@@ -51,10 +51,12 @@ class WebRequest
 
 	protected $curlOptions = array();
 
-	/**
-	 *
-	 * @param string $url
-	 */
+    /**
+     * Constructor
+     *
+     * @param string $url
+     * @param array $curlOptions Array of CURL Options
+     */
 	public function __construct($url, $curlOptions = null)
 	{
 		$this->_url = $url;
@@ -71,9 +73,9 @@ class WebRequest
 
 	/**
 	 * Defines Basic credentials for access the service.
-	 * @param $username
-	 * @param $password
-	 * @return unknown_type
+     *
+	 * @param string $username
+	 * @param string $password
 	 */
 	public function setCredentials($username, $password)
 	{
@@ -81,33 +83,49 @@ class WebRequest
 		$this->setCurlOption(CURLOPT_USERPWD, $username . ":" . $password);
 	}
 
+    /**
+     * Get the current CURLOPT_REFERER
+     *
+     * @return string
+     */
 	public function getReferer()
 	{
 		return $this->getCurlOption(CURLOPT_REFERER);
 	}
 	/**
-	 *
+	 * Set the CURLOPT_REFERER
+     *
 	 * @param string $value
-	 * @return unknown_type
 	 */
 	public function setReferer($value)
 	{
 		$this->setCurlOption(CURLOPT_REFERER, $value);
 	}
 
+    /**
+     * Get the status of last request (get, put, delete, post)
+     *
+     * @return integer
+     */
 	public function getLastStatus()
 	{
 		return $this->_lastStatus;
 	}
 
+    /**
+     * Get an array with the curl response header
+     *
+     * @return array
+     */
 	public function getResponseHeader()
 	{
 		return $this->_responseHeader;
 	}
 
 	/**
-	 *
-	 * @param mixed $key Key may be a string or an associative array. In this case value have to be null;
+	 * Add a request header
+     *
+	 * @param string $key
 	 * @param string $value
 	 */
 	public function addRequestHeader($key, $value = null)
@@ -130,8 +148,9 @@ class WebRequest
 	}
 
 	/**
-	 *
-	 * @param mixed $key Key may be a string or an associative array. In this case value have to be null;
+	 * Add a cookie
+     *
+	 * @param string $key
 	 * @param string $value If value is null so, try to parse
 	 */
 	public function addCookie($key, $value = null)
@@ -152,14 +171,19 @@ class WebRequest
 		}
 	}
 
+    /**
+     * Get the current CURLOPT_FOLLOWLOCATION
+     *
+     * @return boolean
+     */
 	public function getFollowLocation()
 	{
 		return $this->getCurlOption(CURLOPT_FOLLOWLOCATION);
 	}
 	/**
-	 *
+	 * Set the CURLOPT_FOLLOWLOCATION
+     *
 	 * @param bool $value
-	 * @return unknown_type
 	 */
 	public function setFollowLocation($value)
 	{
@@ -205,7 +229,8 @@ class WebRequest
 	 *
 	 * @param string $method
 	 * @param array $params
-	 * @return object
+     * @param array $soapOptions
+	 * @return string
 	 */
 	public function soapCall($method, $params = null, $soapOptions = null)
 	{
@@ -240,6 +265,11 @@ class WebRequest
 		return $result;
 	}
 
+    /**
+     * Set the default curl options.
+     * You can override this method to setup your own default options.
+     * You can pass the options to the constructor also;
+     */
 	protected function defaultCurlOptions()
 	{
 		$this->curlOptions[CURLOPT_CONNECTTIMEOUT] = 30;
@@ -255,6 +285,13 @@ class WebRequest
 		$this->curlOptions[CURLOPT_SSL_VERIFYPEER] = false;
 	}
 
+    /**
+     * Set a custom CURL option
+     *
+     * @param int $key
+     * @param string $value
+     * @throws InvalidArgumentException
+     */
 	public function setCurlOption($key, $value)
 	{
 		if (!is_int($key))
@@ -276,6 +313,12 @@ class WebRequest
 		}
 	}
 
+    /**
+     * Get the current Curl option
+     *
+     * @param int $key
+     * @return mixed
+     */
 	public function getCurlOption($key)
 	{
 		return (isset($this->curlOptions[$key]) ? $this->curlOptions[$key] : null);
@@ -316,6 +359,12 @@ class WebRequest
 	}
 
 
+    /**
+     * Request the method using the CURLOPT defined previously;
+     *
+     * @return string
+     * @throws Exception
+     */
 	protected function curlWrapper()
 	{
 		$curl = curl_init();
@@ -409,6 +458,7 @@ class WebRequest
 
 	/**
 	 * Make a REST Get method call
+     *
 	 * @param array $params
 	 * @return string
 	 */
@@ -433,7 +483,8 @@ class WebRequest
 	}
 
 	/**
-	 * Make a REST POST method call sending a file
+	 * Make a REST POST method call sending a payload
+     *
 	 * @param array $params
 	 * @return string
 	 */
@@ -445,6 +496,7 @@ class WebRequest
 
 	/**
 	 * Make a REST PUT method call with parameters
+     *
 	 * @param array $params
 	 * @return string
 	 */
@@ -457,7 +509,8 @@ class WebRequest
 	}
 
 	/**
-	 * Make a REST PUT method call sending a file
+	 * Make a REST PUT method call sending a payload
+     *
 	 * @param array $params
 	 * @return string
 	 */
@@ -469,6 +522,7 @@ class WebRequest
 
 	/**
 	 * Make a REST DELETE method call with parameters
+     *
 	 * @param array $params
 	 * @return string
 	 */
@@ -480,6 +534,12 @@ class WebRequest
 		return $this->curlWrapper();
 	}
 
+	/**
+	 * Make a REST DELETE method call sending a payload
+     *
+	 * @param array $params
+	 * @return string
+	 */
 	public function deletePayload($data = null, $content_type = "text/plain")
 	{
 		$this->addRequestHeader("Content-Type", $content_type);
@@ -488,8 +548,9 @@ class WebRequest
 
 	/**
 	 * Makes a URL Redirection based on the current client navigation (Browser)
-	 * @param type $params
-	 * @param type $atClientSide
+     *
+	 * @param array $params
+	 * @param bool $atClientSide If true send a javascript for redirection
 	 */
 	public function redirect($params = null, $atClientSide = false)
 	{
@@ -506,6 +567,3 @@ class WebRequest
 	}
 
 }
-
-
-?>
