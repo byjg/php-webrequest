@@ -35,9 +35,9 @@
 namespace ByJG\Util;
 
 use Exception;
+use InvalidArgumentException;
 use SoapClient;
 use SoapParam;
-use Xmlnuke\Core\Engine\Context;
 
 class WebRequest
 {
@@ -50,11 +50,6 @@ class WebRequest
 	protected $_lastStatus = "";
 
 	protected $curlOptions = array();
-
-	const POST = "POST";
-	const PUT = "PUT";
-	const GET = "GET";
-	const DELETE = "DELETE";
 
 	/**
 	 *
@@ -88,7 +83,7 @@ class WebRequest
 
 	public function getReferer()
 	{
-		$this->getCurlOption(CURLOPT_REFERER);
+		return $this->getCurlOption(CURLOPT_REFERER);
 	}
 	/**
 	 *
@@ -264,11 +259,11 @@ class WebRequest
 	{
 		if (!is_int($key))
 		{
-			throw new \InvalidArgumentException('It is not a CURL_OPT argument');
+			throw new InvalidArgumentException('It is not a CURL_OPT argument');
 		}
 		if ($key == CURLOPT_HEADER || $key == CURLOPT_RETURNTRANSFER)
 		{
-			throw new \InvalidArgumentException('You cannot change CURLOPT_HEADER or CURLOPT_RETURNTRANSFER');
+			throw new InvalidArgumentException('You cannot change CURLOPT_HEADER or CURLOPT_RETURNTRANSFER');
 		}
 
 		if (!is_null($value))
@@ -283,7 +278,7 @@ class WebRequest
 
 	public function getCurlOption($key)
 	{
-		return isset($this->curlOptions[$key]) ? $this->curlOptions[$key] : null;
+		return (isset($this->curlOptions[$key]) ? $this->curlOptions[$key] : null);
 	}
 
 	protected function setPostString($fields)
@@ -321,7 +316,7 @@ class WebRequest
 	}
 
 
-	protected function curlWrapper($method, $fields = null, $content_type = null, $data = null)
+	protected function curlWrapper()
 	{
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_URL, $this->_requestUrl);
@@ -332,7 +327,7 @@ class WebRequest
 		{
 			curl_setopt($curl, $key, $value);
 		}
-		
+
 		// Check if have header
 		if (count($this->_requestHeader) > 0)
 		{
@@ -353,7 +348,7 @@ class WebRequest
 		$this->_header = curl_getinfo($curl);
 		$this->_lastStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);
-		
+
 		if ($result === false)
 		{
 			throw new Exception("CURL - " . curl_error($curl));
@@ -421,7 +416,7 @@ class WebRequest
 	{
 		$this->clearRequestMethod();
 		$this->setQueryString($params);
-		return $this->curlWrapper(WebRequest::GET, $params);
+		return $this->curlWrapper();
 	}
 
 	/**
@@ -429,12 +424,12 @@ class WebRequest
 	 * @param array $params
 	 * @return string
 	 */
-	public function post($params)
+	public function post($params = null)
 	{
 		$this->clearRequestMethod();
 		$this->setCurlOption(CURLOPT_POST, true);
 		$this->setPostString($params);
-		return $this->curlWrapper(WebRequest::POST, $params);
+		return $this->curlWrapper();
 	}
 
 	/**
@@ -453,12 +448,12 @@ class WebRequest
 	 * @param array $params
 	 * @return string
 	 */
-	public function put($params)
+	public function put($params = null)
 	{
 		$this->clearRequestMethod();
-		$this->setCurlOption(CURLOPT_PUT, true);
+		$this->setCurlOption(CURLOPT_CUSTOMREQUEST, 'PUT');
 		$this->setPostString($params);
-		return $this->curlWrapper(WebRequest::PUT, $params);
+		return $this->curlWrapper();
 	}
 
 	/**
@@ -482,9 +477,9 @@ class WebRequest
 		$this->clearRequestMethod();
 		$this->setCurlOption(CURLOPT_CUSTOMREQUEST, 'DELETE');
 		$this->setPostString($params);
-		return $this->curlWrapper(WebRequest::DELETE, $params);
+		return $this->curlWrapper();
 	}
-	
+
 	public function deletePayload($data = null, $content_type = "text/plain")
 	{
 		$this->addRequestHeader("Content-Type", $content_type);
@@ -494,32 +489,18 @@ class WebRequest
 	/**
 	 * Makes a URL Redirection based on the current client navigation (Browser)
 	 * @param type $params
-	 * @param type $atClientSide 
+	 * @param type $atClientSide
 	 */
 	public function redirect($params = null, $atClientSide = false)
 	{
-		$url = $this->_url;
-		
-		if ($params != null)
-		{
-			if (strpos($url, "?") === false)
-				$sep = "?";
-			else
-				$sep = "&";
-			
-			foreach ($params as $key=>$value)
-			{
-				$url .= $sep . $key . "=" . urlencode($value);
-				$sep = "&";
-			}
-		}
-		
+        $this->setQueryString($params);
+
+		ob_clean();
 		if (!$atClientSide)
-			Context::getInstance()->redirectUrl($url);
+			header('Location: ' . $this->_requestUrl);
 		else
 		{
-			ob_clean();
-			echo "<script language='javascript'>window.top.location = '" . $url . "'; </script>";
+			echo "<script language='javascript'>window.top.location = '" . $this->_requestUrl . "'; </script>";
 			die();
 		}
 	}
