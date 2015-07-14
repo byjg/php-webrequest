@@ -1,0 +1,21 @@
+{
+    "name": "byjg/webrequest",
+    "version": "1.0.0",
+    "description": "A lightweight and highly customized CURL wrapper for making RESt calls and a wrapper for call dynamically SOAP requests.",
+    "authors": [
+        {
+            "name": "João Gilberto Magalhães",
+            "email": "joao@byjg.com.br"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "ByJG\\Util\\": "src/"
+        }
+    },
+    "require": {
+		"php": ">=5.4.0",
+		"ext-curl": "*"
+	},
+    "license": "MIT"
+}
