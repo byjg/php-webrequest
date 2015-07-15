@@ -392,11 +392,12 @@ class WebRequest
 
 		$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
 		$this->_lastStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $error = curl_error($curl);
 		curl_close($curl);
 
 		if ($result === false)
 		{
-			throw new Exception("CURL - " . curl_error($curl));
+			throw new CurlException("CURL - " . $error);
 		}
 		else
 		{
@@ -408,7 +409,7 @@ class WebRequest
 	protected function parseHeader($raw_headers)
 	{
         $headers = array();
-        $key = ''; 
+        $key = '';
 
         foreach(explode("\n", $raw_headers) as $i => $h)
         {
@@ -420,22 +421,22 @@ class WebRequest
                     $headers[$h[0]] = trim($h[1]);
                 elseif (is_array($headers[$h[0]]))
                 {
-                    $headers[$h[0]] = array_merge($headers[$h[0]], array(trim($h[1]))); 
+                    $headers[$h[0]] = array_merge($headers[$h[0]], array(trim($h[1])));
                 }
                 else
                 {
-                    $headers[$h[0]] = array_merge(array($headers[$h[0]]), array(trim($h[1]))); 
+                    $headers[$h[0]] = array_merge(array($headers[$h[0]]), array(trim($h[1])));
                 }
 
-                $key = $h[0]; 
+                $key = $h[0];
             }
-            else 
-            { 
-                if (substr($h[0], 0, 1) == "\t") 
-                    $headers[$key] .= "\r\n\t".trim($h[0]); 
-                elseif (!$key) 
-                    $headers[0] = trim($h[0]);trim($h[0]); 
-            } 
+            else
+            {
+                if (substr($h[0], 0, 1) == "\t")
+                    $headers[$key] .= "\r\n\t".trim($h[0]);
+                elseif (!$key)
+                    $headers[0] = trim($h[0]);trim($h[0]);
+            }
         }
 		return $headers;
 	}

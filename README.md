@@ -65,6 +65,8 @@ cd tests
 php -S localhost:8080 -t server & 
 ```
 
+**Note:** It is more assertive create a webserver with the server folder instead to use the PHP built-in webserver.
+
 ### Running the integration tests
 
 ```php

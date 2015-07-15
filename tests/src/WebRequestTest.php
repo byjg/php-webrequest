@@ -7,7 +7,7 @@ namespace ByJG\Util;
  */
 class WebRequestTest extends \PHPUnit_Framework_TestCase
 {
-    const SERVER_TEST = 'http://localhost:8080/rest.php';
+    const SERVER_TEST = 'http://xpto.us/webrequest-test/rest.php'; // LOCAL: 'http://localhost:8080/rest.php';
 
     /**
      * @var WebRequest
@@ -217,7 +217,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         $result = json_decode($this->object->post(), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'POST',
             'query_string' => [],
             'post_string' => [],
@@ -233,7 +233,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         $result = json_decode($this->object->post(['param1' => 'value1', 'param2' => 'value2']), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'POST',
             'query_string' => [],
             'post_string' => ['param1' => 'value1', 'param2' => 'value2'],
@@ -249,7 +249,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         $result = json_decode($this->object->post('just_string'), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'POST',
             'query_string' => [],
             'post_string' => [],
@@ -265,7 +265,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         $result = json_decode($this->object->post('just_string=value1&just_string2=value2'), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'POST',
             'query_string' => [],
             'post_string' => ['just_string' => 'value1', 'just_string2' => 'value2'],
@@ -282,7 +282,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
         $result = json_decode($this->object->post(['param' => 'value']), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'POST',
             'query_string' => ['extra' => 'ok'],
             'post_string' => ['param' => 'value'],
@@ -300,7 +300,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
         $result = json_decode($this->object->postPayload('{teste: "ok"}', 'application/json'), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/json',
             'method' => 'POST',
             'query_string' => ['extra' => 'ok'],
             'post_string' => [],
@@ -332,7 +332,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         $result = json_decode($this->object->put(['param1' => 'value1', 'param2' => 'value2']), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'PUT',
             'query_string' => [],
             'post_string' => [],
@@ -348,7 +348,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         $result = json_decode($this->object->put('just_string'), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'PUT',
             'query_string' => [],
             'post_string' => [],
@@ -364,7 +364,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         $result = json_decode($this->object->put('just_string=value1&just_string2=value2'), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'PUT',
             'query_string' => [],
             'post_string' => [],
@@ -381,7 +381,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
         $result = json_decode($this->object->put(['param' => 'value']), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'PUT',
             'query_string' => ['extra' => 'ok'],
             'post_string' => [],
@@ -399,7 +399,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
         $result = json_decode($this->object->putPayload('{teste: "ok"}', 'application/json'), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/json',
             'method' => 'PUT',
             'query_string' => ['extra' => 'ok'],
             'post_string' => [],
@@ -431,7 +431,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         $result = json_decode($this->object->delete(['param1' => 'value1', 'param2' => 'value2']), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'DELETE',
             'query_string' => [],
             'post_string' => [],
@@ -447,7 +447,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         $result = json_decode($this->object->delete('just_string'), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'DELETE',
             'query_string' => [],
             'post_string' => [],
@@ -463,7 +463,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         $result = json_decode($this->object->delete('just_string=value1&just_string2=value2'), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'DELETE',
             'query_string' => [],
             'post_string' => [],
@@ -480,7 +480,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
         $result = json_decode($this->object->delete(['param' => 'value']), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'DELETE',
             'query_string' => ['extra' => 'ok'],
             'post_string' => [],
@@ -497,7 +497,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
         $result = json_decode($this->object->deletePayload('{teste: "ok"}', 'application/json'), true);
         $expected = [
-            'content-type' => null,
+            'content-type' => 'application/json',
             'method' => 'DELETE',
             'query_string' => ['extra' => 'ok'],
             'post_string' => [],
@@ -515,6 +515,18 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->markTestIncomplete(
                 'This test has not been implemented yet.'
         );
+    }
+
+    /**
+     * @covers ByJG\Util\WebRequest::curlWrapper
+     */
+    public function testCurlException()
+    {
+        $this->object = new WebRequest('http://laloiuyakkkall.iiiuqq/');
+
+        $this->setExpectedException('\ByJG\Util\CurlException');
+        $this->object->get();
+
     }
 
 }

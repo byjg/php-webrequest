@@ -1,6 +1,6 @@
 {
     "name": "byjg/webrequest",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A lightweight and highly customized CURL wrapper for making RESt calls and a wrapper for call dynamically SOAP requests.",
     "authors": [
         {

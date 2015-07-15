@@ -9,6 +9,5 @@ install:
 
 script: 
   - cd tests
-  - php -S localhost:8080 -t server & 
-  - phpunit --bootstrap bootstrap.php src/WebRequestTest.php 
+  - phpunit -v --bootstrap bootstrap.php src/WebRequestTest.php 
 
