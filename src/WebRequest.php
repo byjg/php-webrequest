@@ -274,13 +274,10 @@ class WebRequest
 	{
 		$this->curlOptions[CURLOPT_CONNECTTIMEOUT] = 30;
 		$this->curlOptions[CURLOPT_TIMEOUT] = 30;
-		//curl_setopt($hCurl] = CURLOPT_STDERR] = fopen('php://output'] = 'w+');
-		//curl_setopt($hCurl] = CURLOPT_VERBOSE] = 1;
 		$this->curlOptions[CURLOPT_HEADER] = true;
 		$this->curlOptions[CURLOPT_RETURNTRANSFER] = true;
 		$this->curlOptions[CURLOPT_USERAGENT] = "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)";
 		$this->curlOptions[CURLOPT_FOLLOWLOCATION] = true;
-		# sometimes we need this for https to work
 		$this->curlOptions[CURLOPT_SSL_VERIFYHOST] = false;
 		$this->curlOptions[CURLOPT_SSL_VERIFYPEER] = false;
 	}
@@ -411,7 +408,7 @@ class WebRequest
 	protected function parseHeader($raw_headers)
 	{
         $headers = array();
-        $key = ''; // [+]
+        $key = ''; 
 
         foreach(explode("\n", $raw_headers) as $i => $h)
         {
@@ -423,26 +420,22 @@ class WebRequest
                     $headers[$h[0]] = trim($h[1]);
                 elseif (is_array($headers[$h[0]]))
                 {
-                    // $tmp = array_merge($headers[$h[0]], array(trim($h[1]))); // [-]
-                    // $headers[$h[0]] = $tmp; // [-]
-                    $headers[$h[0]] = array_merge($headers[$h[0]], array(trim($h[1]))); // [+]
+                    $headers[$h[0]] = array_merge($headers[$h[0]], array(trim($h[1]))); 
                 }
                 else
                 {
-                    // $tmp = array_merge(array($headers[$h[0]]), array(trim($h[1]))); // [-]
-                    // $headers[$h[0]] = $tmp; // [-]
-                    $headers[$h[0]] = array_merge(array($headers[$h[0]]), array(trim($h[1]))); // [+]
+                    $headers[$h[0]] = array_merge(array($headers[$h[0]]), array(trim($h[1]))); 
                 }
 
-                $key = $h[0]; // [+]
+                $key = $h[0]; 
             }
-            else // [+]
-            { // [+]
-                if (substr($h[0], 0, 1) == "\t") // [+]
-                    $headers[$key] .= "\r\n\t".trim($h[0]); // [+]
-                elseif (!$key) // [+]
-                    $headers[0] = trim($h[0]);trim($h[0]); // [+]
-            } // [+]
+            else 
+            { 
+                if (substr($h[0], 0, 1) == "\t") 
+                    $headers[$key] .= "\r\n\t".trim($h[0]); 
+                elseif (!$key) 
+                    $headers[0] = trim($h[0]);trim($h[0]); 
+            } 
         }
 		return $headers;
 	}
