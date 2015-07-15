@@ -394,7 +394,6 @@ class WebRequest
 		$result = curl_exec($curl);
 
 		$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-		$this->_header = curl_getinfo($curl);
 		$this->_lastStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);
 
@@ -484,8 +483,9 @@ class WebRequest
 
 	/**
 	 * Make a REST POST method call sending a payload
-     *
-	 * @param array $params
+	 *
+	 * @param string $data
+	 * @param string $content_type
 	 * @return string
 	 */
 	public function postPayload($data, $content_type = "text/plain")
@@ -510,8 +510,9 @@ class WebRequest
 
 	/**
 	 * Make a REST PUT method call sending a payload
-     *
-	 * @param array $params
+	 *
+	 * @param string $data
+	 * @param string $content_type
 	 * @return string
 	 */
 	public function putPayload($data, $content_type = "text/plain")
@@ -536,8 +537,9 @@ class WebRequest
 
 	/**
 	 * Make a REST DELETE method call sending a payload
-     *
-	 * @param array $params
+	 *
+	 * @param string $data
+	 * @param string $content_type
 	 * @return string
 	 */
 	public function deletePayload($data = null, $content_type = "text/plain")
