@@ -286,7 +286,7 @@ class WebRequest
      * Set a custom CURL option
      *
      * @param int $key
-     * @param string $value
+     * @param mixed $value
      * @throws InvalidArgumentException
      */
 	public function setCurlOption($key, $value)
