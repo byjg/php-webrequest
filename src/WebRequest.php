@@ -196,7 +196,7 @@ class WebRequest
 	 */
 	protected function getSoapClient()
 	{
-		if ($this->_soapClass == null)
+		if (is_null($this->_soapClass))
 		{
 			$this->_soapClass = new SoapClient(NULL,
 			array(
@@ -247,7 +247,7 @@ class WebRequest
 			$soapParams = null;
 		}
 
-		if (!is_array($soapOptions) || ($soapOptions == null))
+		if (!is_array($soapOptions) || (is_null($soapOptions)))
 		{
 			$soapOptions = array(
 	            "uri" => "urn:xmethods-delayed-quotes",
@@ -480,7 +480,7 @@ class WebRequest
 
 	/**
 	 * Make a REST POST method call with parameters
-	 * @param array $params
+	 * @param array|string $params
 	 * @return string
 	 */
 	public function post($params = '')
@@ -507,7 +507,7 @@ class WebRequest
 	/**
 	 * Make a REST PUT method call with parameters
      *
-	 * @param array $params
+	 * @param array|string $params
 	 * @return string
 	 */
 	public function put($params = null)
@@ -534,7 +534,7 @@ class WebRequest
 	/**
 	 * Make a REST DELETE method call with parameters
      *
-	 * @param array $params
+	 * @param array|string $params
 	 * @return string
 	 */
 	public function delete($params = null)
