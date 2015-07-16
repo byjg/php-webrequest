@@ -384,7 +384,7 @@ class WebRequest
 	{
 		$curl = curl_init();
         echo "Request URL: [$this->_requestUrl]\n";
-        
+
 		curl_setopt($curl, CURLOPT_URL, $this->_requestUrl);
 		$this->_requestUrl = $this->_url;  // Reset request URL
 
@@ -489,11 +489,11 @@ class WebRequest
 	 * @param array $params
 	 * @return string
 	 */
-	public function post($params = null)
+	public function post($params = '')
 	{
 		$this->clearRequestMethod();
 		$this->setCurlOption(CURLOPT_POST, true);
-		$this->setPostString($params);
+		$this->setPostString(is_null($params) ? '' : $params);
 		return $this->curlWrapper();
 	}
 
