@@ -579,15 +579,15 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_URL, 'http://xpto.us/webrequest-test/rest.php');
-		curl_setopt($curl, 78, 30);
-		curl_setopt($curl, 13, 30);
-		curl_setopt($curl, 42, true);
-		curl_setopt($curl, 19913, true);
-		curl_setopt($curl, 10018, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)');
-		curl_setopt($curl, 52, true);
-		curl_setopt($curl, 81, false);
-		curl_setopt($curl, 64, false);
-		curl_setopt($curl, 47, true);
+		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+		curl_setopt($curl, CURLOPT_HEADER, true);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)');
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_POST, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded' ]);
 		$result = curl_exec($curl);
         $error = curl_error($curl);
@@ -602,6 +602,136 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
 		curl_close($curl);
 
 		$this->assertEquals(200, $lastStatus);
+
+        echo $result;
+    }
+
+    public function testCurlAlone_2()
+    {
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, 'http://xpto.us/webrequest-test/rest.php');
+		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+		curl_setopt($curl, CURLOPT_HEADER, true);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)');
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_POST, true);
+		//curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded' ]);
+		$result = curl_exec($curl);
+        $error = curl_error($curl);
+		if ($result === false)
+		{
+			curl_close($curl);
+			throw new CurlException("CURL - " . $error);
+		}
+
+		$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+		$lastStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+
+		$this->assertEquals(200, $lastStatus);
+
+        echo $result;
+    }
+
+    public function testCurlAlone_3()
+    {
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, 'http://xpto.us/webrequest-test/rest.php');
+		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+		curl_setopt($curl, CURLOPT_HEADER, true);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)');
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+		//curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded' ]);
+		$result = curl_exec($curl);
+        $error = curl_error($curl);
+		if ($result === false)
+		{
+			curl_close($curl);
+			throw new CurlException("CURL - " . $error);
+		}
+
+		$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+		$lastStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+
+		$this->assertEquals(200, $lastStatus);
+
+        echo $result;
+    }
+
+    public function testCurlAlone_4()
+    {
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, 'http://xpto.us/webrequest-test/rest.php');
+		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+		curl_setopt($curl, CURLOPT_HEADER, true);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)');
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_POST, true);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded' ]);
+        curl_setopt($curl, 10015, '');
+
+		$result = curl_exec($curl);
+        $error = curl_error($curl);
+		if ($result === false)
+		{
+			curl_close($curl);
+			throw new CurlException("CURL - " . $error);
+		}
+
+		$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+		$lastStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+
+		$this->assertEquals(200, $lastStatus);
+
+        echo $result;
+    }
+
+    public function testCurlAlone_5()
+    {
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, 'http://xpto.us/webrequest-test/rest.php');
+		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+		curl_setopt($curl, CURLOPT_HEADER, true);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)');
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_POST, true);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded' ]);
+        curl_setopt($curl, 10015, '[]');
+
+		$result = curl_exec($curl);
+        $error = curl_error($curl);
+		if ($result === false)
+		{
+			curl_close($curl);
+			throw new CurlException("CURL - " . $error);
+		}
+
+		$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+		$lastStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+
+		$this->assertEquals(200, $lastStatus);
+
+        echo $result;
     }
 
 }
