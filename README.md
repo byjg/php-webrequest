@@ -1,4 +1,6 @@
 # Web Request
+[![Build Status](https://travis-ci.org/byjg/webrequest.svg?branch=master)](https://travis-ci.org/byjg/webrequest)
+[![Build Status](https://drone.io/github.com/byjg/webrequest/status.png)](https://drone.io/github.com/byjg/webrequest/latest)
 
 ## Description
 
