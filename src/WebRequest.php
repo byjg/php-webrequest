@@ -381,6 +381,11 @@ class WebRequest
 		curl_setopt($curl, CURLOPT_URL, $this->_requestUrl);
 		$this->_requestUrl = $this->_url;  // Reset request URL
 
+        echo "Request URL: "; print_r($this->_requestUrl);
+        echo "Curl Options: "; print_r($this->curlOptions);
+        echo "Request Header: "; print_r($this->_requestHeader);
+        echo "Cookies: "; print_r($this->_cookies);
+
 		// Set Curl Options
 		foreach ($this->curlOptions as $key => $value)
 		{
