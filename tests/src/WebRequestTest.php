@@ -575,4 +575,33 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function testCurlAlone()
+    {
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, 'http://xpto.us/webrequest-test/rest.php');
+		curl_setopt($curl, 78, 30);
+		curl_setopt($curl, 13, 30);
+		curl_setopt($curl, 42, true);
+		curl_setopt($curl, 19913, true);
+		curl_setopt($curl, 10018, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)');
+		curl_setopt($curl, 52, true);
+		curl_setopt($curl, 81, false);
+		curl_setopt($curl, 64, false);
+		curl_setopt($curl, 47, true);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded' ]);
+		$result = curl_exec($curl);
+        $error = curl_error($curl);
+		if ($result === false)
+		{
+			curl_close($curl);
+			throw new CurlException("CURL - " . $error);
+		}
+
+		$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+		$lastStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+
+		$this->assertEquals(200, $lastStatus);
+    }
+
 }
