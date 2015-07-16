@@ -383,14 +383,8 @@ class WebRequest
 	protected function curlWrapper()
 	{
 		$curl = curl_init();
-        echo "Request URL: [$this->_requestUrl]\n";
-
 		curl_setopt($curl, CURLOPT_URL, $this->_requestUrl);
 		$this->_requestUrl = $this->_url;  // Reset request URL
-
-        echo "Curl Options: "; print_r($this->curlOptions);
-        echo "Request Header: "; print_r($this->_requestHeader);
-        echo "Cookies: "; print_r($this->_cookies);
 
 		// Set Curl Options
 		foreach ($this->curlOptions as $key => $value)
