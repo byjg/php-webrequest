@@ -383,8 +383,14 @@ class WebRequest
 	protected function curlWrapper()
 	{
 		$curl = curl_init();
+        echo "Request URL: [$this->_requestUrl]\n";
+
 		curl_setopt($curl, CURLOPT_URL, $this->_requestUrl);
 		$this->_requestUrl = $this->_url;  // Reset request URL
+
+        echo "Curl Options: "; print_r($this->curlOptions);
+        echo "Request Header: "; print_r($this->_requestHeader);
+        echo "Cookies: "; print_r($this->_cookies);
 
 		// Set Curl Options
 		foreach ($this->curlOptions as $key => $value)
@@ -483,11 +489,11 @@ class WebRequest
 	 * @param array $params
 	 * @return string
 	 */
-	public function post($params = null)
+	public function post($params = '')
 	{
 		$this->clearRequestMethod();
 		$this->setCurlOption(CURLOPT_POST, true);
-		$this->setPostString($params);
+		$this->setPostString(is_null($params) ? '' : $params);
 		return $this->curlWrapper();
 	}
 
