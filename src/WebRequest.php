@@ -365,7 +365,12 @@ class WebRequest
 
 	protected function setQueryString($fields)
 	{
-		$this->_requestUrl = $this->_url . (strpos($this->_url, "?") === false ? "?" : "&") . $this->getMultiFormData($fields);
+        $queryString = $this->getMultiFormData($fields);
+
+        if (!empty($queryString))
+        {
+            $this->_requestUrl = $this->_url . (strpos($this->_url, "?") === false ? "?" : "&") . $queryString;
+        }
 	}
 
 
