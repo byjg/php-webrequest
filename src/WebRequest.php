@@ -321,10 +321,9 @@ class WebRequest
 		return (isset($this->curlOptions[$key]) ? $this->curlOptions[$key] : null);
 	}
 
-	protected function setPostString($fields)
+	protected function getMultiFormData($fields)
 	{
 		$fields_string = "";
-
 		if (is_array($fields))
 		{
 			foreach($fields as $key=>$value)
@@ -339,20 +338,34 @@ class WebRequest
 					}
 				}
 			}
-			$this->setCurlOption(CURLOPT_POSTFIELDS, $fields_string);
+			return $fields_string;
 		}
 		else
 		{
-			$this->setCurlOption(CURLOPT_POSTFIELDS, $fields);
+			return $fields;
 		}
+	}
+
+	protected function setPostString($fields)
+	{
+		$replaceHeader = true;
+		foreach ($this->_requestHeader as $header) {
+			if (stripos($header,'content-type') !== false) {
+				$replaceHeader = false;
+			}
+		}
+
+		if ($replaceHeader)
+		{
+			$this->addRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
+		}
+
+		$this->setCurlOption(CURLOPT_POSTFIELDS, $this->getMultiFormData($fields));
 	}
 
 	protected function setQueryString($fields)
 	{
-		$this->setPostString($fields);
-		$fields_string = $this->getCurlOption(CURLOPT_POSTFIELDS);
-		$this->_requestUrl = $this->_url . (strpos($this->_url, "?") === false ? "?" : "&") . $fields_string;
-		$this->setCurlOption(CURLOPT_POSTFIELDS, null);
+		$this->_requestUrl = $this->_url . (strpos($this->_url, "?") === false ? "?" : "&") . $this->getMultiFormData($fields);
 	}
 
 
