@@ -215,7 +215,10 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testPost1()
     {
-        $result = json_decode($this->object->post(), true);
+		$tmp = $this->object->post();
+		echo "TMP:" . $tmp;
+
+        $result = json_decode($tmp, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'POST',

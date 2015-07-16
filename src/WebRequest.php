@@ -389,21 +389,19 @@ class WebRequest
 		}
 
 		$result = curl_exec($curl);
+        $error = curl_error($curl);
+		if ($result === false)
+		{
+			curl_close($curl);
+			throw new CurlException("CURL - " . $error);
+		}
 
 		$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
 		$this->_lastStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        $error = curl_error($curl);
 		curl_close($curl);
 
-		if ($result === false)
-		{
-			throw new CurlException("CURL - " . $error);
-		}
-		else
-		{
-			$this->_responseHeader = $this->parseHeader(substr($result, 0, $header_size));
-			return substr($result, $header_size);
-		}
+		$this->_responseHeader = $this->parseHeader(substr($result, 0, $header_size));
+		return substr($result, $header_size);
 	}
 
 	protected function parseHeader($raw_headers)
