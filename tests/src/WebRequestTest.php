@@ -7,11 +7,13 @@ namespace ByJG\Util;
  */
 class WebRequestTest extends \PHPUnit_Framework_TestCase
 {
+
     const SERVER_TEST = 'http://xpto.us/webrequest-test/rest.php'; // LOCAL: 'http://localhost:8080/rest.php';
 
     /**
      * @var WebRequest
      */
+
     protected $object;
 
     /**
@@ -80,7 +82,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
-                'This test has not been implemented yet.'
+            'This test has not been implemented yet.'
         );
     }
 
@@ -91,7 +93,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
-                'This test has not been implemented yet.'
+            'This test has not been implemented yet.'
         );
     }
 
@@ -115,7 +117,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
-                'This test has not been implemented yet.'
+            'This test has not been implemented yet.'
         );
     }
 
@@ -134,8 +136,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testGet1()
     {
-		$response = $this->object->get();
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->get();
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => null,
@@ -152,8 +154,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testGet2()
     {
-		$response = $this->object->get(['param1' => 'value1', 'param2' => 'value2']);
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->get(['param1' => 'value1', 'param2' => 'value2']);
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => null,
@@ -170,8 +172,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testGet3()
     {
-		$response = $this->object->get('just_string');
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->get('just_string');
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => null,
@@ -188,8 +190,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testGet4()
     {
-		$response = $this->object->get('just_string=value1&just_string2=value2');
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->get('just_string=value1&just_string2=value2');
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => null,
@@ -207,8 +209,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     public function testGet5()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extraparam=ok');
-		$response = $this->object->get(['param1' => 'value1']);
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->get(['param1' => 'value1']);
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => null,
@@ -225,8 +227,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testPost1()
     {
-		$response = $this->object->post();
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->post();
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -243,8 +245,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testPost2()
     {
-		$response = $this->object->post(['param1' => 'value1', 'param2' => 'value2']);
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->post(['param1' => 'value1', 'param2' => 'value2']);
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -261,8 +263,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testPost3()
     {
-		$response = $this->object->post('just_string');
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->post('just_string');
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -279,8 +281,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testPost4()
     {
-		$response = $this->object->post('just_string=value1&just_string2=value2');
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->post('just_string=value1&just_string2=value2');
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -298,8 +300,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     public function testPost5()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
-		$response = $this->object->post(['param' => 'value']);
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->post(['param' => 'value']);
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -318,8 +320,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     public function testPostPayload()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
-		$response = $this->object->postPayload('{teste: "ok"}', 'application/json');
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->postPayload('{teste: "ok"}', 'application/json');
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/json',
@@ -336,8 +338,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testPut1()
     {
-		$response = $this->object->put();
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->put();
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -354,8 +356,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testPut2()
     {
-		$response = $this->object->put(['param1' => 'value1', 'param2' => 'value2']);
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->put(['param1' => 'value1', 'param2' => 'value2']);
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -372,8 +374,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testPut3()
     {
-		$response = $this->object->put('just_string');
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->put('just_string');
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -390,8 +392,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testPut4()
     {
-		$response = $this->object->put('just_string=value1&just_string2=value2');
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->put('just_string=value1&just_string2=value2');
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -409,8 +411,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     public function testPut5()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
-		$response = $this->object->put(['param' => 'value']);
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->put(['param' => 'value']);
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -422,15 +424,14 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-
     /**
      * @covers ByJG\Util\WebRequest::putPayload
      */
     public function testPutPayload()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
-		$response = $this->object->putPayload('{teste: "ok"}', 'application/json');
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->putPayload('{teste: "ok"}', 'application/json');
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/json',
@@ -447,8 +448,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testDelete1()
     {
-		$response = $this->object->delete();
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->delete();
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -465,8 +466,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testDelete2()
     {
-		$response = $this->object->delete(['param1' => 'value1', 'param2' => 'value2']);
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->delete(['param1' => 'value1', 'param2' => 'value2']);
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -483,8 +484,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testDelete3()
     {
-		$response = $this->object->delete('just_string');
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->delete('just_string');
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -501,8 +502,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testDelete4()
     {
-		$response = $this->object->delete('just_string=value1&just_string2=value2');
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->delete('just_string=value1&just_string2=value2');
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -520,8 +521,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     public function testDelete5()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
-		$response = $this->object->delete(['param' => 'value']);
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->delete(['param' => 'value']);
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
@@ -539,8 +540,8 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     public function testDeletePayload()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
-		$response = $this->object->deletePayload('{teste: "ok"}', 'application/json');
-		$this->assertEquals(200, $this->object->getLastStatus());
+        $response = $this->object->deletePayload('{teste: "ok"}', 'application/json');
+        $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
         $expected = [
             'content-type' => 'application/json',
@@ -559,7 +560,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
-                'This test has not been implemented yet.'
+            'This test has not been implemented yet.'
         );
     }
 
@@ -572,7 +573,5 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedException('\ByJG\Util\CurlException');
         $this->object->get();
-
     }
-
 }
