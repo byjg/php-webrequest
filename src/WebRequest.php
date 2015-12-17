@@ -332,18 +332,8 @@ class WebRequest
 
     protected function getMultiFormData($fields)
     {
-        $fields_string = "";
         if (is_array($fields)) {
-            foreach ($fields as $key => $value) {
-                if (!is_array($value)) {
-                    $fields_string .= ($fields_string != "" ? "&" : "") . $key . '=' . urlencode($value);
-                } else {
-                    foreach ($value as $valueItem) {
-                        $fields_string .= ($fields_string != "" ? "&" : "") . $key . '=' . urlencode($valueItem);
-                    }
-                }
-            }
-            return $fields_string;
+            return http_build_query($fields);
         }
         
         return $fields;
