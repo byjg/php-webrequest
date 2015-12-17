@@ -189,6 +189,31 @@ class WebRequest
     }
 
     /**
+     * Setting the Proxy
+     *
+     * The full representation of the proxy is scheme://url:port, 
+     * but the only required is the URL;
+     *
+     * Some examples:
+     *    my.proxy.com
+     *    my.proxy.com:1080
+     *    https://my.proxy.com:1080
+     *    socks4://my.proxysocks.com
+     *    socks5://my.proxysocks.com
+     *
+     * @param string $url The Proxy URL in the format scheme://url:port
+     * @param string $username
+     * @param string $password
+     */
+    public function setProxy($url, $username = null, $password = "")
+    {
+        $this->setCurlOption(CURLOPT_PROXY, $url);
+        if (!is_null($username)) {
+            $this->setCurlOption(CURLOPT_PROXYUSERPWD, "$username:$password");
+        }
+    }
+
+    /**
      *
      * @return SoapClient
      */
