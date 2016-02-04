@@ -547,11 +547,9 @@ class WebRequest
         $this->setQueryString($params);
 
         ob_clean();
-        if (!$atClientSide) {
-            header('Location: ' . $this->_requestUrl);
-        } else {
+        header('Location: ' . $this->_requestUrl);
+        if ($atClientSide) {
             echo "<script language='javascript'>window.top.location = '" . $this->_requestUrl . "'; </script>";
-            die();
         }
     }
 }
