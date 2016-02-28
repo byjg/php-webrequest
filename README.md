@@ -47,6 +47,20 @@ $webRequest->setCurlOption(CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.0
 $result = $webRequest->get();
 ```
 
+### Upload a file using "multipart/form-data"
+
+```php
+$webRequest = new WebRequest('http://www.example.com/page');
+
+// Define the Upload File
+$upload = [];
+$upload[] = new UploadFile('fieldName', 'fieldContent');
+$upload[] = new UploadFile('fieldName', 'fieldContent', 'mime-filename.ext');
+
+// Post and get the result
+$result = $webRequest->postUploadFile($upload);
+```
+
 ### Calling Soap Classes
 
 ```php
