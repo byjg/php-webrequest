@@ -470,6 +470,33 @@ class WebRequest
     }
 
     /**
+     * Make a REST POST method call with parameters
+     * @param UploadFile[]
+     * @return string
+     */
+    public function postUploadFile($params = [])
+    {
+        $this->clearRequestMethod();
+        $this->setCurlOption(CURLOPT_POST, true);
+
+        $boundary = 'boundary-' . md5(time());
+        $body = '';
+        foreach($params as $item){
+            $body .= "--$boundary\nContent-Disposition: form-data; name=\"{$item->getField()}\";";
+            if ($item->getFileName()) {
+                $body .= " filename=\"{$item->getFileName()}\";";
+            }
+            $body .= "\n\n{$item->getContent()}\n";
+        }
+        $body .= "--$boundary--";
+
+        $this->addRequestHeader("Content-Type", "multipart/form-data; boundary=$boundary");
+
+        $this->setPostString($body);
+        return $this->curlWrapper();
+    }
+
+    /**
      * Make a REST POST method call sending a payload
      *
      * @param string $data
