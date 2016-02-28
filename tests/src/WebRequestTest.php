@@ -554,6 +554,35 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ByJG\Util\WebRequest::postUploadFile
+     */
+    public function testPostUploadFile()
+    {
+        $this->object = new WebRequest(self::SERVER_TEST);
+
+        $uploadFile = [];
+        $uploadFile[] = new UploadFile('field1', 'value1');
+        $uploadFile[] = new UploadFile('field2', 'value2', 'filename.txt');
+
+        $response = $this->object->postUploadFile($uploadFile);
+        $this->assertEquals(200, $this->object->getLastStatus());
+        $result = json_decode($response, true);
+        unset($result['files']['field2']['tmp_name']);
+
+        $this->assertContains('multipart/form-data; boundary=boundary-', $result['content-type']);
+        $this->assertEquals('POST', $result['method']);
+        $this->assertEquals([], $result['query_string']);
+        $this->assertEquals(['field1' => 'value1'], $result['post_string']);
+        $this->assertEquals('', $result['payload']);
+        $this->assertEquals(['field2' => [
+            'name' => 'filename.txt',
+            'type' => '',
+            'error' => 0,
+            'size' => 6
+        ]], $result['files']);
+    }
+
+    /**
      * @covers ByJG\Util\WebRequest::redirect
      */
     public function testRedirect()
