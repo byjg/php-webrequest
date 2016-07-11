@@ -43,13 +43,13 @@ use SoapParam;
 class WebRequest
 {
 
-    protected $_url;
-    protected $_requestUrl;
-    protected $_soapClass = null;
-    protected $_requestHeader = array();
-    protected $_responseHeader = null;
-    protected $_cookies = array();
-    protected $_lastStatus = "";
+    protected $url;
+    protected $requestUrl;
+    protected $soapClass = null;
+    protected $requestHeader = array();
+    protected $responseHeader = null;
+    protected $cookies = array();
+    protected $lastStatus = "";
     protected $curlOptions = array();
 
     /**
@@ -60,8 +60,8 @@ class WebRequest
      */
     public function __construct($url, $curlOptions = null)
     {
-        $this->_url = $url;
-        $this->_requestUrl = $url;
+        $this->url = $url;
+        $this->requestUrl = $url;
 
         $this->defaultCurlOptions();
         if (is_array($curlOptions)) {
@@ -110,7 +110,7 @@ class WebRequest
      */
     public function getLastStatus()
     {
-        return $this->_lastStatus;
+        return $this->lastStatus;
     }
 
     /**
@@ -120,7 +120,7 @@ class WebRequest
      */
     public function getResponseHeader()
     {
-        return $this->_responseHeader;
+        return $this->responseHeader;
     }
 
     /**
@@ -136,12 +136,14 @@ class WebRequest
                 $this->addRequestHeader($newKey, $newValue);
             }
         } else {
-            $key = preg_replace_callback('/([\s\-_]|^)([a-z0-9-_])/',
-                function($match) {
+            $key = preg_replace_callback(
+                '/([\s\-_]|^)([a-z0-9-_])/',
+                function ($match) {
                     return strtoupper($match[0]);
-                }, $key
+                },
+                $key
             );
-            $this->_requestHeader[] = "$key: $value";
+            $this->requestHeader[] = "$key: $value";
         }
     }
 
@@ -161,9 +163,9 @@ class WebRequest
             $value = preg_replace('/(;\s*path=.+)/', '', $value);
 
             if (is_numeric($key)) {
-                $this->_cookies[] = $value;
+                $this->cookies[] = $value;
             } else {
-                $this->_cookies[] = "$key=$value";
+                $this->cookies[] = "$key=$value";
             }
         }
     }
@@ -191,7 +193,7 @@ class WebRequest
     /**
      * Setting the Proxy
      *
-     * The full representation of the proxy is scheme://url:port, 
+     * The full representation of the proxy is scheme://url:port,
      * but the only required is the URL;
      *
      * Some examples:
@@ -219,10 +221,11 @@ class WebRequest
      */
     protected function getSoapClient()
     {
-        if (is_null($this->_soapClass)) {
-            $this->_soapClass = new SoapClient(NULL,
+        if (is_null($this->soapClass)) {
+            $this->soapClass = new SoapClient(
+                null,
                 array(
-                "location" => $this->_url,
+                "location" => $this->url,
                 "uri" => "urn:xmethods-delayed-quotes",
                 "style" => SOAP_RPC,
                 "use" => SOAP_ENCODED
@@ -233,11 +236,11 @@ class WebRequest
                 $curlPwd = explode(":", $this->getCurlOption(CURLOPT_USERPWD));
                 $username = $curlPwd[0];
                 $password = $curlPwd[1];
-                $this->_soapClass->setCredentials($username, $password);
+                $this->soapClass->setCredentials($username, $password);
             }
         }
 
-        return $this->_soapClass;
+        return $this->soapClass;
     }
 
     /**
@@ -273,7 +276,9 @@ class WebRequest
 
         // Chamando método do webservice
         $result = $this->getSoapClient()->__call(
-            $method, $soapParams, $soapOptions
+            $method,
+            $soapParams,
+            $soapOptions
         );
 
         return $result;
@@ -342,7 +347,7 @@ class WebRequest
     protected function setPostString($fields)
     {
         $replaceHeader = true;
-        foreach ($this->_requestHeader as $header) {
+        foreach ($this->requestHeader as $header) {
             if (stripos($header, 'content-type') !== false) {
                 $replaceHeader = false;
             }
@@ -360,7 +365,7 @@ class WebRequest
         $queryString = $this->getMultiFormData($fields);
 
         if (!empty($queryString)) {
-            $this->_requestUrl = $this->_url . (strpos($this->_url, "?") === false ? "?" : "&") . $queryString;
+            $this->requestUrl = $this->url . (strpos($this->url, "?") === false ? "?" : "&") . $queryString;
         }
     }
 
@@ -373,23 +378,23 @@ class WebRequest
     protected function curlWrapper()
     {
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $this->_requestUrl);
-        $this->_requestUrl = $this->_url;  // Reset request URL
+        curl_setopt($curl, CURLOPT_URL, $this->requestUrl);
+        $this->requestUrl = $this->url;  // Reset request URL
         // Set Curl Options
         foreach ($this->curlOptions as $key => $value) {
             curl_setopt($curl, $key, $value);
         }
 
         // Check if have header
-        if (count($this->_requestHeader) > 0) {
-            curl_setopt($curl, CURLOPT_HTTPHEADER, $this->_requestHeader);
-            $this->_requestHeader = array(); // Reset request Header
+        if (count($this->requestHeader) > 0) {
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $this->requestHeader);
+            $this->requestHeader = array(); // Reset request Header
         }
 
         // Add Cookies
-        if (count($this->_cookies) > 0) {
-            curl_setopt($curl, CURLOPT_COOKIE, implode(";", $this->_cookies));
-            $this->_cookies = array(); // Reset request Header
+        if (count($this->cookies) > 0) {
+            curl_setopt($curl, CURLOPT_COOKIE, implode(";", $this->cookies));
+            $this->cookies = array(); // Reset request Header
         }
 
         $result = curl_exec($curl);
@@ -400,10 +405,10 @@ class WebRequest
         }
 
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $this->_lastStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $this->lastStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
 
-        $this->_responseHeader = $this->parseHeader(substr($result, 0, $header_size));
+        $this->responseHeader = $this->parseHeader(substr($result, 0, $header_size));
         return substr($result, $header_size);
     }
 
@@ -428,8 +433,8 @@ class WebRequest
             } else {
                 if (substr($h[0], 0, 1) == "\t") {
                     $headers[$key] .= "\r\n\t" . trim($h[0]);
-                }  elseif (!$key) {
-                    $headers[0] = trim($h[0]);trim($h[0]);
+                } elseif (!$key) {
+                    $headers[0] = trim($h[0]);
                 }
             }
         }
@@ -471,8 +476,10 @@ class WebRequest
 
     /**
      * Make a REST POST method call with parameters
-     * @param UploadFile[]
+     *
+     * @param array $params
      * @return string
+     * @throws \ByJG\Util\CurlException
      */
     public function postUploadFile($params = [])
     {
@@ -481,7 +488,7 @@ class WebRequest
 
         $boundary = 'boundary-' . md5(time());
         $body = '';
-        foreach($params as $item){
+        foreach ($params as $item) {
             $body .= "--$boundary\nContent-Disposition: form-data; name=\"{$item->getField()}\";";
             if ($item->getFileName()) {
                 $body .= " filename=\"{$item->getFileName()}\";";
@@ -574,9 +581,9 @@ class WebRequest
         $this->setQueryString($params);
 
         ob_clean();
-        header('Location: ' . $this->_requestUrl);
+        header('Location: ' . $this->requestUrl);
         if ($atClientSide) {
-            echo "<script language='javascript'>window.top.location = '" . $this->_requestUrl . "'; </script>";
+            echo "<script language='javascript'>window.top.location = '" . $this->requestUrl . "'; </script>";
         }
     }
 }
