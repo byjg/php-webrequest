@@ -594,7 +594,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ByJG\Util\WebRequest::curlWrapper
+     * @covers ByJG\Util\WebRequest::curlInit
      */
     public function testCurlException()
     {

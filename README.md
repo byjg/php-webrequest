@@ -71,7 +71,7 @@ $resutl = $webRequest->soapCall('soapMethod', ['arg1' => 'value']);
 
 ## Install
 
-Just type: `composer install "byjg/webrequest=1.0.0"`
+Just type: `composer install "byjg/webrequest=1.0.*"`
 
 ## Running Tests
 
