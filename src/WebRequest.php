@@ -452,6 +452,17 @@ class WebRequest
         return $this->curlGetResponse($curlHandle);
     }
 
+    public function preparePost($params = '', $curlHandle = null)
+    {
+        $this->clearRequestMethod();
+        $this->setCurlOption(CURLOPT_POST, true);
+        $this->setPostString(is_null($params) ? '' : $params);
+        if (empty($curlHandle)) {
+            $curlHandle = $this->curlInit();
+        }
+        return $curlHandle;
+    }
+
     /**
      * Make a REST POST method call with parameters
      * @param array|string $params
@@ -459,21 +470,11 @@ class WebRequest
      */
     public function post($params = '')
     {
-        $this->clearRequestMethod();
-        $this->setCurlOption(CURLOPT_POST, true);
-        $this->setPostString(is_null($params) ? '' : $params);
-        $handle = $this->curlInit();
+        $handle = $this->preparePost($params);
         return $this->curlGetResponse($handle);
     }
 
-    /**
-     * Make a REST POST method call with parameters
-     *
-     * @param array $params
-     * @return string
-     * @throws \ByJG\Util\CurlException
-     */
-    public function postUploadFile($params = [])
+    public function preparePostUploadFile($params = [], $curlHandle = null)
     {
         $this->clearRequestMethod();
         $this->setCurlOption(CURLOPT_POST, true);
@@ -492,7 +493,22 @@ class WebRequest
         $this->addRequestHeader("Content-Type", "multipart/form-data; boundary=$boundary");
 
         $this->setPostString($body);
-        $handle = $this->curlInit();
+        if (empty($curlHandle)) {
+            $curlHandle = $this->curlInit();
+        }
+        return $curlHandle;
+    }
+
+    /**
+     * Make a REST POST method call with parameters
+     *
+     * @param array $params
+     * @return string
+     * @throws \ByJG\Util\CurlException
+     */
+    public function postUploadFile($params = [])
+    {
+        $handle = $this->preparePostUploadFile($params);
         return $this->curlGetResponse($handle);
     }
 
@@ -509,6 +525,17 @@ class WebRequest
         return $this->post($data);
     }
 
+    public function preparePut($params = null, $curlHandle = null)
+    {
+        $this->clearRequestMethod();
+        $this->setCurlOption(CURLOPT_CUSTOMREQUEST, 'PUT');
+        $this->setPostString($params);
+        if (empty($curlHandle)) {
+            $curlHandle = $this->curlInit();
+        }
+        return $curlHandle;
+    }
+
     /**
      * Make a REST PUT method call with parameters
      *
@@ -517,10 +544,7 @@ class WebRequest
      */
     public function put($params = null)
     {
-        $this->clearRequestMethod();
-        $this->setCurlOption(CURLOPT_CUSTOMREQUEST, 'PUT');
-        $this->setPostString($params);
-        $handle = $this->curlInit();
+        $handle = $this->preparePut($params);
         return $this->curlGetResponse($handle);
     }
 
@@ -537,6 +561,18 @@ class WebRequest
         return $this->put($data);
     }
 
+    public function prepareDelete($params = null, $curlHandle = null)
+    {
+        $this->clearRequestMethod();
+        $this->setCurlOption(CURLOPT_CUSTOMREQUEST, 'DELETE');
+        $this->setPostString($params);
+        if (empty($curlHandle)) {
+            $curlHandle = $this->curlInit();
+        }
+        return $curlHandle;
+    }
+
+
     /**
      * Make a REST DELETE method call with parameters
      *
@@ -545,10 +581,7 @@ class WebRequest
      */
     public function delete($params = null)
     {
-        $this->clearRequestMethod();
-        $this->setCurlOption(CURLOPT_CUSTOMREQUEST, 'DELETE');
-        $this->setPostString($params);
-        $handle = $this->curlInit();
+        $handle = $this->prepareDelete($params);
         return $this->curlGetResponse($handle);
     }
 

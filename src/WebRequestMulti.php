@@ -70,6 +70,18 @@ class WebRequestMulti
                 case self::GET:
                     $object->handle = $object->webRequest->prepareGet($object->params);
                     break;
+                case self::PUT:
+                    $object->handle = $object->webRequest->preparePut($object->params);
+                    break;
+                case self::POST:
+                    $object->handle = $object->webRequest->preparePost($object->params);
+                    break;
+                case self::DELETE:
+                    $object->handle = $object->webRequest->prepareDelete($object->params);
+                    break;
+                case self::UPLOAD:
+                    $object->handle = $object->webRequest->preparePostUploadFile($object->params);
+                    break;
                 default:
                     throw new CurlException("Invalid Method '{$object->method}'");
             }
