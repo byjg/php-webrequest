@@ -99,13 +99,12 @@ class WebRequestMulti
         foreach ($this->webRequest as $id => $object) {
             $result[$id] = curl_multi_getcontent($object->handle);
             $header_size = curl_getinfo($object->handle, CURLINFO_HEADER_SIZE);
-            $result[$id] = substr($result[$id], $header_size);
+            $closure = $object->onSuccess;
+            $closure(substr($result[$id], $header_size));
             curl_multi_remove_handle($mh, $object->handle);
         }
 
         // all done
         curl_multi_close($mh);
-
-        return $result;
     }
 }

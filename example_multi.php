@@ -6,6 +6,10 @@ require "vendor/autoload.php";
 
 $webRequestMulti = new WebRequestMulti();
 
+$onSuccess = function ($body) {
+    echo $body . "\n";
+};
+
 $webRequestMulti
     ->addRequest(
         new \ByJG\Util\WebRequest('http://www.byjg.com.br/ws/cep'),
@@ -13,7 +17,8 @@ $webRequestMulti
         [
             'httpmethod' => 'obterLogradouro',
             'cep' => '30130000'
-        ]
+        ],
+        $onSuccess
     )
     ->addRequest(
         new \ByJG\Util\WebRequest('http://www.byjg.com.br/ws/cep'),
@@ -21,9 +26,8 @@ $webRequestMulti
         [
             'httpmethod' => 'obterLogradouro',
             'cep' => '21130010'
-        ]
+        ],
+        $onSuccess
     );
 
-$result = $webRequestMulti->execute();
-
-print_r($result);
+$webRequestMulti->execute();
