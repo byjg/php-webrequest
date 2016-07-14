@@ -8,7 +8,7 @@ namespace ByJG\Util;
 class WebRequestTest extends \PHPUnit_Framework_TestCase
 {
 
-    const SERVER_TEST = 'http://xpto.us/webrequest-test/rest.php'; // LOCAL: 'http://localhost:8080/rest.php';
+    const SERVER_TEST = 'http://localhost:8080/rest.php'; // 'http://xpto.us/webrequest-test/rest.php'; 
 
     /**
      * @var WebRequest
@@ -270,7 +270,9 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
             'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'POST',
             'query_string' => [],
-            'post_string' => [],
+            'post_string' => [
+                'just_string' => ''
+            ],
             'payload' => 'just_string'
         ];
         $this->assertEquals($expected, $result);

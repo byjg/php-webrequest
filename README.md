@@ -79,7 +79,7 @@ Just type: `composer install "byjg/webrequest=1.0.*"`
 
 ```php
 cd tests
-php -S localhost:8080 -t server & 
+php -S localhost:8080 -t tests/server & 
 ```
 
 **Note:** It is more assertive create a webserver with the server folder instead to use the PHP built-in webserver.
@@ -87,8 +87,7 @@ php -S localhost:8080 -t server &
 ### Running the integration tests
 
 ```php
-cd tests
-phpunit --bootstrap bootstrap.php src/WebRequestTest.php 
+phpunit
 ```
 
 ### Stopping the server
