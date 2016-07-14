@@ -8,7 +8,7 @@ namespace ByJG\Util;
 class WebRequestTest extends \PHPUnit_Framework_TestCase
 {
 
-    const SERVER_TEST = 'http://localhost:8080/rest.php'; // 'http://xpto.us/webrequest-test/rest.php'; 
+    const SERVER_TEST = 'http://xpto.us/webrequest-test/rest.php'; // LOCAL: 'http://localhost:8080/rest.php';
 
     /**
      * @var WebRequest
