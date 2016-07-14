@@ -92,15 +92,31 @@ class WebRequestMulti
         // execute the handles
         $running = null;
         do {
-            curl_multi_exec($mh, $running);
+            $status = curl_multi_exec($mh, $running);
+
+            // Check status
+            switch ($status) {
+                case CURLM_BAD_HANDLE:
+                    throw new CurlException('Bad Handle');
+                    break;
+                case CURLM_BAD_EASY_HANDLE:
+                    throw new CurlException('Bad Easy Handle');
+                    break;
+                case CURLM_OUT_OF_MEMORY:
+                    throw new CurlException('Out of memory');
+                    break;
+                case CURLM_INTERNAL_ERROR:
+                    throw new CurlException('Internal Error');
+                    break;
+            }
         } while ($running > 0);
 
         // get content and remove handles
         foreach ($this->webRequest as $id => $object) {
-            $result[$id] = curl_multi_getcontent($object->handle);
+            $body = curl_multi_getcontent($object->handle);
             $header_size = curl_getinfo($object->handle, CURLINFO_HEADER_SIZE);
             $closure = $object->onSuccess;
-            $closure(substr($result[$id], $header_size));
+            $closure(substr($body, $header_size), $id);
             curl_multi_remove_handle($mh, $object->handle);
         }
 

@@ -6,8 +6,8 @@ require "vendor/autoload.php";
 
 $webRequestMulti = new WebRequestMulti();
 
-$onSuccess = function ($body) {
-    echo $body . "\n";
+$onSuccess = function ($body, $id) {
+    echo "[$id] => $body\n";
 };
 
 $webRequestMulti
