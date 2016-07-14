@@ -21,9 +21,31 @@ class WebRequestMulti
      */
     protected $webRequest = [];
 
-    public function __construct()
-    {
+    /**
+     * @var \Closure
+     */
+    protected $defaultOnSuccess = null;
 
+    /**
+     * @var \Closure
+     */
+    protected $defaultOnError = null;
+
+    public function __construct(\Closure $defaultOnSuccess = null, \Closure $defaultOnError = null)
+    {
+        $this->defaultOnSuccess = $defaultOnSuccess;
+        if (is_null($defaultOnSuccess)) {
+            $this->defaultOnSuccess = function () {
+                return;
+            };
+        }
+
+        $this->defaultOnError = $defaultOnError;
+        if (is_null($defaultOnError)) {
+            $this->defaultOnError = function () {
+                return;
+            };
+        }
     }
 
     public function addRequest(
@@ -34,15 +56,11 @@ class WebRequestMulti
         \Closure $onError = null
     ) {
         if (is_null($onSuccess)) {
-            $onSuccess = function () {
-                return;
-            };
+            $onSuccess = $this->defaultOnSuccess;
         }
 
         if (is_null($onError)) {
-            $onError = function () {
-                return;
-            };
+            $onError = $this->defaultOnError;
         }
 
         $data = new \stdClass();
@@ -112,15 +130,38 @@ class WebRequestMulti
         } while ($running > 0);
 
         // get content and remove handles
+        $errorList = [];
         foreach ($this->webRequest as $id => $object) {
             $body = curl_multi_getcontent($object->handle);
+            $error = curl_error($object->handle);
+            if (!empty($error)) {
+                curl_multi_remove_handle($mh, $object->handle);
+                $closure = $object->onError;
+                try {
+                    $closure($error, $id);
+                } catch (\Exception $ex) {
+                    $errorList[] = $ex;
+                }
+                continue;
+            }
+            
             $header_size = curl_getinfo($object->handle, CURLINFO_HEADER_SIZE);
             $closure = $object->onSuccess;
-            $closure(substr($body, $header_size), $id);
+            
+            try {
+                $closure(substr($body, $header_size), $id);
+            } catch (\Exception $ex) {
+                $errorList[] = $ex;
+            }
+            
             curl_multi_remove_handle($mh, $object->handle);
         }
 
         // all done
         curl_multi_close($mh);
+        
+        if (count($errorList) > 0) {
+            throw $errorList[0];
+        }
     }
 }
