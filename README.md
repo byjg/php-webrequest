@@ -13,6 +13,7 @@ Just one class and no dependencies.
 ### Basic Usage
 
 ```php
+<?php
 $webRequest = new WebRequest('http://www.example.com/page');
 $result = $webRequest->get();
 //$result = $webRequest->post();
@@ -23,6 +24,7 @@ $result = $webRequest->get();
 ### Passing arguments
 
 ```php
+<?php
 $webRequest = new WebRequest('http://www.example.com/page');
 $result = $webRequest->get(['param'=>'value']);
 //$result = $webRequest->post(['param'=>'value']);
@@ -33,6 +35,7 @@ $result = $webRequest->get(['param'=>'value']);
 ### Passing a string payload (JSON)
 
 ```php
+<?php
 $webRequest = new WebRequest('http://www.example.com/page');
 $result = $webRequest->postPayload('{teste: "value"}', 'application/json');
 //$result = $webRequest->putPayload('{teste: "value"}', 'application/json');
@@ -42,6 +45,7 @@ $result = $webRequest->postPayload('{teste: "value"}', 'application/json');
 ### Setting Custom CURL PARAMETER
 
 ```php
+<?php
 $webRequest = new WebRequest('http://www.example.com/page');
 $webRequest->setCurlOption(CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)');
 $result = $webRequest->get();
@@ -50,6 +54,7 @@ $result = $webRequest->get();
 ### Upload a file using "multipart/form-data"
 
 ```php
+<?php
 $webRequest = new WebRequest('http://www.example.com/page');
 
 // Define the Upload File
@@ -64,10 +69,77 @@ $result = $webRequest->postUploadFile($upload);
 ### Calling Soap Classes
 
 ```php
+<?php
 $webRequest = new WebRequest('http://www.example.com/soap');
 $resutl = $webRequest->soapCall('soapMethod', ['arg1' => 'value']);
 ```
 
+## WebRequestMulti
+
+You can use the WebRequest to do several differents requests in parallel. 
+
+To use this funcionallity you need:
+
+1. Create a instance of the WebRequestMulti class
+2. Add the WebRequest instance
+3. Execute
+
+See a basic example to execute the WebRequest and does not care about the result:
+
+```php
+<?php
+$webRequestMulti = new WebRequestMulti();
+
+$webRequestMulti
+    ->addRequest(
+        new \ByJG\Util\WebRequest('http://localhost/api/myrest'),
+        WebRequestMulti::GET
+    )
+    ->addRequest(
+        new \ByJG\Util\WebRequest('http://anotherserver/method'),
+        WebRequestMulti::PUT,
+        [
+            'param' => 'somevalue',
+            'anotherparam' => '30130000'
+        ]
+    );
+
+$webRequestMulti->execute();
+```
+
+You can optionally create a \Closure function for process the successfull and the error result. 
+
+For example:
+
+```php
+<?php
+$onSuccess = function ($body, $id) {
+    echo "[$id] => $body\n";
+};
+
+$onError = function ($error, $id) {
+    throw new \Exception("$error on id '$id'");
+};
+```
+And then pass to WebRequestMulti constructor:
+
+```php
+<?php
+$webRequestMulti = new WebRequestMulti($onSuccess, $onError);
+```
+
+or pass to the addRequestMethod:
+
+```php
+<?php
+$webRequestMulti->addRequest(
+    $webRequestInstance,
+    WebRequestMulti::GET,
+    ['params'],
+    $onSuccess, 
+    $onError
+);
+```
 
 ## Install
 
