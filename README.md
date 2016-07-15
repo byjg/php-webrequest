@@ -1,6 +1,5 @@
 # Web Request
 [![Build Status](https://travis-ci.org/byjg/webrequest.svg?branch=master)](https://travis-ci.org/byjg/webrequest)
-[![Build Status](https://drone.io/github.com/byjg/webrequest/status.png)](https://drone.io/github.com/byjg/webrequest/latest)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/7cfbd581-fdb6-405d-be0a-afee0f70d30c/mini.png)](https://insight.sensiolabs.com/projects/7cfbd581-fdb6-405d-be0a-afee0f70d30c)
 
 ## Description

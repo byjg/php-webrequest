@@ -8,7 +8,6 @@
 
 namespace ByJG\Util;
 
-use Exception;
 use InvalidArgumentException;
 use SoapClient;
 use SoapParam;
