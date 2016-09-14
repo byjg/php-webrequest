@@ -56,6 +56,4 @@ class UploadFile
     {
         $this->filename = $filename;
     }
-
-
 }

@@ -270,7 +270,9 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
             'content-type' => 'application/x-www-form-urlencoded',
             'method' => 'POST',
             'query_string' => [],
-            'post_string' => [],
+            'post_string' => [
+                'just_string' => ''
+            ],
             'payload' => 'just_string'
         ];
         $this->assertEquals($expected, $result);
@@ -594,7 +596,7 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ByJG\Util\WebRequest::curlWrapper
+     * @covers ByJG\Util\WebRequest::curlInit
      */
     public function testCurlException()
     {
