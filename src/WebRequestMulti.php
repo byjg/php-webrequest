@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jg
- * Date: 13/07/16
- * Time: 10:04
- */
 
 namespace ByJG\Util;
 
@@ -48,6 +42,14 @@ class WebRequestMulti
         }
     }
 
+    /**
+     * @param \ByJG\Util\WebRequest $webRequest
+     * @param string $method
+     * @param array $params
+     * @param \Closure|null $onSuccess
+     * @param \Closure|null $onError
+     * @return $this
+     */
     public function addRequest(
         WebRequest $webRequest,
         $method,
@@ -76,6 +78,9 @@ class WebRequestMulti
         return $this;
     }
 
+    /**
+     * @throws \ByJG\Util\CurlException
+     */
     public function execute()
     {
         // multi handle

@@ -307,6 +307,10 @@ class WebRequest
         return (isset($this->curlOptions[$key]) ? $this->curlOptions[$key] : null);
     }
 
+    /**
+     * @param $fields
+     * @return string|array
+     */
     protected function getMultiFormData($fields)
     {
         if (is_array($fields)) {
@@ -316,6 +320,9 @@ class WebRequest
         return $fields;
     }
 
+    /**
+     * @param array|string $fields
+     */
     protected function setPostString($fields)
     {
         $replaceHeader = true;
@@ -332,6 +339,9 @@ class WebRequest
         $this->setCurlOption(CURLOPT_POSTFIELDS, $this->getMultiFormData($fields));
     }
 
+    /**
+     * @param array|string $fields
+     */
     protected function setQueryString($fields)
     {
         $queryString = $this->getMultiFormData($fields);
@@ -393,6 +403,10 @@ class WebRequest
         return substr($result, $header_size);
     }
 
+    /**
+     * @param string $raw_headers
+     * @return array
+     */
     protected function parseHeader($raw_headers)
     {
         $headers = array();
@@ -422,6 +436,9 @@ class WebRequest
         return $headers;
     }
 
+    /**
+     *
+     */
     protected function clearRequestMethod()
     {
         $this->setCurlOption(CURLOPT_POST, null);
@@ -429,6 +446,11 @@ class WebRequest
         $this->setCurlOption(CURLOPT_CUSTOMREQUEST, null);
     }
 
+    /**
+     * @param array|string|null $params
+     * @param resource|null $curlHandle
+     * @return null|resource
+     */
     public function prepareGet($params = null, $curlHandle = null)
     {
         $this->clearRequestMethod();
@@ -442,7 +464,7 @@ class WebRequest
     /**
      * Make a REST Get method call
      *
-     * @param array $params
+     * @param array|null $params
      * @return string
      */
     public function get($params = null)
@@ -451,6 +473,13 @@ class WebRequest
         return $this->curlGetResponse($curlHandle);
     }
 
+    /**
+     * @param array|string $params
+     * @param resource $curlHandle
+     * @param int $curlOption
+     * @param mixed $curlValue
+     * @return resource
+     */
     protected function _prepare($params, $curlHandle, $curlOption, $curlValue)
     {
         $this->clearRequestMethod();
@@ -462,6 +491,11 @@ class WebRequest
         return $curlHandle;
     }
 
+    /**
+     * @param string|array $params
+     * @param resource|null $curlHandle
+     * @return resource
+     */
     public function preparePost($params = '', $curlHandle = null)
     {
         return $this->_prepare(is_null($params) ? '' : $params, $curlHandle, CURLOPT_POST, true);
@@ -478,6 +512,11 @@ class WebRequest
         return $this->curlGetResponse($handle);
     }
 
+    /**
+     * @param array $params
+     * @param resource|null $curlHandle
+     * @return null|resource
+     */
     public function preparePostUploadFile($params = [], $curlHandle = null)
     {
         $this->clearRequestMethod();
@@ -529,6 +568,11 @@ class WebRequest
         return $this->post($data);
     }
 
+    /**
+     * @param array|null $params
+     * @param resource|null $curlHandle
+     * @return resource
+     */
     public function preparePut($params = null, $curlHandle = null)
     {
         return $this->_prepare($params, $curlHandle, CURLOPT_CUSTOMREQUEST, 'PUT');
@@ -559,6 +603,11 @@ class WebRequest
         return $this->put($data);
     }
 
+    /**
+     * @param array|null $params
+     * @param resource|null $curlHandle
+     * @return resource
+     */
     public function prepareDelete($params = null, $curlHandle = null)
     {
         return $this->_prepare($params, $curlHandle, CURLOPT_CUSTOMREQUEST, 'DELETE');
