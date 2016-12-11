@@ -116,16 +116,16 @@ class WebRequestMulti
             switch ($status) {
                 case CURLM_BAD_HANDLE:
                     throw new CurlException('Bad Handle');
-                    break;
+
                 case CURLM_BAD_EASY_HANDLE:
                     throw new CurlException('Bad Easy Handle');
-                    break;
+
                 case CURLM_OUT_OF_MEMORY:
                     throw new CurlException('Out of memory');
-                    break;
+
                 case CURLM_INTERNAL_ERROR:
                     throw new CurlException('Internal Error');
-                    break;
+
             }
         } while ($running > 0);
 

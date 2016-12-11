@@ -451,15 +451,20 @@ class WebRequest
         return $this->curlGetResponse($curlHandle);
     }
 
-    public function preparePost($params = '', $curlHandle = null)
+    protected function _prepare($params, $curlHandle, $curlOption, $curlValue)
     {
         $this->clearRequestMethod();
-        $this->setCurlOption(CURLOPT_POST, true);
-        $this->setPostString(is_null($params) ? '' : $params);
+        $this->setCurlOption($curlOption, $curlValue);
+        $this->setPostString($params);
         if (empty($curlHandle)) {
             $curlHandle = $this->curlInit();
         }
         return $curlHandle;
+    }
+
+    public function preparePost($params = '', $curlHandle = null)
+    {
+        return $this->_prepare(is_null($params) ? '' : $params, $curlHandle, CURLOPT_POST, true);
     }
 
     /**
@@ -526,13 +531,7 @@ class WebRequest
 
     public function preparePut($params = null, $curlHandle = null)
     {
-        $this->clearRequestMethod();
-        $this->setCurlOption(CURLOPT_CUSTOMREQUEST, 'PUT');
-        $this->setPostString($params);
-        if (empty($curlHandle)) {
-            $curlHandle = $this->curlInit();
-        }
-        return $curlHandle;
+        return $this->_prepare($params, $curlHandle, CURLOPT_CUSTOMREQUEST, 'PUT');
     }
 
     /**
@@ -562,13 +561,7 @@ class WebRequest
 
     public function prepareDelete($params = null, $curlHandle = null)
     {
-        $this->clearRequestMethod();
-        $this->setCurlOption(CURLOPT_CUSTOMREQUEST, 'DELETE');
-        $this->setPostString($params);
-        if (empty($curlHandle)) {
-            $curlHandle = $this->curlInit();
-        }
-        return $curlHandle;
+        return $this->_prepare($params, $curlHandle, CURLOPT_CUSTOMREQUEST, 'DELETE');
     }
 
 
