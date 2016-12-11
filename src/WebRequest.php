@@ -308,8 +308,8 @@ class WebRequest
     }
 
     /**
-     * @param $fields
-     * @return string|array
+     * @param array|string|null $fields
+     * @return string|array|null
      */
     protected function getMultiFormData($fields)
     {
@@ -340,7 +340,7 @@ class WebRequest
     }
 
     /**
-     * @param array|string $fields
+     * @param array|string|null $fields
      */
     protected function setQueryString($fields)
     {
@@ -474,8 +474,8 @@ class WebRequest
     }
 
     /**
-     * @param array|string $params
-     * @param resource $curlHandle
+     * @param array|string|null $params
+     * @param resource|null $curlHandle
      * @param int $curlOption
      * @param mixed $curlValue
      * @return resource
@@ -492,7 +492,7 @@ class WebRequest
     }
 
     /**
-     * @param string|array $params
+     * @param string|array|null $params
      * @param resource|null $curlHandle
      * @return resource
      */
@@ -569,7 +569,7 @@ class WebRequest
     }
 
     /**
-     * @param array|null $params
+     * @param array|string|null $params
      * @param resource|null $curlHandle
      * @return resource
      */
@@ -604,7 +604,7 @@ class WebRequest
     }
 
     /**
-     * @param array|null $params
+     * @param array|string|null $params
      * @param resource|null $curlHandle
      * @return resource
      */
