@@ -147,7 +147,7 @@ class WebRequest
      *
      * @return boolean
      */
-    public function getFollowLocation()
+    public function isFollowingLocation()
     {
         return $this->getCurlOption(CURLOPT_FOLLOWLOCATION);
     }
@@ -307,6 +307,10 @@ class WebRequest
         return (isset($this->curlOptions[$key]) ? $this->curlOptions[$key] : null);
     }
 
+    /**
+     * @param array|string|null $fields
+     * @return string|array|null
+     */
     protected function getMultiFormData($fields)
     {
         if (is_array($fields)) {
@@ -316,6 +320,9 @@ class WebRequest
         return $fields;
     }
 
+    /**
+     * @param array|string $fields
+     */
     protected function setPostString($fields)
     {
         $replaceHeader = true;
@@ -332,6 +339,9 @@ class WebRequest
         $this->setCurlOption(CURLOPT_POSTFIELDS, $this->getMultiFormData($fields));
     }
 
+    /**
+     * @param array|string|null $fields
+     */
     protected function setQueryString($fields)
     {
         $queryString = $this->getMultiFormData($fields);
@@ -385,43 +395,50 @@ class WebRequest
             throw new CurlException("CURL - " . $error);
         }
 
-        $header_size = curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE);
+        $headerSize = curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE);
         $this->lastStatus = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
         curl_close($curlHandle);
 
-        $this->responseHeader = $this->parseHeader(substr($result, 0, $header_size));
-        return substr($result, $header_size);
+        $this->responseHeader = $this->parseHeader(substr($result, 0, $headerSize));
+        return substr($result, $headerSize);
     }
 
-    protected function parseHeader($raw_headers)
+    /**
+     * @param string $rawHeaders
+     * @return array
+     */
+    protected function parseHeader($rawHeaders)
     {
         $headers = array();
         $key = '';
 
-        foreach (explode("\n", $raw_headers) as $i => $h) {
-            $h = explode(':', $h, 2);
+        foreach (explode("\n", $rawHeaders) as $headerLine) {
+            $headerLine = explode(':', $headerLine, 2);
 
-            if (isset($h[1])) {
-                if (!isset($headers[$h[0]])) {
-                    $headers[$h[0]] = trim($h[1]);
-                } elseif (is_array($headers[$h[0]])) {
-                    $headers[$h[0]] = array_merge($headers[$h[0]], array(trim($h[1])));
+            if (isset($headerLine[1])) {
+                if (!isset($headers[$headerLine[0]])) {
+                    $headers[$headerLine[0]] = trim($headerLine[1]);
+                } elseif (is_array($headers[$headerLine[0]])) {
+                    $headers[$headerLine[0]] = array_merge($headers[$headerLine[0]], [trim($headerLine[1])]);
                 } else {
-                    $headers[$h[0]] = array_merge(array($headers[$h[0]]), array(trim($h[1])));
+                    $headers[$headerLine[0]] = array_merge([$headers[$headerLine[0]]], [trim($headerLine[1])]);
                 }
 
-                $key = $h[0];
+                $key = $headerLine[0];
             } else {
-                if (substr($h[0], 0, 1) == "\t") {
-                    $headers[$key] .= "\r\n\t" . trim($h[0]);
+                if (substr($headerLine[0], 0, 1) == "\t") {
+                    $headers[$key] .= "\r\n\t" . trim($headerLine[0]);
                 } elseif (!$key) {
-                    $headers[0] = trim($h[0]);
+                    $headers[0] = trim($headerLine[0]);
                 }
             }
         }
         return $headers;
     }
 
+    /**
+     *
+     */
     protected function clearRequestMethod()
     {
         $this->setCurlOption(CURLOPT_POST, null);
@@ -429,6 +446,11 @@ class WebRequest
         $this->setCurlOption(CURLOPT_CUSTOMREQUEST, null);
     }
 
+    /**
+     * @param array|string|null $params
+     * @param resource|null $curlHandle
+     * @return null|resource
+     */
     public function prepareGet($params = null, $curlHandle = null)
     {
         $this->clearRequestMethod();
@@ -442,7 +464,7 @@ class WebRequest
     /**
      * Make a REST Get method call
      *
-     * @param array $params
+     * @param array|null $params
      * @return string
      */
     public function get($params = null)
@@ -451,15 +473,32 @@ class WebRequest
         return $this->curlGetResponse($curlHandle);
     }
 
-    public function preparePost($params = '', $curlHandle = null)
+    /**
+     * @param array|string|null $params
+     * @param resource|null $curlHandle
+     * @param int $curlOption
+     * @param mixed $curlValue
+     * @return resource
+     */
+    protected function prepare($params, $curlHandle, $curlOption, $curlValue)
     {
         $this->clearRequestMethod();
-        $this->setCurlOption(CURLOPT_POST, true);
-        $this->setPostString(is_null($params) ? '' : $params);
+        $this->setCurlOption($curlOption, $curlValue);
+        $this->setPostString($params);
         if (empty($curlHandle)) {
             $curlHandle = $this->curlInit();
         }
         return $curlHandle;
+    }
+
+    /**
+     * @param string|array|null $params
+     * @param resource|null $curlHandle
+     * @return resource
+     */
+    public function preparePost($params = '', $curlHandle = null)
+    {
+        return $this->prepare(is_null($params) ? '' : $params, $curlHandle, CURLOPT_POST, true);
     }
 
     /**
@@ -473,7 +512,12 @@ class WebRequest
         return $this->curlGetResponse($handle);
     }
 
-    public function preparePostUploadFile($params = [], $curlHandle = null)
+    /**
+     * @param MultiPartItem[] $params
+     * @param resource|null $curlHandle
+     * @return null|resource
+     */
+    public function preparePostMultiFormData($params = [], $curlHandle = null)
     {
         $this->clearRequestMethod();
         $this->setCurlOption(CURLOPT_POST, true);
@@ -482,8 +526,13 @@ class WebRequest
         $body = '';
         foreach ($params as $item) {
             $body .= "--$boundary\nContent-Disposition: form-data; name=\"{$item->getField()}\";";
-            if ($item->getFileName()) {
+            $fileName = $item->getFileName();
+            if (!empty($fileName)) {
                 $body .= " filename=\"{$item->getFileName()}\";";
+            }
+            $contentType = $item->getContentType();
+            if (!empty($contentType)) {
+                $body .= "\nContent-Type: {$item->getContentType()}";
             }
             $body .= "\n\n{$item->getContent()}\n";
         }
@@ -501,13 +550,13 @@ class WebRequest
     /**
      * Make a REST POST method call with parameters
      *
-     * @param array $params
+     * @param MultiPartItem[] $params
      * @return string
      * @throws \ByJG\Util\CurlException
      */
-    public function postUploadFile($params = [])
+    public function postMultiPartForm($params = [])
     {
-        $handle = $this->preparePostUploadFile($params);
+        $handle = $this->preparePostMultiFormData($params);
         return $this->curlGetResponse($handle);
     }
 
@@ -515,24 +564,23 @@ class WebRequest
      * Make a REST POST method call sending a payload
      *
      * @param string $data
-     * @param string $content_type
+     * @param string $contentType
      * @return string
      */
-    public function postPayload($data, $content_type = "text/plain")
+    public function postPayload($data, $contentType = "text/plain")
     {
-        $this->addRequestHeader("Content-Type", $content_type);
+        $this->addRequestHeader("Content-Type", $contentType);
         return $this->post($data);
     }
 
+    /**
+     * @param array|string|null $params
+     * @param resource|null $curlHandle
+     * @return resource
+     */
     public function preparePut($params = null, $curlHandle = null)
     {
-        $this->clearRequestMethod();
-        $this->setCurlOption(CURLOPT_CUSTOMREQUEST, 'PUT');
-        $this->setPostString($params);
-        if (empty($curlHandle)) {
-            $curlHandle = $this->curlInit();
-        }
-        return $curlHandle;
+        return $this->prepare($params, $curlHandle, CURLOPT_CUSTOMREQUEST, 'PUT');
     }
 
     /**
@@ -551,24 +599,23 @@ class WebRequest
      * Make a REST PUT method call sending a payload
      *
      * @param string $data
-     * @param string $content_type
+     * @param string $contentType
      * @return string
      */
-    public function putPayload($data, $content_type = "text/plain")
+    public function putPayload($data, $contentType = "text/plain")
     {
-        $this->addRequestHeader("Content-Type", $content_type);
+        $this->addRequestHeader("Content-Type", $contentType);
         return $this->put($data);
     }
 
+    /**
+     * @param array|string|null $params
+     * @param resource|null $curlHandle
+     * @return resource
+     */
     public function prepareDelete($params = null, $curlHandle = null)
     {
-        $this->clearRequestMethod();
-        $this->setCurlOption(CURLOPT_CUSTOMREQUEST, 'DELETE');
-        $this->setPostString($params);
-        if (empty($curlHandle)) {
-            $curlHandle = $this->curlInit();
-        }
-        return $curlHandle;
+        return $this->prepare($params, $curlHandle, CURLOPT_CUSTOMREQUEST, 'DELETE');
     }
 
 
@@ -588,12 +635,12 @@ class WebRequest
      * Make a REST DELETE method call sending a payload
      *
      * @param string $data
-     * @param string $content_type
+     * @param string $contentType
      * @return string
      */
-    public function deletePayload($data = null, $content_type = "text/plain")
+    public function deletePayload($data = null, $contentType = "text/plain")
     {
-        $this->addRequestHeader("Content-Type", $content_type);
+        $this->addRequestHeader("Content-Type", $contentType);
         return $this->delete($data);
     }
 

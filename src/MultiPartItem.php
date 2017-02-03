@@ -2,7 +2,7 @@
 
 namespace ByJG\Util;
 
-class UploadFile
+class MultiPartItem
 {
     protected $field;
 
@@ -10,14 +10,25 @@ class UploadFile
 
     protected $filename;
 
-    public function __construct($field, $content = "", $filename = "")
+    protected $contentType;
+
+    /**
+     * MultiPartItem constructor.
+     *
+     * @param $field
+     * @param $content
+     * @param $filename
+     * @param $contentType
+     */
+    public function __construct($field, $content = "", $filename = "", $contentType = "")
     {
         $this->field = $field;
         $this->content = $content;
         $this->filename = $filename;
+        $this->contentType = $contentType;
     }
 
-    public function loadFile($filename)
+    public function loadFile($filename, $contentType = "")
     {
         if (!file_exists($filename)) {
             throw new FileNotFoundException("File '$filename' does not found!");
@@ -25,6 +36,7 @@ class UploadFile
 
         $this->content = file_get_contents($filename);
         $this->filename = basename($filename);
+        $this->contentType = $contentType;
     }
 
     public function getField()
@@ -56,4 +68,15 @@ class UploadFile
     {
         $this->filename = $filename;
     }
+
+    public function getContentType()
+    {
+        return $this->contentType;
+    }
+
+    public function setContentType($contentType)
+    {
+        $this->contentType = $contentType;
+    }
+
 }

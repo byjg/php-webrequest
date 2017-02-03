@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jg
- * Date: 13/07/16
- * Time: 10:04
- */
 
 namespace ByJG\Util;
 
@@ -48,6 +42,14 @@ class WebRequestMulti
         }
     }
 
+    /**
+     * @param \ByJG\Util\WebRequest $webRequest
+     * @param string $method
+     * @param array $params
+     * @param \Closure|null $onSuccess
+     * @param \Closure|null $onError
+     * @return $this
+     */
     public function addRequest(
         WebRequest $webRequest,
         $method,
@@ -76,6 +78,9 @@ class WebRequestMulti
         return $this;
     }
 
+    /**
+     * @throws \ByJG\Util\CurlException
+     */
     public function execute()
     {
         // multi handle
@@ -116,16 +121,16 @@ class WebRequestMulti
             switch ($status) {
                 case CURLM_BAD_HANDLE:
                     throw new CurlException('Bad Handle');
-                    break;
+
                 case CURLM_BAD_EASY_HANDLE:
                     throw new CurlException('Bad Easy Handle');
-                    break;
+
                 case CURLM_OUT_OF_MEMORY:
                     throw new CurlException('Out of memory');
-                    break;
+
                 case CURLM_INTERNAL_ERROR:
                     throw new CurlException('Internal Error');
-                    break;
+
             }
         } while ($running > 0);
 
