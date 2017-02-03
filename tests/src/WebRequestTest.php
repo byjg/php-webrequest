@@ -437,7 +437,12 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
 
         $uploadFile = [];
         $uploadFile[] = new MultiPartItem('field1', 'value1');
-        $uploadFile[] = new MultiPartItem('field2', 'value2', 'filename.txt');
+        $uploadFile[] = new MultiPartItem(
+            'field2',
+            '{"key": "value2"}',
+            'filename.json',
+            'application/json; charset=UTF-8'
+        );
         $uploadFile[] = new MultiPartItem('field3', 'value3');
 
         $response = $this->object->postMultiPartForm($uploadFile);
@@ -452,10 +457,10 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['field1' => 'value1', 'field3' => 'value3'], $result['post_string']);
         $this->assertEquals('', $result['payload']);
         $this->assertEquals(['field2' => [
-            'name' => 'filename.txt',
-            'type' => '',
+            'name' => 'filename.json',
+            'type' => 'application/json',
             'error' => 0,
-            'size' => 6
+            'size' => 17
         ]], $result['files']);
     }
 
