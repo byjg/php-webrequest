@@ -526,10 +526,12 @@ class WebRequest
         $body = '';
         foreach ($params as $item) {
             $body .= "--$boundary\nContent-Disposition: form-data; name=\"{$item->getField()}\";";
-            if (!empty($item->getFileName())) {
+            $fileName = $item->getFileName();
+            if (!empty($fileName)) {
                 $body .= " filename=\"{$item->getFileName()}\";";
             }
-            if (!empty($item->getContentType())) {
+            $contentType = $item->getContentType();
+            if (!empty($contentType)) {
                 $body .= "\nContent-Type: {$item->getContentType()}";
             }
             $body .= "\n\n{$item->getContent()}\n";
