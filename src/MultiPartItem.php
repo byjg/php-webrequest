@@ -2,7 +2,7 @@
 
 namespace ByJG\Util;
 
-class UploadFile
+class MultiPartItem
 {
     protected $field;
 

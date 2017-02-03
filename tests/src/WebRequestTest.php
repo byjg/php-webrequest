@@ -34,9 +34,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::setCredentials
-     */
     public function testSetCredentials()
     {
         $this->object->setCredentials('user', 'pass');
@@ -45,28 +42,18 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('user:pass', $this->object->getCurlOption(CURLOPT_USERPWD));
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::getReferer
-     * @covers ByJG\Util\WebRequest::setReferer
-     */
     public function testReferer()
     {
         $this->object->setReferer('http://example.com');
         $this->assertEquals('http://example.com', $this->object->getReferer());
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::getLastStatus
-     */
     public function testGetLastStatus()
     {
         $this->object->get();
         $this->assertEquals(200, $this->object->getLastStatus());
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::getResponseHeader
-     */
     public function testGetResponseHeader()
     {
         $this->object->get();
@@ -75,65 +62,21 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('HTTP/1.1 200 OK', $result[0]);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::addRequestHeader
-     */
-    public function testAddRequestHeader()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers ByJG\Util\WebRequest::addCookie
-     */
-    public function testAddCookie()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers ByJG\Util\WebRequest::getFollowLocation
-     */
-    public function testGetFollowLocation()
+    public function testisFollowingLocation()
     {
         $this->object->setFollowLocation(true);
-        $this->assertTrue($this->object->getFollowLocation());
+        $this->assertTrue($this->object->isFollowingLocation());
 
         $this->object->setFollowLocation(false);
-        $this->assertFalse($this->object->getFollowLocation());
+        $this->assertFalse($this->object->isFollowingLocation());
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::soapCall
-     * @todo   Implement testSoapCall().
-     */
-    public function testSoapCall()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers ByJG\Util\WebRequest::setCurlOption
-     * @covers ByJG\Util\WebRequest::getCurlOption
-     */
     public function testSetCurlOption()
     {
         $this->object->setCurlOption(CURLOPT_NOBODY, true);
         $this->assertTrue($this->object->getCurlOption(CURLOPT_NOBODY));
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::get
-     */
     public function testGet1()
     {
         $response = $this->object->get();
@@ -149,9 +92,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::get
-     */
     public function testGet2()
     {
         $response = $this->object->get(['param1' => 'value1', 'param2' => 'value2']);
@@ -167,9 +107,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::get
-     */
     public function testGet3()
     {
         $response = $this->object->get('just_string');
@@ -185,9 +122,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::get
-     */
     public function testGet4()
     {
         $response = $this->object->get('just_string=value1&just_string2=value2');
@@ -203,9 +137,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::get
-     */
     public function testGet5()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extraparam=ok');
@@ -222,9 +153,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::post
-     */
     public function testPost1()
     {
         $response = $this->object->post();
@@ -240,9 +168,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::post
-     */
     public function testPost2()
     {
         $response = $this->object->post(['param1' => 'value1', 'param2' => 'value2']);
@@ -258,9 +183,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::post
-     */
     public function testPost3()
     {
         $response = $this->object->post('just_string');
@@ -278,9 +200,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::post
-     */
     public function testPost4()
     {
         $response = $this->object->post('just_string=value1&just_string2=value2');
@@ -296,9 +215,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::post
-     */
     public function testPost5()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
@@ -315,10 +231,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::postPayload
-     * @todo   Implement testPostPayload().
-     */
     public function testPostPayload()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
@@ -335,9 +247,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::put
-     */
     public function testPut1()
     {
         $response = $this->object->put();
@@ -353,9 +262,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::put
-     */
     public function testPut2()
     {
         $response = $this->object->put(['param1' => 'value1', 'param2' => 'value2']);
@@ -371,9 +277,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::put
-     */
     public function testPut3()
     {
         $response = $this->object->put('just_string');
@@ -389,9 +292,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::put
-     */
     public function testPut4()
     {
         $response = $this->object->put('just_string=value1&just_string2=value2');
@@ -407,9 +307,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::put
-     */
     public function testPut5()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
@@ -426,9 +323,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::putPayload
-     */
     public function testPutPayload()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
@@ -445,9 +339,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::delete
-     */
     public function testDelete1()
     {
         $response = $this->object->delete();
@@ -463,9 +354,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::delete
-     */
     public function testDelete2()
     {
         $response = $this->object->delete(['param1' => 'value1', 'param2' => 'value2']);
@@ -481,9 +369,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::delete
-     */
     public function testDelete3()
     {
         $response = $this->object->delete('just_string');
@@ -499,9 +384,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::delete
-     */
     public function testDelete4()
     {
         $response = $this->object->delete('just_string=value1&just_string2=value2');
@@ -517,9 +399,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::delete
-     */
     public function testDelete5()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
@@ -536,9 +415,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::deletePayload
-     */
     public function testDeletePayload()
     {
         $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
@@ -555,26 +431,25 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::postUploadFile
-     */
-    public function testPostUploadFile()
+    public function testPostMultiPartForm()
     {
         $this->object = new WebRequest(self::SERVER_TEST);
 
         $uploadFile = [];
-        $uploadFile[] = new UploadFile('field1', 'value1');
-        $uploadFile[] = new UploadFile('field2', 'value2', 'filename.txt');
+        $uploadFile[] = new MultiPartItem('field1', 'value1');
+        $uploadFile[] = new MultiPartItem('field2', 'value2', 'filename.txt');
+        $uploadFile[] = new MultiPartItem('field3', 'value3');
 
-        $response = $this->object->postUploadFile($uploadFile);
+        $response = $this->object->postMultiPartForm($uploadFile);
         $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
+
         unset($result['files']['field2']['tmp_name']);
 
         $this->assertContains('multipart/form-data; boundary=boundary-', $result['content-type']);
         $this->assertEquals('POST', $result['method']);
         $this->assertEquals([], $result['query_string']);
-        $this->assertEquals(['field1' => 'value1'], $result['post_string']);
+        $this->assertEquals(['field1' => 'value1', 'field3' => 'value3'], $result['post_string']);
         $this->assertEquals('', $result['payload']);
         $this->assertEquals(['field2' => [
             'name' => 'filename.txt',
@@ -584,20 +459,6 @@ class WebRequestTest extends \PHPUnit_Framework_TestCase
         ]], $result['files']);
     }
 
-    /**
-     * @covers ByJG\Util\WebRequest::redirect
-     */
-    public function testRedirect()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers ByJG\Util\WebRequest::curlInit
-     */
     public function testCurlException()
     {
         $this->object = new WebRequest('http://laloiuyakkkall.iiiuqq/');

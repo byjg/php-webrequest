@@ -58,11 +58,11 @@ $webRequest = new WebRequest('http://www.example.com/page');
 
 // Define the Upload File
 $upload = [];
-$upload[] = new UploadFile('fieldName', 'fieldContent');
-$upload[] = new UploadFile('fieldName', 'fieldContent', 'mime-filename.ext');
+$upload[] = new MultiPartItem('fieldName', 'fieldContent');
+$upload[] = new MultiPartItem('fieldName', 'fieldContent', 'mime-filename.ext');
 
 // Post and get the result
-$result = $webRequest->postUploadFile($upload);
+$result = $webRequest->postMultiPartForm($upload);
 ```
 
 ### Calling Soap Classes
