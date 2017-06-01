@@ -23,6 +23,7 @@ class WebRequest
     protected $cookies = array();
     protected $lastStatus = "";
     protected $curlOptions = array();
+    protected $lastFetchedUrl = "";
 
     /**
      * Constructor
@@ -93,6 +94,16 @@ class WebRequest
     public function getResponseHeader()
     {
         return $this->responseHeader;
+    }
+
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    public function getLastFetchedUrl()
+    {
+        return $this->lastFetchedUrl;
     }
 
     /**
@@ -378,6 +389,9 @@ class WebRequest
             $this->cookies = []; // Reset request Header
         }
 
+        // Set last fetched URL
+        $this->lastFetchedUrl = null;
+
         return $curlHandle;
     }
 
@@ -397,6 +411,7 @@ class WebRequest
 
         $headerSize = curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE);
         $this->lastStatus = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        $this->lastFetchedUrl = curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL);
         curl_close($curlHandle);
 
         $this->responseHeader = $this->parseHeader(substr($result, 0, $headerSize));
