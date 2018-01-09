@@ -10,7 +10,7 @@ if (!class_exists('\PHPUnit\Framework\TestCase')) {
 class WebRequestTest extends \PHPUnit\Framework\TestCase
 {
 
-    const SERVER_TEST = 'http://xpto.us/webrequest-test/rest.php'; // LOCAL: 'http://localhost:8080/rest.php';
+    const SERVER_TEST = 'http://localhost:8080/rest.php';
 
     /**
      * @var WebRequest
