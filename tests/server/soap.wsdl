@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding ="utf-8"?>
+<!--
+(c) World Corp
+2018-01-09
+Just Test
+
+Online WSDL 1.1 SOAP generator 0.2
+Julien Blitte
+http://marin.jb.free.fr/wsdl/
+ -->
+<definitions name="Just Test"
+             targetNamespace="opensource.byjg.com.wsdl"
+             xmlns:tns="opensource.byjg.com.wsdl"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:xsd1="opensource.byjg.com.xsd"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <!-- definition of datatypes -->
+    <types>
+        <schema targetNamespace="opensource.byjg.com.xsd" xmlns="http://www.w3.org/2000/10/XMLSchema">
+            <element name="param1">
+                <complexType><all><element name="value" type="string" /></all></complexType>
+            </element>
+            <element name="param2">
+                <complexType><all><element name="value" type="int" /></all></complexType>
+            </element>
+            <element name="resultcode">
+                <complexType><all><element name="value" type="string" /></all></complexType>
+            </element>
+        </schema>
+    </types>
+    <!-- response messages -->
+    <message name='returns_resultcode'>
+        <part name='resultcode' type='xsd:resultcode'/>
+    </message>
+    <!-- request messages -->
+    <message name='test'>
+        <part name='param1' type='xsd:param1'/>
+        <part name='param2' type='xsd:param2'/>
+    </message>
+    <!-- server's services -->
+    <portType name='Test WebRequest'>
+        <operation name='test'>
+            <input message='tns:test'/>
+            <output message='tns:returns_resultcode'/>
+        </operation>
+    </portType>
+    <!-- server encoding -->
+    <binding name='Test WebRequest_webservices' type='tns:Test WebRequest'>
+        <soap:binding style='rpc' transport='http://schemas.xmlsoap.org/soap/http'/>
+        <operation name='test'>
+            <soap:operation soapAction='urn:xmethods-delayed-quotes#test'/>
+            <input><soap:body use='encoded' namespace='urn:xmethods-delayed-quotes' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/></input>
+            <output><soap:body use='encoded' namespace='urn:xmethods-delayed-quotes' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/></output>
+        </operation>
+    </binding>
+    <!-- access to service provider -->
+    <service name='ByJG'>
+        <port name='ByJG_0' binding='Test WebRequest_webservices'>
+            <soap:address location='http://localhost:8080/soap.php'/>
+        </port>
+    </service>
+</definitions>

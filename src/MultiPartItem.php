@@ -28,6 +28,11 @@ class MultiPartItem
         $this->contentType = $contentType;
     }
 
+    /**
+     * @param $filename
+     * @param string $contentType
+     * @throws \ByJG\Util\FileNotFoundException
+     */
     public function loadFile($filename, $contentType = "")
     {
         if (!file_exists($filename)) {
@@ -78,5 +83,4 @@ class MultiPartItem
     {
         $this->contentType = $contentType;
     }
-
 }

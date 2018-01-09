@@ -207,12 +207,14 @@ class WebRequest
         if (is_null($this->soapClass)) {
             $this->soapClass = new SoapClient(
                 null,
-                array(
-                "location" => $this->url,
-                "uri" => "urn:xmethods-delayed-quotes",
-                "style" => SOAP_RPC,
-                "use" => SOAP_ENCODED
-                )
+                [
+                    "location" => $this->url,
+                    "uri" => "urn:xmethods-delayed-quotes",
+                    "style" => SOAP_RPC,
+                    "use" => SOAP_ENCODED,
+                    "trace" => true,
+                    "exceptions" => true
+                ]
             );
 
             if ($this->getCurlOption(CURLOPT_HTTPAUTH) == CURLAUTH_BASIC) {
@@ -258,7 +260,7 @@ class WebRequest
         }
 
         // Chamando método do webservice
-        $result = $this->getSoapClient()->__call(
+        $result = $this->getSoapClient()->__soapCall(
             $method,
             $soapParams,
             $soapOptions
@@ -481,6 +483,7 @@ class WebRequest
      *
      * @param array|null $params
      * @return string
+     * @throws \ByJG\Util\CurlException
      */
     public function get($params = null)
     {
@@ -518,8 +521,10 @@ class WebRequest
 
     /**
      * Make a REST POST method call with parameters
+     *
      * @param array|string $params
      * @return string
+     * @throws \ByJG\Util\CurlException
      */
     public function post($params = '')
     {
@@ -581,6 +586,7 @@ class WebRequest
      * @param string $data
      * @param string $contentType
      * @return string
+     * @throws \ByJG\Util\CurlException
      */
     public function postPayload($data, $contentType = "text/plain")
     {
@@ -603,6 +609,7 @@ class WebRequest
      *
      * @param array|string $params
      * @return string
+     * @throws \ByJG\Util\CurlException
      */
     public function put($params = null)
     {
@@ -616,6 +623,7 @@ class WebRequest
      * @param string $data
      * @param string $contentType
      * @return string
+     * @throws \ByJG\Util\CurlException
      */
     public function putPayload($data, $contentType = "text/plain")
     {
@@ -639,6 +647,7 @@ class WebRequest
      *
      * @param array|string $params
      * @return string
+     * @throws \ByJG\Util\CurlException
      */
     public function delete($params = null)
     {
@@ -652,6 +661,7 @@ class WebRequest
      * @param string $data
      * @param string $contentType
      * @return string
+     * @throws \ByJG\Util\CurlException
      */
     public function deletePayload($data = null, $contentType = "text/plain")
     {

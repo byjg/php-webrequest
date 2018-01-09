@@ -11,6 +11,7 @@ class WebRequestTest extends \PHPUnit\Framework\TestCase
 {
 
     const SERVER_TEST = 'http://localhost:8080/rest.php';
+    const SOAP_TEST = 'http://localhost:8080/soap.php';
 
     /**
      * @var WebRequest
@@ -474,5 +475,23 @@ class WebRequestTest extends \PHPUnit\Framework\TestCase
         $this->object = new WebRequest('http://laloiuyakkkall.iiiuqq/');
 
         $this->object->get();
+    }
+
+    public function testSoap()
+    {
+        $this->object = new WebRequest(self::SOAP_TEST);
+        $resutl = $this->object->soapCall('test', ['param1' => 'teste', 'param2' => 1]);
+        $this->assertEquals("teste - 1", $resutl);
+        $resutl = $this->object->soapCall('test', ['param1' => 'another call', 'param2' => 2018]);
+        $this->assertEquals("another call - 2018", $resutl);
+    }
+
+    /**
+     * @expectedException \SoapFault
+     */
+    public function testSoapFail()
+    {
+        $this->object = new WebRequest(self::SERVER_TEST);
+        $this->object->soapCall('test', ['param1' => 'teste', 'param2' => 1]);
     }
 }

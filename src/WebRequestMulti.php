@@ -84,7 +84,7 @@ class WebRequestMulti
     public function execute()
     {
         // multi handle
-        $mh = curl_multi_init();
+        $multiInitHandle = curl_multi_init();
 
         // loop through $data and create curl handles
         // then add them to the multi-handle
@@ -109,13 +109,13 @@ class WebRequestMulti
                     throw new CurlException("Invalid Method '{$object->method}'");
             }
             $this->webRequest[$id] = $object;
-            curl_multi_add_handle($mh, $object->handle);
+            curl_multi_add_handle($multiInitHandle, $object->handle);
         }
 
         // execute the handles
         $running = null;
         do {
-            $status = curl_multi_exec($mh, $running);
+            $status = curl_multi_exec($multiInitHandle, $running);
 
             // Check status
             switch ($status) {
@@ -140,7 +140,7 @@ class WebRequestMulti
             $body = curl_multi_getcontent($object->handle);
             $error = curl_error($object->handle);
             if (!empty($error)) {
-                curl_multi_remove_handle($mh, $object->handle);
+                curl_multi_remove_handle($multiInitHandle, $object->handle);
                 $closure = $object->onError;
                 try {
                     $closure($error, $id);
@@ -150,20 +150,20 @@ class WebRequestMulti
                 continue;
             }
             
-            $header_size = curl_getinfo($object->handle, CURLINFO_HEADER_SIZE);
+            $headerSize = curl_getinfo($object->handle, CURLINFO_HEADER_SIZE);
             $closure = $object->onSuccess;
             
             try {
-                $closure(substr($body, $header_size), $id);
+                $closure(substr($body, $headerSize), $id);
             } catch (\Exception $ex) {
                 $errorList[] = $ex;
             }
             
-            curl_multi_remove_handle($mh, $object->handle);
+            curl_multi_remove_handle($multiInitHandle, $object->handle);
         }
 
         // all done
-        curl_multi_close($mh);
+        curl_multi_close($multiInitHandle);
         
         if (count($errorList) > 0) {
             throw $errorList[0];
