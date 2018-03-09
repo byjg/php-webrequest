@@ -2,12 +2,9 @@
 
 namespace ByJG\Util;
 
-// backward compatibility
-if (!class_exists('\PHPUnit\Framework\TestCase')) {
-    class_alias('\PHPUnit_Framework_TestCase', '\PHPUnit\Framework\TestCase');
-}
+use PHPUnit\Framework\TestCase;
 
-class WebRequestTest extends \PHPUnit\Framework\TestCase
+class WebRequestTest extends TestCase
 {
 
     const SERVER_TEST = 'http://localhost:8080/rest.php';
