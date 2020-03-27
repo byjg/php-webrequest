@@ -1,23 +1,26 @@
 {
-    "name": "byjg/webrequest",
-    "description": "A lightweight and highly customized CURL wrapper for making RESt calls and a wrapper for call dynamically SOAP requests.",
-    "authors": [
-        {
-            "name": "João Gilberto Magalhães",
-            "email": "joao@byjg.com.br"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "ByJG\\Util\\": "src/"
-        }
-    },
-    "require": {
-        "php": ">=5.4.0",
-        "ext-curl": "*"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "5.7.*|7.4.*"
-    },
-    "license": "MIT"
+  "name": "byjg/webrequest",
+  "description": "A lightweight and highly customized CURL wrapper for making RESt calls and a wrapper for call dynamically SOAP requests.",
+  "authors": [
+    {
+      "name": "João Gilberto Magalhães",
+      "email": "joao@byjg.com.br"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "ByJG\\Util\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=5.4.0",
+    "ext-curl": "*",
+    "byjg/uri": "2.0.*",
+    "psr/http-message": "1.0.*",
+    "mintware-de/streams": "1.0.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.7.*|7.4.*"
+  },
+  "license": "MIT"
 }

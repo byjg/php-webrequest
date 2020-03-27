@@ -1,7 +1,7 @@
 <?php
 
-namespace ByJG\Util;
-
+use ByJG\Util\MultiPartItem;
+use ByJG\Util\WebRequest;
 use PHPUnit\Framework\TestCase;
 
 class WebRequestTest extends TestCase
