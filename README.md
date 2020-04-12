@@ -5,7 +5,15 @@
 
 A lightweight PSR-7 implementation and and highly customized CURL wrapper for making RESt calls. 
 
-# Features
+# Main Features
+
+This class implements:
+* PSR-7 objects;
+* HttpClient customizable with partial implementation PSR-18
+* Helper to create Request instances with the most common use cases;
+* Wrapper to implement several requests in parallel;
+
+# PSR-7 Implementation and basic usage
 
 Since the implementation follow the PSR7 implementation there is no much explanation about the usage.
 
@@ -41,7 +49,7 @@ $response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 
 # Helper Classes
 
-The WebRequest package have some Helper classes to create Request instances for some use cases. 
+The WebRequest package has Helper classes to make it easy to create Request instances for some use cases. 
 
 ## Passing a string payload (JSON)
 
@@ -56,7 +64,7 @@ $request = \ByJG\Util\Helper\RequestJson::build(
 $response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
 
-## Create a Form Url Encoded (emulate <form method="post">)
+## Create a Form Url Encoded (emulate HTTP form)
 
 ```php
 <?php
@@ -105,80 +113,60 @@ The customizations options are:
 $client = \ByJG\Util\HttpClient::getInstance()
     ->withNoFollowRedirect()         // HttpClient will not follow redirects (status codes 301 and 302). Default is follow 
     ->withNoSSLVerification()        // HttpClient will not validate the SSL certificate. Default is validate.
-    ->withProxy($uri)                // Define a URI for the Proxy. 
-    ->withCurlOption($key, $value)   // Setting arbitrary CURL options (use with caution)
+    ->withProxy($uri)                // Define a http Proxy based on the URI. 
+    ->withCurlOption($key, $value)   // Set an arbitrary CURL option (use with caution)
 ;
 
 ```
 
 
-
 # WebRequestMulti
 
-You can use the WebRequest to do several differents requests in parallel. 
+You can use the HttpClient to do several differents requests in parallel. 
 
 To use this funcionallity you need:
 
 1. Create a instance of the WebRequestMulti class
-2. Add the WebRequest instance
+2. Add the RequestInterface instance
 3. Execute
 
-See a basic example to execute the WebRequest and does not care about the result:
+Below a basic example:
 
 ```php
 <?php
-$webRequestMulti = new WebRequestMulti();
+// Create the instances of the requirements
+$httpClient = \ByJG\Util\HttpClient::getInstance();
 
-$webRequestMulti
-    ->addRequest(
-        new \ByJG\Util\WebRequest('http://localhost/api/myrest'),
-        WebRequestMulti::GET
-    )
-    ->addRequest(
-        new \ByJG\Util\WebRequest('http://anotherserver/method'),
-        WebRequestMulti::PUT,
-        [
-            'param' => 'somevalue',
-            'anotherparam' => '30130000'
-        ]
-    );
-
-$webRequestMulti->execute();
-```
-
-You can optionally create a \Closure function for process the successfull and the error result. 
-
-For example:
-
-```php
-<?php
-$onSuccess = function ($body, $id) {
-    echo "[$id] => $body\n";
+$onSucess = function ($body, $id) {
+    // Do something
 };
 
-$onError = function ($error, $id) {
-    throw new \Exception("$error on id '$id'");
+$onError = function ($error, $id) use (&$fail) {
+    // Do something
 };
-```
-And then pass to WebRequestMulti constructor:
 
-```php
-<?php
-$webRequestMulti = new WebRequestMulti($onSuccess, $onError);
-```
-
-or pass to the addRequestMethod:
-
-```php
-<?php
-$webRequestMulti->addRequest(
-    $webRequestInstance,
-    WebRequestMulti::GET,
-    ['params'],
-    $onSuccess, 
+// Create the WebRequest Multi
+$multi = new \ByJG\Util\WebRequestMulti(
+    $httpClient,
+    $onSucess,
     $onError
 );
+
+// Add the request to run in parallel
+$request1 = Request::getInstance($uri1);
+$request2 = Request::getInstance($uri2);
+$request3 = Request::getInstance($uri3);
+
+$multi
+    ->addRequest($request1)
+    ->addRequest($request2)
+    ->addRequest($request3);
+
+// Start execute and wait to finish
+// The results will be get from the closure defined above. 
+$multi->execute();
 ```
+
 
 # Install
 

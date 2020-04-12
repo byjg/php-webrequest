@@ -108,6 +108,30 @@ class HttpClient
      */
     public function sendRequest(RequestInterface $request)
     {
+        $curlHandle = $this->createCurlHandle($request);
+
+        $result = curl_exec($curlHandle);
+        $error = curl_error($curlHandle);
+        if ($result === false) {
+            curl_close($curlHandle);
+            throw new CurlException("CURL - " . $error);
+        }
+
+        $headerSize = curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE);
+        $status = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        $lastFetchedUrl = curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL);
+        curl_close($curlHandle);
+
+        $response = Response::getInstance($status)
+            ->withBody(new MemoryStream(substr($result, $headerSize)));
+
+        $this->parseHeader($response, substr($result, 0, $headerSize));
+
+        return $response;
+    }
+
+    public function createCurlHandle(RequestInterface $request)
+    {
         $this->request = $request;
         $this->curlOptions = [];
         $this->clearRequestMethod();
@@ -118,9 +142,7 @@ class HttpClient
         $this->setMethod();
         $this->setBody();
 
-        $curlHandle = $this->curlInit();
-
-        return $this->curlGetResponse($curlHandle);
+        return $this->curlInit();
     }
 
 
@@ -251,33 +273,6 @@ class HttpClient
         foreach ($this->defaultCurlOptions as $key => $value) {
             $this->setCurl($key, $value);
         }
-    }
-
-    /**
-     * @param resource $curlHandle
-     * @return Response
-     * @throws \ByJG\Util\CurlException
-     */
-    protected function curlGetResponse($curlHandle)
-    {
-        $result = curl_exec($curlHandle);
-        $error = curl_error($curlHandle);
-        if ($result === false) {
-            curl_close($curlHandle);
-            throw new CurlException("CURL - " . $error);
-        }
-
-        $headerSize = curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE);
-        $status = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
-        $lastFetchedUrl = curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL);
-        curl_close($curlHandle);
-
-        $response = Response::getInstance($status)
-            ->withBody(new MemoryStream(substr($result, $headerSize)));
-
-        $this->parseHeader($response, substr($result, 0, $headerSize));
-
-        return $response;
     }
 
 

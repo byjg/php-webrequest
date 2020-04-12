@@ -2,18 +2,20 @@
 
 namespace ByJG\Util;
 
+use ByJG\Util\Psr7\Request;
+use Psr\Http\Message\RequestInterface;
+
 class WebRequestMulti
 {
-    const GET = "get";
-    const POST = "post";
-    const PUT = "put";
-    const DELETE = "delete";
-    const UPLOAD = "upload";
-
     /**
      * @var array
      */
-    protected $webRequest = [];
+    protected $curlClients = [];
+
+    /**
+     * @var HttpClient
+     */
+    protected $httpClient = null;
 
     /**
      * @var \Closure
@@ -25,8 +27,10 @@ class WebRequestMulti
      */
     protected $defaultOnError = null;
 
-    public function __construct(\Closure $defaultOnSuccess = null, \Closure $defaultOnError = null)
+    public function __construct(HttpClient $httpClient, \Closure $defaultOnSuccess = null, \Closure $defaultOnError = null)
     {
+        $this->httpClient = $httpClient;
+
         $this->defaultOnSuccess = $defaultOnSuccess;
         if (is_null($defaultOnSuccess)) {
             $this->defaultOnSuccess = function () {
@@ -43,17 +47,13 @@ class WebRequestMulti
     }
 
     /**
-     * @param \ByJG\Util\WebRequest $webRequest
-     * @param string $method
-     * @param array $params
+     * @param RequestInterface $request
      * @param \Closure|null $onSuccess
      * @param \Closure|null $onError
      * @return $this
      */
     public function addRequest(
-        WebRequest $webRequest,
-        $method,
-        $params = [],
+        RequestInterface $request,
         \Closure $onSuccess = null,
         \Closure $onError = null
     ) {
@@ -66,20 +66,19 @@ class WebRequestMulti
         }
 
         $data = new \stdClass();
-        $data->webRequest = $webRequest;
-        $data->method = $method;
-        $data->params = $params;
+        $data->request = $request;
         $data->onSuccess = $onSuccess;
         $data->onError = $onError;
         $data->handle = null;
 
-        $this->webRequest[] = $data;
+        $this->curlClients[] = $data;
 
         return $this;
     }
 
     /**
-     * @throws \ByJG\Util\CurlException
+     * @param HttpClient $httpClient
+     * @throws CurlException
      */
     public function execute()
     {
@@ -88,27 +87,9 @@ class WebRequestMulti
 
         // loop through $data and create curl handles
         // then add them to the multi-handle
-        foreach ($this->webRequest as $id => $object) {
-            switch ($object->method) {
-                case self::GET:
-                    $object->handle = $object->webRequest->prepareGet($object->params);
-                    break;
-                case self::PUT:
-                    $object->handle = $object->webRequest->preparePut($object->params);
-                    break;
-                case self::POST:
-                    $object->handle = $object->webRequest->preparePost($object->params);
-                    break;
-                case self::DELETE:
-                    $object->handle = $object->webRequest->prepareDelete($object->params);
-                    break;
-                case self::UPLOAD:
-                    $object->handle = $object->webRequest->preparePostUploadFile($object->params);
-                    break;
-                default:
-                    throw new CurlException("Invalid Method '{$object->method}'");
-            }
-            $this->webRequest[$id] = $object;
+        foreach ($this->curlClients as $id => $object) {
+            $object->handle = $this->httpClient->createCurlHandle($object->request);
+            $this->curlClients[$id] = $object;
             curl_multi_add_handle($multiInitHandle, $object->handle);
         }
 
@@ -136,7 +117,7 @@ class WebRequestMulti
 
         // get content and remove handles
         $errorList = [];
-        foreach ($this->webRequest as $id => $object) {
+        foreach ($this->curlClients as $id => $object) {
             $body = curl_multi_getcontent($object->handle);
             $error = curl_error($object->handle);
             if (!empty($error)) {
