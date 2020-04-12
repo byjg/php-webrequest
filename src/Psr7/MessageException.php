@@ -2,7 +2,9 @@
 
 namespace ByJG\Util\Psr7;
 
-class MessageException extends \Exception
+use Exception;
+
+class MessageException extends Exception
 {
 
 }

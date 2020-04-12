@@ -17,7 +17,6 @@ class HttpClient
 {
     use ParseCurlTrait;
 
-    protected $url;
     protected $defaultCurlOptions = [];
     protected $curlOptions = [];
     protected $lastFetchedUrl = "";
@@ -28,7 +27,6 @@ class HttpClient
     protected $request;
 
     /**
-     * @param RequestInterface $request
      * @return HttpClient
      */
     public static function getInstance()
@@ -37,11 +35,9 @@ class HttpClient
     }
 
 
-
     /**
      * Set the CURLOPT_FOLLOWLOCATION
      *
-     * @param bool $value
      * @return HttpClient
      */
     public function withNoFollowRedirect()
@@ -97,11 +93,11 @@ class HttpClient
     }
 
 
-
-
     /**
+     * @param RequestInterface $request
      * @return Response
      * @throws CurlException
+     * @throws Psr7\MessageException
      */
     public function sendRequest(RequestInterface $request)
     {
@@ -117,6 +113,10 @@ class HttpClient
         return $this->parseCurl($result, $curlHandle);
     }
 
+    /**
+     * @param RequestInterface $request
+     * @return resource
+     */
     public function createCurlHandle(RequestInterface $request)
     {
         $this->request = $request;
@@ -261,5 +261,4 @@ class HttpClient
             $this->setCurl($key, $value);
         }
     }
-
 }

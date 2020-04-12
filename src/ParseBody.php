@@ -4,9 +4,7 @@
 namespace ByJG\Util;
 
 
-use MintWare\Streams\MemoryStream;
 use Psr\Http\Message\MessageInterface;
-use Psr\Http\Message\StreamInterface;
 
 class ParseBody
 {

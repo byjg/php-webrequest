@@ -2,7 +2,10 @@
 
 namespace ByJG\Util;
 
+use Closure;
+use Exception;
 use Psr\Http\Message\RequestInterface;
+use stdClass;
 
 class HttpClientParallel
 {
@@ -19,16 +22,16 @@ class HttpClientParallel
     protected $httpClient = null;
 
     /**
-     * @var \Closure
+     * @var Closure
      */
     protected $defaultOnSuccess = null;
 
     /**
-     * @var \Closure
+     * @var Closure
      */
     protected $defaultOnError = null;
 
-    public function __construct(HttpClient $httpClient, \Closure $defaultOnSuccess = null, \Closure $defaultOnError = null)
+    public function __construct(HttpClient $httpClient, Closure $defaultOnSuccess = null, Closure $defaultOnError = null)
     {
         $this->httpClient = $httpClient;
 
@@ -49,14 +52,14 @@ class HttpClientParallel
 
     /**
      * @param RequestInterface $request
-     * @param \Closure|null $onSuccess
-     * @param \Closure|null $onError
+     * @param Closure|null $onSuccess
+     * @param Closure|null $onError
      * @return $this
      */
     public function addRequest(
         RequestInterface $request,
-        \Closure $onSuccess = null,
-        \Closure $onError = null
+        Closure $onSuccess = null,
+        Closure $onError = null
     ) {
         if (is_null($onSuccess)) {
             $onSuccess = $this->defaultOnSuccess;
@@ -66,7 +69,7 @@ class HttpClientParallel
             $onError = $this->defaultOnError;
         }
 
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->request = $request;
         $data->onSuccess = $onSuccess;
         $data->onError = $onError;
@@ -121,7 +124,7 @@ class HttpClientParallel
             if ($done) {
                 try {
                     $this->getContent($multiInitHandle, $done["handle"]);
-                } catch (\Exception $ex) {
+                } catch (Exception $ex) {
                     $errorList[] = get_class($ex) . ": " . $ex->getMessage();
                 }
             }
@@ -131,7 +134,7 @@ class HttpClientParallel
         foreach ($this->curlClients as $object) {
             try {
                 $this->getContent($multiInitHandle, $object->handle);
-            } catch (\Exception $ex) {
+            } catch (Exception $ex) {
                 $errorList[] = get_class($ex) . ": " . $ex->getMessage();
             }
         }
@@ -144,6 +147,11 @@ class HttpClientParallel
         }
     }
 
+    /**
+     * @param $multiInitHandle
+     * @param $handle
+     * @throws Psr7\MessageException
+     */
     protected function getContent($multiInitHandle, $handle)
     {
         $object = $this->curlClients["ch;" . ((int)$handle)];
@@ -155,7 +163,7 @@ class HttpClientParallel
             $closure = $object->onError;
             try {
                 $closure($error, $object->id);
-            } catch (\Exception $ex) {
+            } catch (Exception $ex) {
                 $errorList[] = $ex;
             }
         }
@@ -165,7 +173,7 @@ class HttpClientParallel
 
         try {
             $closure($response, $object->id);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $errorList[] = $ex;
         }
 

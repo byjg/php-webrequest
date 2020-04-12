@@ -3,8 +3,8 @@
 
 namespace ByJG\Util\Psr7;
 
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\UriInterface;
 
 class Response extends Message implements ResponseInterface
 {
@@ -129,7 +129,7 @@ class Response extends Message implements ResponseInterface
     {
         $code = intval($code);
         if ($code < 100 || $code > 599) {
-            throw new \InvalidArgumentException('Status code has to be an integer between 100 and 599');
+            throw new InvalidArgumentException('Status code has to be an integer between 100 and 599');
         }
 
         $this->statusCode[0] = $code;

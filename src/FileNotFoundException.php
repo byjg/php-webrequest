@@ -2,7 +2,9 @@
 
 namespace ByJG\Util;
 
-class FileNotFoundException extends \Exception
+use Exception;
+
+class FileNotFoundException extends Exception
 {
     //put your code here
 }

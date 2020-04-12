@@ -31,7 +31,7 @@ class MultiPartItem
     /**
      * @param $filename
      * @param string $contentType
-     * @throws \ByJG\Util\FileNotFoundException
+     * @throws FileNotFoundException
      */
     public function loadFile($filename, $contentType = "")
     {

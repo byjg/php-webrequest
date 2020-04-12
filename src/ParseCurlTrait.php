@@ -15,18 +15,20 @@ trait ParseCurlTrait
      * @param $curlHandle
      * @param bool $close
      * @return Response|MessageInterface
+     * @throws Psr7\MessageException
      */
     public function parseCurl($body, $curlHandle, $close = true)
     {
         $headerSize = curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE);
         $status = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
-        $lastFetchedUrl = curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL);
+        $effectiveUrl = curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL);
         if ($close) {
             curl_close($curlHandle);
         }
 
         $response = Response::getInstance($status)
-            ->withBody(new MemoryStream(substr($body, $headerSize)));
+            ->withBody(new MemoryStream(substr($body, $headerSize)))
+            ->withHeader("X-Effective-Url", $effectiveUrl);
 
         $this->parseHeader($response, substr($body, 0, $headerSize));
 
@@ -39,8 +41,6 @@ trait ParseCurlTrait
      */
     protected function parseHeader(MessageInterface $response, $rawHeaders)
     {
-        $key = '';
-
         foreach (preg_split("/\r?\n/", $rawHeaders) as $headerLine) {
             $headerLine = explode(':', $headerLine, 2);
 

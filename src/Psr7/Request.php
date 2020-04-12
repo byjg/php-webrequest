@@ -3,7 +3,6 @@
 
 namespace ByJG\Util\Psr7;
 
-use ByJG\Util\Uri;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
