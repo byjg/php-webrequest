@@ -3,73 +3,115 @@
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/7cfbd581-fdb6-405d-be0a-afee0f70d30c/mini.png)](https://insight.sensiolabs.com/projects/7cfbd581-fdb6-405d-be0a-afee0f70d30c)
 
 
-A lightweight and highly customized CURL wrapper for making RESt calls and a wrapper for call dynamically SOAP requests.
-Just one class and no dependencies. 
+A lightweight PSR-7 implementation and and highly customized CURL wrapper for making RESt calls. 
 
+# Features
 
-# Basic Usage
+Since the implementation follow the PSR7 implementation there is no much explanation about the usage.
 
-```php
-<?php
-$webRequest = new WebRequest('http://www.example.com/page');
-$result = $webRequest->get();
-//$result = $webRequest->post();
-//$result = $webRequest->delete();
-//$result = $webRequest->put();
-```
+The key elements are:
+* URI - Will define the URI with parameters, path, host, schema, etc
+* Request - Will set the request headers and method;
+* Response - Will receive the response header, body and status code. 
 
-# Passing arguments
+More information about the PSR-7 here: https://www.php-fig.org/psr/psr-7/
 
-```php
-<?php
-$webRequest = new WebRequest('http://www.example.com/page');
-$result = $webRequest->get(['param'=>'value']);
-//$result = $webRequest->post(['param'=>'value']);
-//$result = $webRequest->delete(['param'=>'value']);
-//$result = $webRequest->put(['param'=>'value']);
-```
+The implementation to send the request is defined by the class `HttpClient`. This class follow partially the PSR-18 implementation.
+So, once you have a Request instance defined just need to call `HttpClient::sendRequest($request);`
 
-# Passing a string payload (JSON)
+## Basic Usage
 
 ```php
 <?php
-$webRequest = new WebRequest('http://www.example.com/page');
-$result = $webRequest->postPayload('{teste: "value"}', 'application/json');
-//$result = $webRequest->putPayload('{teste: "value"}', 'application/json');
-//$result = $webRequest->deletePayload('{teste: "value"}', 'application/json');
+$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
+$request = \ByJG\Util\Psr7\Request::getInstance($uri);
+$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
 
-# Setting Custom CURL PARAMETER
+## Passing arguments
 
 ```php
 <?php
-$webRequest = new WebRequest('http://www.example.com/page');
-$webRequest->setCurlOption(CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)');
-$result = $webRequest->get();
+$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page')
+    ->withQuery(http_build_query(['param'=>'value']));
+
+$request = \ByJG\Util\Psr7\Request::getInstance($uri);
+$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
 
-# Upload a file using "multipart/form-data"
+# Helper Classes
+
+The WebRequest package have some Helper classes to create Request instances for some use cases. 
+
+## Passing a string payload (JSON)
 
 ```php
 <?php
-$webRequest = new WebRequest('http://www.example.com/page');
-
-// Define the Upload File
-$upload = [];
-$upload[] = new MultiPartItem('fieldName', 'fieldContent');
-$upload[] = new MultiPartItem('fieldName', 'fieldContent', 'mime-filename.ext');
-
-// Post and get the result
-$result = $webRequest->postMultiPartForm($upload);
+$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
+$request = \ByJG\Util\Helper\RequestJson::build(
+   $uri,
+   "POST",
+   '{teste: "value"}'  // Support an associate array
+);
+$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
 
-# Calling Soap Classes
+## Create a Form Url Encoded (emulate <form method="post">)
 
 ```php
 <?php
-$webRequest = new WebRequest('http://www.example.com/soap');
-$resutl = $webRequest->soapCall('soapMethod', ['arg1' => 'value']);
+$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
+$request = \ByJG\Util\Helper\RequestFormUrlEncoded::build(
+   $uri,
+   ["param" => "value"]
+);
+$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
+
+## Create a Multi Part request (upload documents)
+
+```php
+<?php
+$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
+
+// Define the contents to upload using a list of MultiPartItem objects
+$uploadFile = [];
+$uploadFile[] = new \ByJG\Util\MultiPartItem('field1', 'value1');
+$uploadFile[] = new \ByJG\Util\MultiPartItem(
+    'field2',
+    '{"key": "value2"}',
+    'filename.json',
+    'application/json; charset=UTF-8'
+);
+$uploadFile[] = new \ByJG\Util\MultiPartItem('field3', 'value3');
+
+// Use the Wrapper to create the Request
+$request = \ByJG\Util\Helper\RequestMultiPart::build(Uri::getInstanceFromString($uri),
+    "POST",
+    $uploadFile
+);
+
+// Do the request as usual
+$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
+```
+
+# Customizing the Http Client
+
+The customizations options are:
+
+```php
+<?php
+
+$client = \ByJG\Util\HttpClient::getInstance()
+    ->withNoFollowRedirect()         // HttpClient will not follow redirects (status codes 301 and 302). Default is follow 
+    ->withNoSSLVerification()        // HttpClient will not validate the SSL certificate. Default is validate.
+    ->withProxy($uri)                // Define a URI for the Proxy. 
+    ->withCurlOption($key, $value)   // Setting arbitrary CURL options (use with caution)
+;
+
+```
+
+
 
 # WebRequestMulti
 
@@ -141,15 +183,14 @@ $webRequestMulti->addRequest(
 # Install
 
 ```
-composer install "byjg/webrequest=1.0.*"
+composer install "byjg/webrequest=2.0.*"
 ```
 
 # Running Tests
 
 ## Starting the server
 
-```php
-cd tests
+```bash
 php -S localhost:8080 -t tests/server & 
 ```
 

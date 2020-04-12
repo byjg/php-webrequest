@@ -12,6 +12,11 @@ use InvalidArgumentException;
 use SoapClient;
 use SoapParam;
 
+/**
+ * Class WebRequest
+ * @package ByJG\Util
+ * @deprecated Deprecated in favor of HttpClient.
+ */
 class WebRequest
 {
 
