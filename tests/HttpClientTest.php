@@ -30,8 +30,7 @@ class HttpClientTest extends TestCase
      */
     protected function setUp()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
-        $this->object = HttpClient::getInstance($request);
+        $this->object = HttpClient::getInstance();
     }
 
     /**
@@ -45,7 +44,8 @@ class HttpClientTest extends TestCase
 
     public function testGetLastStatus()
     {
-        $response = $this->object->send();
+        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
+        $response = $this->object->sendRequest($request);
         $body = ParseBody::parse($response);
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -59,9 +59,9 @@ class HttpClientTest extends TestCase
         $request
             ->getUri()
             ->withUserInfo("user", "pass");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
         $body = ParseBody::parse($response);
 
         $this->assertEquals("user:pass", $body["authinfo"]);
@@ -71,23 +71,18 @@ class HttpClientTest extends TestCase
     {
         $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
             ->withHeader("referer", "http://example.com/abc");
-        $this->object = HttpClient::getInstance($request);
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
         $body = ParseBody::parse($response);
         $this->assertEquals('http://example.com/abc', $body["referer"]);
     }
 
     public function testCustomHeader()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
-        $this->object = HttpClient::getInstance($request);
-
         $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
             ->withHeader("X-Custom-Header", "Defined");
-        $this->object = HttpClient::getInstance($request);
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
         $body = ParseBody::parse($response);
         $this->assertEquals('Defined', $body["custom_header"]);
     }
@@ -95,20 +90,21 @@ class HttpClientTest extends TestCase
     public function testisFollowingLocation()
     {
         $request = Request::getInstance(Uri::getInstanceFromString(self::REDIRECT_TEST));
-        $this->object = HttpClient::getInstance($request)
+        $this->object = HttpClient::getInstance()
             ->withNoFollowRedirect();
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals("rest.php", $response->getHeaderLine("Location"));
 
-        $this->object = HttpClient::getInstance($request);
-        $response = $this->object->send();
+        $this->object = HttpClient::getInstance();
+        $response = $this->object->sendRequest($request);
         $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testGet1()
     {
-        $response = $this->object->send();
+        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -128,9 +124,9 @@ class HttpClientTest extends TestCase
         $request
             ->getUri()
             ->withQuery(http_build_query(['param1' => 'value1', 'param2' => 'value2']));
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -150,9 +146,9 @@ class HttpClientTest extends TestCase
         $request
             ->getUri()
             ->withQuery("just string");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -172,9 +168,9 @@ class HttpClientTest extends TestCase
         $request
             ->getUri()
             ->withQuery('just_string=value1&just_string2=value2');
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -192,9 +188,9 @@ class HttpClientTest extends TestCase
     {
         $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
             ->withMethod("POST");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -214,9 +210,9 @@ class HttpClientTest extends TestCase
             'param1' => 'value1',
             'param2' => 'value2'
         ]);
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -233,9 +229,9 @@ class HttpClientTest extends TestCase
     public function testPost3()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string');
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -254,9 +250,9 @@ class HttpClientTest extends TestCase
     public function testPost4()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string=value1&just_string2=value2');
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -275,9 +271,9 @@ class HttpClientTest extends TestCase
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ]);
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -297,9 +293,9 @@ class HttpClientTest extends TestCase
             "POST",
             '{teste: "ok"}'
         );
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -318,9 +314,9 @@ class HttpClientTest extends TestCase
         $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
             ->withHeader("content-type",  'application/x-www-form-urlencoded')
             ->withMethod("PUT");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -340,9 +336,9 @@ class HttpClientTest extends TestCase
             'param1' => 'value1',
             'param2' => 'value2'
         ])->withMethod("PUT");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -360,9 +356,9 @@ class HttpClientTest extends TestCase
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string')
             ->withMethod("PUT");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -380,9 +376,9 @@ class HttpClientTest extends TestCase
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("PUT");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -401,9 +397,9 @@ class HttpClientTest extends TestCase
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ])->withMethod("PUT");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -423,9 +419,9 @@ class HttpClientTest extends TestCase
             "PUT",
             '{teste: "ok"}'
         );
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -445,9 +441,9 @@ class HttpClientTest extends TestCase
         $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
             ->withHeader("content-type",  'application/x-www-form-urlencoded')
             ->withMethod("DELETE");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -467,9 +463,9 @@ class HttpClientTest extends TestCase
             'param1' => 'value1',
             'param2' => 'value2'
         ])->withMethod("DELETE");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -487,9 +483,9 @@ class HttpClientTest extends TestCase
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string')
             ->withMethod("DELETE");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -507,9 +503,9 @@ class HttpClientTest extends TestCase
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("DELETE");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -528,9 +524,9 @@ class HttpClientTest extends TestCase
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ])->withMethod("DELETE");
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -550,9 +546,9 @@ class HttpClientTest extends TestCase
             "DELETE",
             '{teste: "ok"}'
         );
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -582,9 +578,9 @@ class HttpClientTest extends TestCase
             "POST",
             $uploadFile
         );
-        $this->object = HttpClient::getInstance($request);
+        
 
-        $response = $this->object->send();
+        $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
@@ -603,45 +599,19 @@ class HttpClientTest extends TestCase
             'size' => 17
         ]], $result['files']);
     }
+
+    public function testWithCurlOption()
+    {
+        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
+
+        $this->object->withCurlOption(CURLOPT_NOBODY, 1);
+
+        $response = $this->object->sendRequest($request);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $result = ParseBody::parse($response);
+        $expected = null;
+        $this->assertEquals($expected, $result);
+    }
+
 }
-
-/*
-
-
-public function testSetCurlOption()
-{
-    $this->object->setCurlOption(CURLOPT_NOBODY, true);
-    $this->assertTrue($this->object->getCurlOption(CURLOPT_NOBODY));
-}
-
-
-
-
-
-
-
-
-
-public function testCurlException()
-{
-    $this->object = new WebRequest('http://laloiuyakkkall.iiiuqq/');
-
-    $this->object->get();
-}
-
-public function testSoap()
-{
-    $this->object = new WebRequest(self::SOAP_TEST);
-    $resutl = $this->object->soapCall('test', ['param1' => 'teste', 'param2' => 1]);
-    $this->assertEquals("teste - 1", $resutl);
-    $resutl = $this->object->soapCall('test', ['param1' => 'another call', 'param2' => 2018]);
-    $this->assertEquals("another call - 2018", $resutl);
-}
-
-public function testSoapFail()
-{
-    $this->object = new WebRequest(self::SERVER_TEST);
-    $this->object->soapCall('test', ['param1' => 'teste', 'param2' => 1]);
-}
-}
-*/
