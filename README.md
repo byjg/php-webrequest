@@ -11,7 +11,7 @@ This class implements:
 * PSR-7 objects;
 * HttpClient customizable with partial implementation PSR-18
 * Helper to create Request instances with the most common use cases;
-* Wrapper to implement several requests in parallel;
+* Wrapper to execute several requests in parallel;
 
 # PSR-7 Implementation and basic usage
 
@@ -120,13 +120,13 @@ $client = \ByJG\Util\HttpClient::getInstance()
 ```
 
 
-# WebRequestMulti
+# HttpClientParallel
 
 You can use the HttpClient to do several differents requests in parallel. 
 
 To use this funcionallity you need:
 
-1. Create a instance of the WebRequestMulti class
+1. Create a instance of the HttpClientParallel class
 2. Add the RequestInterface instance
 3. Execute
 
@@ -145,8 +145,8 @@ $onError = function ($error, $id) use (&$fail) {
     // Do something
 };
 
-// Create the WebRequest Multi
-$multi = new \ByJG\Util\WebRequestMulti(
+// Create the HttpClientParallel
+$multi = new \ByJG\Util\HttpClientParallel(
     $httpClient,
     $onSucess,
     $onError

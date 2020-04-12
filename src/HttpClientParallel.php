@@ -2,10 +2,9 @@
 
 namespace ByJG\Util;
 
-use ByJG\Util\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
 
-class WebRequestMulti
+class HttpClientParallel
 {
     /**
      * @var array

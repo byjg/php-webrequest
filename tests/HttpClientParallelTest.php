@@ -1,12 +1,10 @@
 <?php
 
-use ByJG\Util\MultiPartItem;
 use ByJG\Util\Psr7\Request;
 use ByJG\Util\Uri;
-use ByJG\Util\WebRequest;
 use PHPUnit\Framework\TestCase;
 
-class WebRequestMultiTest extends TestCase
+class HttpClientParallelTest extends TestCase
 {
 
     const SERVER_TEST = 'http://localhost:8080/multirequest.php';
@@ -33,7 +31,7 @@ class WebRequestMultiTest extends TestCase
             $fail[] = $error;
         };
 
-        $multi = new \ByJG\Util\WebRequestMulti(
+        $multi = new \ByJG\Util\HttpClientParallel(
             $httpClient,
             $onSucess,
             $onError
