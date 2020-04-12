@@ -10,7 +10,7 @@ $httpClientParallel = new HttpClientParallel(
         echo "[$id] => $body\n";
     },
     function ($error, $id) {
-        throw new \Exception("$error on id '$id'");
+        echo "[$id] => $error\n";
     }
 );
 

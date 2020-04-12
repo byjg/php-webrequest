@@ -69,6 +69,7 @@ class HttpClientParallel
         $data->onSuccess = $onSuccess;
         $data->onError = $onError;
         $data->handle = null;
+        $data->id = count($this->curlClients);
 
         $this->curlClients[] = $data;
 
@@ -76,7 +77,6 @@ class HttpClientParallel
     }
 
     /**
-     * @param HttpClient $httpClient
      * @throws CurlException
      */
     public function execute()
@@ -88,12 +88,14 @@ class HttpClientParallel
         // then add them to the multi-handle
         foreach ($this->curlClients as $id => $object) {
             $object->handle = $this->httpClient->createCurlHandle($object->request);
-            $this->curlClients[$id] = $object;
+            $this->curlClients["ch;" . ((int)$object->handle)] = $object;
+            unset($this->curlClients[$id]);
             curl_multi_add_handle($multiInitHandle, $object->handle);
         }
 
         // execute the handles
         $running = null;
+        $errorList = [];
         do {
             $status = curl_multi_exec($multiInitHandle, $running);
 
@@ -112,41 +114,61 @@ class HttpClientParallel
                     throw new CurlException('Internal Error');
 
             }
+
+            $done = curl_multi_info_read($multiInitHandle);
+            if ($done) {
+                try {
+                    $this->getContent($multiInitHandle, $done["handle"]);
+                } catch (\Exception $ex) {
+                    $errorList[] = get_class($ex) . ": " . $ex->getMessage();
+                }
+            }
+
         } while ($running > 0);
 
-        // get content and remove handles
-        $errorList = [];
-        foreach ($this->curlClients as $id => $object) {
-            $body = curl_multi_getcontent($object->handle);
-            $error = curl_error($object->handle);
-            if (!empty($error)) {
-                curl_multi_remove_handle($multiInitHandle, $object->handle);
-                $closure = $object->onError;
-                try {
-                    $closure($error, $id);
-                } catch (\Exception $ex) {
-                    $errorList[] = $ex;
-                }
-                continue;
-            }
-            
-            $headerSize = curl_getinfo($object->handle, CURLINFO_HEADER_SIZE);
-            $closure = $object->onSuccess;
-            
+        foreach ($this->curlClients as $object) {
             try {
-                $closure(substr($body, $headerSize), $id);
+                $this->getContent($multiInitHandle, $object->handle);
             } catch (\Exception $ex) {
-                $errorList[] = $ex;
+                $errorList[] = get_class($ex) . ": " . $ex->getMessage();
             }
-            
-            curl_multi_remove_handle($multiInitHandle, $object->handle);
         }
 
         // all done
         curl_multi_close($multiInitHandle);
-        
+
         if (count($errorList) > 0) {
-            throw $errorList[0];
+            throw new CurlException("Raised " . count($errorList) . " error(s). \n" . implode("\n", $errorList));
         }
+    }
+
+    protected function getContent($multiInitHandle, $handle)
+    {
+        $object = $this->curlClients["ch;" . ((int)$handle)];
+
+        $body = curl_multi_getcontent($object->handle);
+        $error = curl_error($object->handle);
+        if (!empty($error)) {
+            curl_multi_remove_handle($multiInitHandle, $object->handle);
+            $closure = $object->onError;
+            try {
+                $closure($error, $object->id);
+            } catch (\Exception $ex) {
+                $errorList[] = $ex;
+            }
+        }
+
+        $headerSize = curl_getinfo($object->handle, CURLINFO_HEADER_SIZE);
+        $closure = $object->onSuccess;
+
+        try {
+            $closure(substr($body, $headerSize), $object->id);
+        } catch (\Exception $ex) {
+            $errorList[] = $ex;
+        }
+
+        curl_multi_remove_handle($multiInitHandle, $object->handle);
+
+        unset($this->curlClients["ch;" . ((int)$handle)]);
     }
 }
