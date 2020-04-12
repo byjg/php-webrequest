@@ -101,9 +101,24 @@ class HttpClientTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
+    /**
+     * @throws \ByJG\Util\CurlException
+     * @throws \ByJG\Util\Psr7\MessageException
+     * @expectedException \ByJG\Util\CurlException
+     * @expectedExceptionMessage Cannot set body with method GET
+     */
+    public function testGet()
+    {
+        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+            ->withBody(new MemoryStream("A"));
+
+        $this->object->sendRequest($request);
+    }
+
     public function testGet1()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
+        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+            ->withMethod("GET");
         $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());

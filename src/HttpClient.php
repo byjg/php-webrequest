@@ -19,7 +19,6 @@ class HttpClient
 
     protected $defaultCurlOptions = [];
     protected $curlOptions = [];
-    protected $lastFetchedUrl = "";
 
     /**
      * @var RequestInterface
@@ -150,9 +149,6 @@ class HttpClient
             curl_setopt($curlHandle, $key, $value);
         }
 
-        // Set last fetched URL
-        $this->lastFetchedUrl = null;
-
         return $curlHandle;
     }
 
@@ -173,6 +169,9 @@ class HttpClient
     {
         $stream = $this->request->getBody();
         if (!is_null($stream)) {
+            if (empty($this->getCurl(CURLOPT_POST)) && empty($this->getCurl(CURLOPT_CUSTOMREQUEST))) {
+                throw new CurlException("Cannot set body with method GET");
+            }
             $this->setCurl(CURLOPT_POSTFIELDS, $stream->getContents());
         }
     }
@@ -229,6 +228,15 @@ class HttpClient
         } else {
             unset($this->curlOptions[$key]);
         }
+    }
+
+    protected function getCurl($key)
+    {
+        if (isset($this->curlOptions[$key])) {
+            return $this->curlOptions[$key];
+        }
+
+        return null;
     }
 
     /**
