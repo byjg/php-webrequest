@@ -6,6 +6,8 @@ use Psr\Http\Message\RequestInterface;
 
 class HttpClientParallel
 {
+    use ParseCurlTrait;
+
     /**
      * @var array
      */
@@ -158,11 +160,11 @@ class HttpClientParallel
             }
         }
 
-        $headerSize = curl_getinfo($object->handle, CURLINFO_HEADER_SIZE);
+        $response = $this->parseCurl($body, $object->handle, false);
         $closure = $object->onSuccess;
 
         try {
-            $closure(substr($body, $headerSize), $object->id);
+            $closure($response, $object->id);
         } catch (\Exception $ex) {
             $errorList[] = $ex;
         }

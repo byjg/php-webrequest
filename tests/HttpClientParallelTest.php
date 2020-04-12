@@ -22,8 +22,8 @@ class HttpClientParallelTest extends TestCase
         $results = [];
         $fail = [];
 
-        $onSucess = function ($body, $id) use (&$count, &$results) {
-            $results[] = $body;
+        $onSucess = function ($response, $id) use (&$count, &$results) {
+            $results[] = $response->getStatusCode() . "-" . $response->getBody();
             $count++;
         };
 
@@ -51,6 +51,6 @@ class HttpClientParallelTest extends TestCase
         sort($results);
 
         $this->assertEquals(3, $count);
-        $this->assertEquals([1, 2, 3], $results);
+        $this->assertEquals(["200-1", "200-2", "200-3"], $results);
     }
 }

@@ -10,15 +10,12 @@ namespace ByJG\Util;
 
 use ByJG\Util\Psr7\Response;
 use InvalidArgumentException;
-use MintWare\Streams\MemoryStream;
-use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
-use SoapClient;
-use SoapParam;
 
 class HttpClient
 {
+    use ParseCurlTrait;
 
     protected $url;
     protected $defaultCurlOptions = [];
@@ -117,17 +114,7 @@ class HttpClient
             throw new CurlException("CURL - " . $error);
         }
 
-        $headerSize = curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE);
-        $status = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
-        $lastFetchedUrl = curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL);
-        curl_close($curlHandle);
-
-        $response = Response::getInstance($status)
-            ->withBody(new MemoryStream(substr($result, $headerSize)));
-
-        $this->parseHeader($response, substr($result, 0, $headerSize));
-
-        return $response;
+        return $this->parseCurl($result, $curlHandle);
     }
 
     public function createCurlHandle(RequestInterface $request)
@@ -274,28 +261,5 @@ class HttpClient
             $this->setCurl($key, $value);
         }
     }
-
-
-    protected function parseHeader(MessageInterface $response, $rawHeaders)
-    {
-        $key = '';
-
-        foreach (preg_split("/\r?\n/", $rawHeaders) as $headerLine) {
-            $headerLine = explode(':', $headerLine, 2);
-
-            if (isset($headerLine[1])) {
-                $response->withHeader($headerLine[0], preg_replace("/^\s+/", "", $headerLine[1]));
-            }
-        }
-    }
-
-
-
-
-
-
-
-
-
 
 }

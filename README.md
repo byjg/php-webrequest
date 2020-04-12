@@ -130,6 +130,8 @@ To use this funcionallity you need:
 2. Add the RequestInterface instance
 3. Execute
 
+The results will be processed as soon is ready. 
+
 Below a basic example:
 
 ```php
@@ -137,8 +139,8 @@ Below a basic example:
 // Create the instances of the requirements
 $httpClient = \ByJG\Util\HttpClient::getInstance();
 
-$onSucess = function ($body, $id) {
-    // Do something
+$onSucess = function ($response, $id) {
+    // Do something with Response object
 };
 
 $onError = function ($error, $id) use (&$fail) {
