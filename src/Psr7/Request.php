@@ -28,6 +28,16 @@ class Request extends Message implements RequestInterface
     }
 
     /**
+     * @param UriInterface $uri
+     * @return Request
+     * @throws MessageException
+     */
+    public static function getInstance(UriInterface $uri)
+    {
+        return new Request($uri);
+    }
+
+    /**
      * @inheritDoc
      */
     public function getRequestTarget()
@@ -50,6 +60,7 @@ class Request extends Message implements RequestInterface
             unset($parts[0]);
             $this->uri->withQuery(implode("?", $parts));
         }
+        return $this;
     }
 
     /**
@@ -73,6 +84,7 @@ class Request extends Message implements RequestInterface
         }
  
         $this->method = $method;
+        return $this;
     }
 
     /**
@@ -98,5 +110,6 @@ class Request extends Message implements RequestInterface
             }
             $this->withHeader("host", $this->uri->getHost() . $host);
         }
+        return $this;
     }
 }

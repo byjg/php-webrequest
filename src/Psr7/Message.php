@@ -10,6 +10,10 @@ class Message implements MessageInterface
 {
     protected $protocolVersion = "1.1";
     protected $headers = [];
+
+    /**
+     * @var StreamInterface
+     */
     protected $body = null;
 
     /**
@@ -126,6 +130,9 @@ class Message implements MessageInterface
      */
     public function getBody()
     {
+        if (!is_null($this->body)) {
+            $this->body->rewind();
+        }
         return $this->body;
     }
 
@@ -135,6 +142,7 @@ class Message implements MessageInterface
     public function withBody(StreamInterface $body)
     {
         $this->body = $body;
+        return $this;
     }
 
     protected function normalize($header)

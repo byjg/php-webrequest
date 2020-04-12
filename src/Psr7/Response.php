@@ -4,6 +4,7 @@
 namespace ByJG\Util\Psr7;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 
 class Response extends Message implements ResponseInterface
 {
@@ -106,6 +107,11 @@ class Response extends Message implements ResponseInterface
     public function __construct($code = 200)
     {
         $this->withStatus($code);
+    }
+
+    public static function getInstance($code = 200)
+    {
+        return new Response($code);
     }
 
     /**
