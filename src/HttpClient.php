@@ -115,6 +115,7 @@ class HttpClient
     /**
      * @param RequestInterface $request
      * @return resource
+     * @throws CurlException
      */
     public function createCurlHandle(RequestInterface $request)
     {

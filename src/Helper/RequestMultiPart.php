@@ -31,16 +31,16 @@ class RequestMultiPart extends Request
     }
 
     /**
-     * @param MultiPartItem[] $multiPartItem
+     * @param MultiPartItem[] $multiPartItems
      * @param RequestInterface $request
      */
-    protected static function buildMultiPart($multiPartItem, $request)
+    public static function buildMultiPart($multiPartItems, $request)
     {
         $stream = new MemoryStream();
 
         $boundary = 'boundary-' . md5(time());
 
-        foreach ($multiPartItem as $item) {
+        foreach ($multiPartItems as $item) {
             $stream->write("--$boundary\nContent-Disposition: form-data; name=\"{$item->getField()}\";");
             $fileName = $item->getFileName();
             if (!empty($fileName)) {
