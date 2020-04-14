@@ -119,7 +119,7 @@ class HttpClient
      */
     public function createCurlHandle(RequestInterface $request)
     {
-        $this->request = $request;
+        $this->request = clone $request;
         $this->curlOptions = [];
         $this->clearRequestMethod();
         $this->defaultCurlOptions();
