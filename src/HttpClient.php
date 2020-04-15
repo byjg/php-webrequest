@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Class to abstract Soap and REST calls
- * @author jg
- *
- */
-
 namespace ByJG\Util;
 
 use ByJG\Util\Psr7\Response;
@@ -72,7 +66,6 @@ class HttpClient
     {
         if ($this->request->getUri()->getUserInfo() != "") {
             $this->withCurlOption(CURLOPT_PROXYUSERPWD, $uri->getUserInfo());
-            $this->request->getUri()->withUserInfo("");
         }
         $this->withCurlOption(CURLOPT_PROXY, $uri);
         return $this;
@@ -119,7 +112,7 @@ class HttpClient
      */
     public function createCurlHandle(RequestInterface $request)
     {
-        $this->request = clone $request;
+        $this->request = $request;
         $this->curlOptions = [];
         $this->clearRequestMethod();
         $this->defaultCurlOptions();

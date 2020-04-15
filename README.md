@@ -24,7 +24,8 @@ The key elements are:
 
 More information about the PSR-7 here: https://www.php-fig.org/psr/psr-7/
 
-The implementation to send the request is defined by the class `HttpClient`. This class follow partially the PSR-18 implementation.
+The implementation to send the request object is defined by the class `HttpClient`. 
+This class follow partially the PSR-18 implementation.
 So, once you have a Request instance defined just need to call `HttpClient::sendRequest($request);`
 
 ## Basic Usage
@@ -168,6 +169,59 @@ $multi
 // The results will be get from the closure defined above. 
 $multi->execute();
 ```
+
+
+# Mocking Http Client
+
+The class `MockClient` has the same methods that HttpClient except by:
+- Do not send any request to the server;
+- You can add the expected Response object;
+- You can collect information from the CURL after submit the request. 
+
+## Setting the expected response object:
+
+```php
+<?php
+$expectedResponse = new Response(200);
+
+$mock = $this->object = new MockClient($expectedResponse);
+$response = $mock->sendRequest(new Request("http://example.com"));
+
+assertEquals($expectedResponse, $response);
+```
+
+## Debuging the CURL options:
+
+```php
+<?php
+$expectedResponse = new Response(200);
+
+$mock = $this->object = new MockClient($expectedResponse);
+$response = $mock->sendRequest(new Request("http://example.com"));
+
+$expectedCurlOptions = [
+    CURLOPT_CONNECTTIMEOUT => 30,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HEADER => true,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_USERAGENT => "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)",
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_SSL_VERIFYHOST => 2,
+    CURLOPT_SSL_VERIFYPEER => 1,
+    CURLOPT_HTTPHEADER => [
+        'Host: localhost:8080'
+    ],
+];
+
+assertEquals($expectedCurlOptions, $mock->getCurlConfiguration());
+```
+
+## Other methods in the MockClient
+
+The methods below are available *after* the execution of the method `sendRequest()`:
+* getCurlConfiguration()
+* getRequestedObject()
+* getExpectedResponse()
 
 
 # Install

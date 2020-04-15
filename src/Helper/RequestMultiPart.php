@@ -16,16 +16,16 @@ class RequestMultiPart extends Request
      * @param UriInterface $uri
      * @param string $method
      * @param MultiPartItem[] $multiPartItem
+     * @param string $boundary
      * @return Request|MessageInterface|RequestInterface
      * @throws MessageException
      */
-    public static function build(UriInterface $uri, $method, $multiPartItem)
+    public static function build(UriInterface $uri, $method, $multiPartItem, $boundary = null)
     {
         $request = Request::getInstance($uri)
-            ->withMethod($method)
-            ->withHeader("content-type", "application/x-www-form-urlencoded");
+            ->withMethod($method);
 
-        self::buildMultiPart($multiPartItem, $request);
+        self::buildMultiPart($multiPartItem, $request, $boundary);
 
         return $request;
     }
@@ -33,12 +33,13 @@ class RequestMultiPart extends Request
     /**
      * @param MultiPartItem[] $multiPartItems
      * @param RequestInterface $request
+     * @param string $boundary
      */
-    public static function buildMultiPart($multiPartItems, $request)
+    public static function buildMultiPart($multiPartItems, $request, $boundary = null)
     {
         $stream = new MemoryStream();
 
-        $boundary = 'boundary-' . md5(time());
+        $boundary = 'boundary-' . (is_null($boundary) ? md5(time()) : $boundary);
 
         foreach ($multiPartItems as $item) {
             $stream->write("--$boundary\nContent-Disposition: form-data; name=\"{$item->getField()}\";");
