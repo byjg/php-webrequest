@@ -461,4 +461,18 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
+    public function testMockResponse()
+    {
+        $expectedResponse = \ByJG\Util\Psr7\Response::getInstance(404)
+            ->withBody(new \MintWare\Streams\MemoryStream("<h1>Not Found</h1>"));
+
+        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
+
+        $this->object = new MockClient($expectedResponse);
+
+        $response = $this->object->sendRequest($request);
+
+        $this->assertSame($expectedResponse, $response);
+    }
+
 }
