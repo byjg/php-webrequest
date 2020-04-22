@@ -428,21 +428,21 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
                 CURLOPT_POST => true,
-                CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: multipart/form-data; boundary=boundary-12345'],
-                CURLOPT_POSTFIELDS => "--boundary-12345\n". 
+                CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: multipart/form-data; boundary=12345'],
+                CURLOPT_POSTFIELDS => "--12345\n".
                     "Content-Disposition: form-data; name=\"field1\";\n".
                     "\n".
                     "value1\n".
-                    "--boundary-12345\n".
+                    "--12345\n".
                     "Content-Disposition: form-data; name=\"field2\"; filename=\"filename.json\";\n".
                     "Content-Type: application/json; charset=UTF-8\n".
                     "\n".
                     "{\"key\": \"value2\"}\n".
-                    "--boundary-12345\n".
+                    "--12345\n".
                     "Content-Disposition: form-data; name=\"field3\";\n".
                     "\n".
                     "value3\n".
-                    "--boundary-12345--"
+                    "--12345--"
             ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }

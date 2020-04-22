@@ -102,9 +102,9 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws \ByJG\Util\CurlException
+     * @throws \ByJG\Util\Exception\CurlException
      * @throws \ByJG\Util\Psr7\MessageException
-     * @expectedException \ByJG\Util\CurlException
+     * @expectedException \ByJG\Util\Exception\CurlException
      * @expectedExceptionMessage Cannot set body with method GET
      */
     public function testGet()
@@ -602,7 +602,7 @@ class HttpClientTest extends TestCase
 
         unset($result['files']['field2']['tmp_name']);
 
-        $this->assertContains('multipart/form-data; boundary=boundary-', $result['content-type']);
+        $this->assertContains('multipart/form-data; boundary=', $result['content-type']);
         $this->assertEquals('POST', $result['method']);
         $this->assertEquals([], $result['query_string']);
         $this->assertEquals(['field1' => 'value1', 'field3' => 'value3'], $result['post_string']);

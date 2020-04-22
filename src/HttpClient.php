@@ -2,6 +2,7 @@
 
 namespace ByJG\Util;
 
+use ByJG\Util\Exception\CurlException;
 use ByJG\Util\Psr7\Response;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;

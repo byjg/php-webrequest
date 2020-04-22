@@ -39,24 +39,21 @@ class RequestMultiPart extends Request
     {
         $stream = new MemoryStream();
 
-        $boundary = 'boundary-' . (is_null($boundary) ? md5(time()) : $boundary);
+        $boundary = (is_null($boundary) ? md5(time()) : $boundary);
+
+        $contentType = "multipart/form-data";
 
         foreach ($multiPartItems as $item) {
-            $stream->write("--$boundary\nContent-Disposition: form-data; name=\"{$item->getField()}\";");
-            $fileName = $item->getFileName();
-            if (!empty($fileName)) {
-                $stream->write(" filename=\"{$item->getFileName()}\";");
+            $item->build($stream, $boundary);
+            if ($item->getContentDisposition() != "form-data") {
+                $contentType = "multipart/related";
             }
-            $contentType = $item->getContentType();
-            if (!empty($contentType)) {
-                $stream->write("\nContent-Type: {$item->getContentType()}");
-            }
-            $stream->write("\n\n{$item->getContent()}\n");
         }
+
         $stream->write("--$boundary--");
 
         $request
             ->withBody($stream)
-            ->withHeader("Content-Type", "multipart/form-data; boundary=$boundary");
+            ->withHeader("Content-Type", "$contentType; boundary=$boundary");
     }
 }

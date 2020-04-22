@@ -465,7 +465,7 @@ class WebRequestTest extends TestCase
     }
 
     /**
-     * @expectedException \ByJG\Util\CurlException
+     * @expectedException \ByJG\Util\Exception\CurlException
      */
     public function testCurlException()
     {

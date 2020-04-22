@@ -8,6 +8,7 @@
 
 namespace ByJG\Util;
 
+use ByJG\Util\Exception\CurlException;
 use InvalidArgumentException;
 use SoapClient;
 use SoapFault;

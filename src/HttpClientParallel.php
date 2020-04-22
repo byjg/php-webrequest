@@ -2,6 +2,7 @@
 
 namespace ByJG\Util;
 
+use ByJG\Util\Exception\CurlException;
 use Closure;
 use Exception;
 use Psr\Http\Message\RequestInterface;
