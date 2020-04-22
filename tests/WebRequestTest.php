@@ -449,8 +449,6 @@ class WebRequestTest extends TestCase
         $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
 
-        unset($result['files']['field2']['tmp_name']);
-
         $this->assertContains('multipart/form-data; boundary=boundary-', $result['content-type']);
         $this->assertEquals('POST', $result['method']);
         $this->assertEquals([], $result['query_string']);
@@ -460,7 +458,8 @@ class WebRequestTest extends TestCase
             'name' => 'filename.json',
             'type' => 'application/json',
             'error' => 0,
-            'size' => 17
+            'size' => 17,
+            'content' => "{\"key\": \"value2\"}"
         ]], $result['files']);
     }
 
