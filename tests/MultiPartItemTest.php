@@ -82,6 +82,7 @@ class MultiPartItemTest extends TestCase
             ->withContent("Lorem ipsum dolor sit amet")
             ->withContentType("text/html")
             ->withFilename("text.txt")
+            ->withContentDisposition("form-data")
             ->withEncodedBase64();
 
         $expected = [

@@ -67,7 +67,7 @@ class MultiPartItem
     public function withContentDisposition($type)
     {
         $validTypes = ["form-data", "inline", "attachment"];
-        if (in_array($type, $validTypes)) {
+        if (!in_array($type, $validTypes)) {
             throw new InvalidArgumentException("Only '" . implode("', '", $validTypes) . "' are accepted.");
         }
         $this->contentDisposition = $type;
