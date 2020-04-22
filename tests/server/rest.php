@@ -20,6 +20,10 @@ $result['payload'] = file_get_contents('php://input');
 
 if (count($_FILES) > 0) {
     $result['files'] = $_FILES;
+    foreach ($result['files'] as $key => $values) {
+        $result['files'][$key]["content"] = file_get_contents($values["tmp_name"]);
+        unset($result['files'][$key]["tmp_name"]);
+    }
 }
 
 header('Content-Type: application/json;charset=utf-8;');

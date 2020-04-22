@@ -600,8 +600,6 @@ class HttpClientTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
 
-        unset($result['files']['field2']['tmp_name']);
-
         $this->assertContains('multipart/form-data; boundary=', $result['content-type']);
         $this->assertEquals('POST', $result['method']);
         $this->assertEquals([], $result['query_string']);
@@ -611,7 +609,8 @@ class HttpClientTest extends TestCase
             'name' => 'filename.json',
             'type' => 'application/json',
             'error' => 0,
-            'size' => 17
+            'size' => 17,
+            'content' => "{\"key\": \"value2\"}"
         ]], $result['files']);
     }
 
