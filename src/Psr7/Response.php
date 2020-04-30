@@ -106,7 +106,7 @@ class Response extends Message implements ResponseInterface
 
     public function __construct($code = 200)
     {
-        $this->withStatus($code);
+        $this->setStatus($code);
     }
 
     public static function getInstance($code = 200)
@@ -127,6 +127,13 @@ class Response extends Message implements ResponseInterface
      */
     public function withStatus($code, $reasonPhrase = '')
     {
+        $clone = clone $this;
+        $clone->setStatus($code, $reasonPhrase);
+        return $clone;
+    }
+
+    protected function setStatus($code, $reasonPhrase = "")
+    {
         $code = intval($code);
         if ($code < 100 || $code > 599) {
             throw new InvalidArgumentException('Status code has to be an integer between 100 and 599');
@@ -134,8 +141,6 @@ class Response extends Message implements ResponseInterface
 
         $this->statusCode[0] = $code;
         $this->statusCode[1] = (empty($reasonPhrase) && isset(self::$codes[$code])) ? self::$codes[$code] : $reasonPhrase;
-
-        return $this;
     }
 
     /**

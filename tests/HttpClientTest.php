@@ -55,11 +55,10 @@ class HttpClientTest extends TestCase
 
     public function testWithCredentials()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
-        $request
-            ->getUri()
+        $uri = Uri::getInstanceFromString(self::SERVER_TEST)
             ->withUserInfo("user", "pass");
-        
+
+        $request = Request::getInstance($uri);
 
         $response = $this->object->sendRequest($request);
         $body = ParseBody::parse($response);
@@ -135,11 +134,10 @@ class HttpClientTest extends TestCase
 
     public function testGet2()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
-        $request
-            ->getUri()
+        $uri = Uri::getInstanceFromString(self::SERVER_TEST)
             ->withQuery(http_build_query(['param1' => 'value1', 'param2' => 'value2']));
-        
+
+        $request = Request::getInstance($uri);
 
         $response = $this->object->sendRequest($request);
 
@@ -157,11 +155,10 @@ class HttpClientTest extends TestCase
 
     public function testGet3()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
-        $request
-            ->getUri()
+        $uri = Uri::getInstanceFromString(self::SERVER_TEST)
             ->withQuery("just string");
-        
+
+        $request = Request::getInstance($uri);
 
         $response = $this->object->sendRequest($request);
 
@@ -179,11 +176,10 @@ class HttpClientTest extends TestCase
 
     public function testGet4()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
-        $request
-            ->getUri()
+        $uri = Uri::getInstanceFromString(self::SERVER_TEST)
             ->withQuery('just_string=value1&just_string2=value2');
-        
+
+        $request = Request::getInstance($uri);
 
         $response = $this->object->sendRequest($request);
 

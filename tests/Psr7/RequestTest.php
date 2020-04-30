@@ -61,7 +61,7 @@ class RequestTest extends TestCase
     {
         $path = "/another" . rand(1000, 9000);
         $query = "query=" . rand(1000, 9000);
-        $request->withRequestTarget($path . "?" . $query);
+        $request = $request->withRequestTarget($path . "?" . $query);
         $this->assertEquals($path . "?" . $query, $request->getRequestTarget());
         $this->assertEquals($path, $request->getUri()->getPath());
         $this->assertEquals($query, $request->getUri()->getQuery());
@@ -78,8 +78,8 @@ class RequestTest extends TestCase
         $request = new Request(new Uri());
         $methods = [ "GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH" ];
         foreach ($methods as $method) {
-            $request->withMethod(strtolower($method));
-            $this->assertEquals($method, $request->getMethod());
+            $expectedRequest = $request->withMethod(strtolower($method));
+            $this->assertEquals($method, $expectedRequest->getMethod());
         }
     }
 
@@ -91,12 +91,12 @@ class RequestTest extends TestCase
         $this->assertEquals($uri, $request->getUri());
 
         $uri = new Uri("https://anotherhost.uk:9090/test");
-        $request->withUri($uri, false);
+        $request = $request->withUri($uri, false);
         $this->assertEquals(["anotherhost.uk:9090"], $request->getHeader("host"));
         $this->assertEquals($uri, $request->getUri());
 
         $uri = new Uri("https://shouldnot.me:1234/path");
-        $request->withUri($uri, true);
+        $request = $request->withUri($uri, true);
         $this->assertEquals(["anotherhost.uk:9090"], $request->getHeader("host"));
         $this->assertEquals($uri, $request->getUri());
     }

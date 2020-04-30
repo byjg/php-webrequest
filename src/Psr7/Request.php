@@ -23,7 +23,7 @@ class Request extends Message implements RequestInterface
      */
     public function __construct(UriInterface $uri)
     {
-        $this->withUri($uri);
+        $this->setUri($uri);
     }
 
     /**
@@ -53,13 +53,15 @@ class Request extends Message implements RequestInterface
      */
     public function withRequestTarget($requestTarget)
     {
+        $clone = clone $this;
         $parts = explode("?", $requestTarget);
-        $this->uri->withPath($parts[0]);
+        $uri = $clone->uri->withPath($parts[0]);
         if (isset($parts[1])) {
             unset($parts[0]);
-            $this->uri->withQuery(implode("?", $parts));
+            $uri = $uri->withQuery(implode("?", $parts));
         }
-        return $this;
+        $clone->setUri($uri);
+        return $clone;
     }
 
     /**
@@ -81,9 +83,10 @@ class Request extends Message implements RequestInterface
         if (!in_array($method, $this->validMethods)) {
             throw new MessageException("Invalid Method " . $method);
         }
- 
-        $this->method = $method;
-        return $this;
+
+        $clone = clone $this;
+        $clone->method = $method;
+        return $clone;
     }
 
     /**
@@ -100,6 +103,13 @@ class Request extends Message implements RequestInterface
      */
     public function withUri(UriInterface $uri, $preserveHost = false)
     {
+        $clone = clone $this;
+        $clone->setUri($uri, $preserveHost);
+        return $clone;
+    }
+
+    protected function setUri(UriInterface $uri, $preserveHost = false)
+    {
         $this->uri = $uri;
 
         if (!$preserveHost || (!$this->hasHeader("host") && $this->uri->getHost() !== "")) {
@@ -107,8 +117,7 @@ class Request extends Message implements RequestInterface
             if (!empty($host)) {
                 $host = ":$host";
             }
-            $this->withHeader("host", $this->uri->getHost() . $host);
+            $this->setHeader("host", $this->uri->getHost() . $host, true);
         }
-        return $this;
     }
 }

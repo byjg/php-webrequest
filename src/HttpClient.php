@@ -160,11 +160,14 @@ class HttpClient
         }
     }
 
+    /**
+     * @throws CurlException
+     */
     protected function setBody()
     {
         $stream = $this->request->getBody();
         if (!is_null($stream)) {
-            if (empty($this->getCurl(CURLOPT_POST)) && empty($this->getCurl(CURLOPT_CUSTOMREQUEST))) {
+            if (!$this->getCurl(CURLOPT_POST) && !$this->getCurl(CURLOPT_CUSTOMREQUEST)) {
                 throw new CurlException("Cannot set body with method GET");
             }
             $this->setCurl(CURLOPT_POSTFIELDS, $stream->getContents());
@@ -179,7 +182,8 @@ class HttpClient
         if ($this->request->getUri()->getUserInfo() != "") {
             $this->setCurl(CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             $this->setCurl(CURLOPT_USERPWD, $this->request->getUri()->getUserInfo());
-            $this->request->getUri()->withUserInfo("");
+            $uri = $this->request->getUri()->withUserInfo("");
+            $this->request = $this->request->withUri($uri);
         }
     }
 

@@ -33,8 +33,9 @@ class Message implements MessageInterface
         if ($version != "1.0" && $version != "1.1") {
             throw new MessageException("Invalid Protocol Version");
         }
-        $this->protocolVersion = $version;
-        return $this;
+        $clone = clone $this;
+        $clone->protocolVersion = $version;
+        return $clone;
     }
 
     /**
@@ -79,8 +80,9 @@ class Message implements MessageInterface
      */
     public function withHeader($name, $value)
     {
-        $this->setHeader($name, $value, true);
-        return $this;
+        $clone = clone $this;
+        $clone->setHeader($name, $value, true);
+        return $clone;
     }
 
     /**
@@ -89,8 +91,9 @@ class Message implements MessageInterface
      */
     public function withAddedHeader($name, $value)
     {
-        $this->setHeader($name, $value, false);
-        return $this;
+        $clone = clone $this;
+        $clone->setHeader($name, $value, false);
+        return $clone;
     }
 
     /**
@@ -119,10 +122,11 @@ class Message implements MessageInterface
      */
     public function withoutHeader($name)
     {
-        if ($this->hasHeader($name)) {
-            unset($this->headers[$this->normalize($name)]);
+        $clone = clone $this;
+        if ($clone->hasHeader($name)) {
+            unset($clone->headers[$this->normalize($name)]);
         }
-        return $this;
+        return $clone;
     }
 
     /**
@@ -141,8 +145,9 @@ class Message implements MessageInterface
      */
     public function withBody(StreamInterface $body)
     {
-        $this->body = $body;
-        return $this;
+        $clone = clone $this;
+        $clone->body = $body;
+        return $clone;
     }
 
     protected function normalize($header)

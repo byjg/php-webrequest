@@ -25,7 +25,7 @@ class RequestMultiPart extends Request
         $request = Request::getInstance($uri)
             ->withMethod($method);
 
-        self::buildMultiPart($multiPartItem, $request, $boundary);
+        $request = self::buildMultiPart($multiPartItem, $request, $boundary);
 
         return $request;
     }
@@ -34,6 +34,7 @@ class RequestMultiPart extends Request
      * @param MultiPartItem[] $multiPartItems
      * @param RequestInterface $request
      * @param string $boundary
+     * @return RequestInterface
      */
     public static function buildMultiPart($multiPartItems, $request, $boundary = null)
     {
@@ -52,8 +53,8 @@ class RequestMultiPart extends Request
 
         $stream->write("--$boundary--");
 
-        $request
-            ->withBody($stream)
-            ->withHeader("Content-Type", "$contentType; boundary=$boundary");
+        return $request
+                ->withBody($stream)
+                ->withHeader("Content-Type", "$contentType; boundary=$boundary");
     }
 }

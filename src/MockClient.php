@@ -21,8 +21,8 @@ class MockClient extends HttpClient
     public function __construct(Response $expectedResponse = null)
     {
         if (is_null($expectedResponse)) {
-            $expectedResponse = new Response(200);
-            $expectedResponse->withBody(new MemoryStream('{"key":"value"}'));
+            $expectedResponse = (new Response(200))
+                                    ->withBody(new MemoryStream('{"key":"value"}'));
         }
         $this->expectedResponse = $expectedResponse;
     }
@@ -38,7 +38,6 @@ class MockClient extends HttpClient
     /**
      * @param RequestInterface $request
      * @return Response
-     * @throws CurlException
      * @throws Psr7\MessageException
      */
     public function sendRequest(RequestInterface $request)
@@ -56,7 +55,7 @@ class MockClient extends HttpClient
     /**
      * @param RequestInterface $request
      * @return resource
-     * @throws CurlException
+     * @throws Exception\CurlException
      */
     public function createCurlHandle(RequestInterface $request)
     {

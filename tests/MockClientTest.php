@@ -53,10 +53,10 @@ class MockClientTest extends TestCase
 
     public function testWithCredentials()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
-        $request
-            ->getUri()
+        $uri = Uri::getInstanceFromString(self::SERVER_TEST)
             ->withUserInfo("user", "pass");
+
+        $request = Request::getInstance($uri);
 
         $response = $this->object->sendRequest($request);
 

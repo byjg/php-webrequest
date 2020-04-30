@@ -16,7 +16,7 @@
     "php": ">=5.4.0",
     "ext-curl": "*",
     "ext-json": "*",
-    "byjg/uri": "2.0.*",
+    "byjg/uri": "2.1.0.x-dev",
     "psr/http-message": "1.0.*",
     "mintware-de/streams": "1.0.*"
   },

@@ -30,7 +30,7 @@ trait ParseCurlTrait
             ->withBody(new MemoryStream(substr($body, $headerSize)))
             ->withHeader("X-Effective-Url", $effectiveUrl);
 
-        $this->parseHeader($response, substr($body, 0, $headerSize));
+        $response = $this->parseHeader($response, substr($body, 0, $headerSize));
 
         return $response;
     }
@@ -45,9 +45,11 @@ trait ParseCurlTrait
             $headerLine = explode(':', $headerLine, 2);
 
             if (isset($headerLine[1])) {
-                $response->withHeader($headerLine[0], preg_replace("/^\s+/", "", $headerLine[1]));
+                $response = $response->withHeader($headerLine[0], preg_replace("/^\s+/", "", $headerLine[1]));
             }
         }
+
+        return $response;
     }
 
 }
