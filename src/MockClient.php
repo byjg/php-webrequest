@@ -4,6 +4,7 @@ namespace ByJG\Util;
 
 use ByJG\Util\Psr7\Response;
 use MintWare\Streams\MemoryStream;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 
 class MockClient extends HttpClient
@@ -16,7 +17,7 @@ class MockClient extends HttpClient
 
     /**
      * MockClient constructor.
-     * @param Response $expectedResponse
+     * @param Response|MessageInterface $expectedResponse
      */
     public function __construct(Response $expectedResponse = null)
     {
