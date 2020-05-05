@@ -65,7 +65,7 @@ class HttpClient
      */
     public function withProxy(UriInterface $uri)
     {
-        if ($this->request->getUri()->getUserInfo() != "") {
+        if ($uri->getUserInfo() != "") {
             $this->withCurlOption(CURLOPT_PROXYUSERPWD, $uri->getUserInfo());
         }
         $this->withCurlOption(CURLOPT_PROXY, $uri);
@@ -182,8 +182,6 @@ class HttpClient
         if ($this->request->getUri()->getUserInfo() != "") {
             $this->setCurl(CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             $this->setCurl(CURLOPT_USERPWD, $this->request->getUri()->getUserInfo());
-            $uri = $this->request->getUri()->withUserInfo("");
-            $this->request = $this->request->withUri($uri);
         }
     }
 
