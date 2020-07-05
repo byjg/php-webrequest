@@ -8,10 +8,17 @@
 
 namespace ByJG\Util;
 
+use ByJG\Util\Exception\CurlException;
 use InvalidArgumentException;
 use SoapClient;
+use SoapFault;
 use SoapParam;
 
+/**
+ * Class WebRequest
+ * @package ByJG\Util
+ * @deprecated Deprecated in favor of HttpClient.
+ */
 class WebRequest
 {
 
@@ -201,6 +208,7 @@ class WebRequest
     /**
      *
      * @return SoapClient
+     * @throws SoapFault
      */
     protected function getSoapClient()
     {
@@ -240,6 +248,7 @@ class WebRequest
      * @param array $params
      * @param array $soapOptions
      * @return string
+     * @throws SoapFault
      */
     public function soapCall($method, $params = null, $soapOptions = null)
     {
@@ -260,13 +269,11 @@ class WebRequest
         }
 
         // Chamando método do webservice
-        $result = $this->getSoapClient()->__soapCall(
+        return $this->getSoapClient()->__soapCall(
             $method,
             $soapParams,
             $soapOptions
         );
-
-        return $result;
     }
 
     /**
@@ -400,7 +407,7 @@ class WebRequest
     /**
      * @param resource $curlHandle
      * @return string
-     * @throws \ByJG\Util\CurlException
+     * @throws CurlException
      */
     protected function curlGetResponse($curlHandle)
     {
@@ -483,7 +490,7 @@ class WebRequest
      *
      * @param array|null $params
      * @return string
-     * @throws \ByJG\Util\CurlException
+     * @throws CurlException
      */
     public function get($params = null)
     {
@@ -524,7 +531,7 @@ class WebRequest
      *
      * @param array|string $params
      * @return string
-     * @throws \ByJG\Util\CurlException
+     * @throws CurlException
      */
     public function post($params = '')
     {
@@ -572,7 +579,7 @@ class WebRequest
      *
      * @param MultiPartItem[] $params
      * @return string
-     * @throws \ByJG\Util\CurlException
+     * @throws CurlException
      */
     public function postMultiPartForm($params = [])
     {
@@ -586,7 +593,7 @@ class WebRequest
      * @param string $data
      * @param string $contentType
      * @return string
-     * @throws \ByJG\Util\CurlException
+     * @throws CurlException
      */
     public function postPayload($data, $contentType = "text/plain")
     {
@@ -609,7 +616,7 @@ class WebRequest
      *
      * @param array|string $params
      * @return string
-     * @throws \ByJG\Util\CurlException
+     * @throws CurlException
      */
     public function put($params = null)
     {
@@ -623,7 +630,7 @@ class WebRequest
      * @param string $data
      * @param string $contentType
      * @return string
-     * @throws \ByJG\Util\CurlException
+     * @throws CurlException
      */
     public function putPayload($data, $contentType = "text/plain")
     {
@@ -647,7 +654,7 @@ class WebRequest
      *
      * @param array|string $params
      * @return string
-     * @throws \ByJG\Util\CurlException
+     * @throws CurlException
      */
     public function delete($params = null)
     {
@@ -661,7 +668,7 @@ class WebRequest
      * @param string $data
      * @param string $contentType
      * @return string
-     * @throws \ByJG\Util\CurlException
+     * @throws CurlException
      */
     public function deletePayload($data = null, $contentType = "text/plain")
     {

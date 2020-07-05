@@ -3,153 +3,238 @@
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/7cfbd581-fdb6-405d-be0a-afee0f70d30c/mini.png)](https://insight.sensiolabs.com/projects/7cfbd581-fdb6-405d-be0a-afee0f70d30c)
 
 
-A lightweight and highly customized CURL wrapper for making RESt calls and a wrapper for call dynamically SOAP requests.
-Just one class and no dependencies. 
+A lightweight PSR-7 implementation and and highly customized CURL wrapper for making RESt calls. 
 
+# Main Features
 
-# Basic Usage
+This class implements:
+* PSR-7 objects;
+* HttpClient customizable with partial implementation PSR-18
+* Helper to create Request instances with the most common use cases;
+* Wrapper to execute several requests in parallel;
 
-```php
-<?php
-$webRequest = new WebRequest('http://www.example.com/page');
-$result = $webRequest->get();
-//$result = $webRequest->post();
-//$result = $webRequest->delete();
-//$result = $webRequest->put();
-```
+# PSR-7 Implementation and basic usage
 
-# Passing arguments
+Since the implementation follow the PSR7 implementation there is no much explanation about the usage.
 
-```php
-<?php
-$webRequest = new WebRequest('http://www.example.com/page');
-$result = $webRequest->get(['param'=>'value']);
-//$result = $webRequest->post(['param'=>'value']);
-//$result = $webRequest->delete(['param'=>'value']);
-//$result = $webRequest->put(['param'=>'value']);
-```
+The key elements are:
+* URI - Will define the URI with parameters, path, host, schema, etc
+* Request - Will set the request headers and method;
+* Response - Will receive the response header, body and status code. 
 
-# Passing a string payload (JSON)
+More information about the PSR-7 here: https://www.php-fig.org/psr/psr-7/
 
-```php
-<?php
-$webRequest = new WebRequest('http://www.example.com/page');
-$result = $webRequest->postPayload('{teste: "value"}', 'application/json');
-//$result = $webRequest->putPayload('{teste: "value"}', 'application/json');
-//$result = $webRequest->deletePayload('{teste: "value"}', 'application/json');
-```
+The implementation to send the request object is defined by the class `HttpClient`. 
+This class follow partially the PSR-18 implementation.
+So, once you have a Request instance defined just need to call `HttpClient::sendRequest($request);`
 
-# Setting Custom CURL PARAMETER
+## Basic Usage
 
 ```php
 <?php
-$webRequest = new WebRequest('http://www.example.com/page');
-$webRequest->setCurlOption(CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)');
-$result = $webRequest->get();
+$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
+$request = \ByJG\Util\Psr7\Request::getInstance($uri);
+$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
 
-# Upload a file using "multipart/form-data"
+## Passing arguments
 
 ```php
 <?php
-$webRequest = new WebRequest('http://www.example.com/page');
+$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page')
+    ->withQuery(http_build_query(['param'=>'value']));
 
-// Define the Upload File
-$upload = [];
-$upload[] = new MultiPartItem('fieldName', 'fieldContent');
-$upload[] = new MultiPartItem('fieldName', 'fieldContent', 'mime-filename.ext');
-
-// Post and get the result
-$result = $webRequest->postMultiPartForm($upload);
+$request = \ByJG\Util\Psr7\Request::getInstance($uri);
+$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
 
-# Calling Soap Classes
+# Helper Classes
+
+The WebRequest package has Helper classes to make it easy to create Request instances for some use cases. 
+
+## Passing a string payload (JSON)
 
 ```php
 <?php
-$webRequest = new WebRequest('http://www.example.com/soap');
-$resutl = $webRequest->soapCall('soapMethod', ['arg1' => 'value']);
+$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
+$request = \ByJG\Util\Helper\RequestJson::build(
+   $uri,
+   "POST",
+   '{teste: "value"}'  // Support an associate array
+);
+$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
 
-# WebRequestMulti
+## Create a Form Url Encoded (emulate HTTP form)
 
-You can use the WebRequest to do several differents requests in parallel. 
+```php
+<?php
+$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
+$request = \ByJG\Util\Helper\RequestFormUrlEncoded::build(
+   $uri,
+   ["param" => "value"]
+);
+$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
+```
+
+## Create a Multi Part request (upload documents)
+
+```php
+<?php
+$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
+
+// Define the contents to upload using a list of MultiPartItem objects
+$uploadFile = [];
+$uploadFile[] = new \ByJG\Util\MultiPartItem('field1', 'value1');
+$uploadFile[] = new \ByJG\Util\MultiPartItem(
+    'field2',
+    '{"key": "value2"}',
+    'filename.json',
+    'application/json; charset=UTF-8'
+);
+$uploadFile[] = new \ByJG\Util\MultiPartItem('field3', 'value3');
+
+// Use the Wrapper to create the Request
+$request = \ByJG\Util\Helper\RequestMultiPart::build(Uri::getInstanceFromString($uri),
+    "POST",
+    $uploadFile
+);
+
+// Do the request as usual
+$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
+```
+
+# Customizing the Http Client
+
+The customizations options are:
+
+```php
+<?php
+
+$client = \ByJG\Util\HttpClient::getInstance()
+    ->withNoFollowRedirect()         // HttpClient will not follow redirects (status codes 301 and 302). Default is follow 
+    ->withNoSSLVerification()        // HttpClient will not validate the SSL certificate. Default is validate.
+    ->withProxy($uri)                // Define a http Proxy based on the URI. 
+    ->withCurlOption($key, $value)   // Set an arbitrary CURL option (use with caution)
+;
+
+```
+
+
+# HttpClientParallel
+
+You can use the HttpClient to do several differents requests in parallel. 
 
 To use this funcionallity you need:
 
-1. Create a instance of the WebRequestMulti class
-2. Add the WebRequest instance
+1. Create a instance of the HttpClientParallel class
+2. Add the RequestInterface instance
 3. Execute
 
-See a basic example to execute the WebRequest and does not care about the result:
+The results will be processed as soon is ready. 
+
+Below a basic example:
 
 ```php
 <?php
-$webRequestMulti = new WebRequestMulti();
+// Create the instances of the requirements
+$httpClient = \ByJG\Util\HttpClient::getInstance();
 
-$webRequestMulti
-    ->addRequest(
-        new \ByJG\Util\WebRequest('http://localhost/api/myrest'),
-        WebRequestMulti::GET
-    )
-    ->addRequest(
-        new \ByJG\Util\WebRequest('http://anotherserver/method'),
-        WebRequestMulti::PUT,
-        [
-            'param' => 'somevalue',
-            'anotherparam' => '30130000'
-        ]
-    );
-
-$webRequestMulti->execute();
-```
-
-You can optionally create a \Closure function for process the successfull and the error result. 
-
-For example:
-
-```php
-<?php
-$onSuccess = function ($body, $id) {
-    echo "[$id] => $body\n";
+$onSucess = function ($response, $id) {
+    // Do something with Response object
 };
 
-$onError = function ($error, $id) {
-    throw new \Exception("$error on id '$id'");
+$onError = function ($error, $id) use (&$fail) {
+    // Do something
 };
-```
-And then pass to WebRequestMulti constructor:
 
-```php
-<?php
-$webRequestMulti = new WebRequestMulti($onSuccess, $onError);
-```
-
-or pass to the addRequestMethod:
-
-```php
-<?php
-$webRequestMulti->addRequest(
-    $webRequestInstance,
-    WebRequestMulti::GET,
-    ['params'],
-    $onSuccess, 
+// Create the HttpClientParallel
+$multi = new \ByJG\Util\HttpClientParallel(
+    $httpClient,
+    $onSucess,
     $onError
 );
+
+// Add the request to run in parallel
+$request1 = Request::getInstance($uri1);
+$request2 = Request::getInstance($uri2);
+$request3 = Request::getInstance($uri3);
+
+$multi
+    ->addRequest($request1)
+    ->addRequest($request2)
+    ->addRequest($request3);
+
+// Start execute and wait to finish
+// The results will be get from the closure defined above. 
+$multi->execute();
 ```
+
+
+# Mocking Http Client
+
+The class `MockClient` has the same methods that HttpClient except by:
+- Do not send any request to the server;
+- You can add the expected Response object;
+- You can collect information from the CURL after submit the request. 
+
+## Setting the expected response object:
+
+```php
+<?php
+$expectedResponse = new Response(200);
+
+$mock = $this->object = new MockClient($expectedResponse);
+$response = $mock->sendRequest(new Request("http://example.com"));
+
+assertEquals($expectedResponse, $response);
+```
+
+## Debuging the CURL options:
+
+```php
+<?php
+$expectedResponse = new Response(200);
+
+$mock = $this->object = new MockClient($expectedResponse);
+$response = $mock->sendRequest(new Request("http://example.com"));
+
+$expectedCurlOptions = [
+    CURLOPT_CONNECTTIMEOUT => 30,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HEADER => true,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_USERAGENT => "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)",
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_SSL_VERIFYHOST => 2,
+    CURLOPT_SSL_VERIFYPEER => 1,
+    CURLOPT_HTTPHEADER => [
+        'Host: localhost:8080'
+    ],
+];
+
+assertEquals($expectedCurlOptions, $mock->getCurlConfiguration());
+```
+
+## Other methods in the MockClient
+
+The methods below are available *after* the execution of the method `sendRequest()`:
+* getCurlConfiguration()
+* getRequestedObject()
+* getExpectedResponse()
+
 
 # Install
 
 ```
-composer install "byjg/webrequest=1.0.*"
+composer install "byjg/webrequest=2.0.*"
 ```
 
 # Running Tests
 
 ## Starting the server
 
-```php
-cd tests
+```bash
 php -S localhost:8080 -t tests/server & 
 ```
 

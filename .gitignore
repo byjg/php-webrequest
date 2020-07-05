@@ -1,5 +1,6 @@
 nbproject
-.idea
+.idea/*
+!.idea/runConfigurations
 *~
 composer.lock
 vendor

@@ -1,6 +1,6 @@
 <?php
 
-namespace ByJG\Util;
+namespace ByJG\Util\Exception;
 
 class CurlException extends \Exception
 {
