@@ -153,6 +153,13 @@ class HttpClient
             case "POST":
                 $this->setCurl(CURLOPT_POST, true);
                 break;
+            case "HEAD":
+                $this->setCurl(CURLOPT_NOBODY, true);
+                $this->setCurl(CURLOPT_WRITEFUNCTION, null);
+                $this->setCurl(CURLOPT_READFUNCTION, null);
+                $this->setCurl(CURLOPT_FILE, null);
+                $this->setCurl(CURLOPT_INFILE, null);
+                break;
             case "GET":
                 break;
             default:

@@ -624,4 +624,19 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testHead1()
+    {
+        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+            ->withHeader( "Connection", "Keep-Alive")
+            ->withMethod("HEAD");
+
+        $response = $this->object->sendRequest($request);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $result = ParseBody::parse($response);
+        $this->assertEquals(null, $result);
+
+        $this->assertNotEmpty($response->getHeaders());
+    }
+
 }
