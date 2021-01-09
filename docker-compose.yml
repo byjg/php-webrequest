@@ -1,0 +1,9 @@
+version: "3.0"
+
+services:
+  webserver:
+    image: byjg/php:7.4-fpm-nginx
+    volumes:
+    - $PWD/tests/server:/var/www/html
+    ports:
+      - "8080:80"

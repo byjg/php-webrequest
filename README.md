@@ -1,11 +1,16 @@
 # Web Request
-[![Build Status](https://travis-ci.org/byjg/webrequest.svg?branch=master)](https://travis-ci.org/byjg/webrequest)
+
+[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](http://opensource.byjg.com)
+[![Build Status](https://travis-ci.com/byjg/webrequest.svg?branch=master)](https://travis-ci.com/byjg/webrequest)
+[![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/webrequest/)
+[![GitHub license](https://img.shields.io/github/license/byjg/webrequest.svg)](https://opensource.byjg.com/opensource/licensing.html)
+[![GitHub release](https://img.shields.io/github/release/byjg/webrequest.svg)](https://github.com/byjg/webrequest/releases/)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/7cfbd581-fdb6-405d-be0a-afee0f70d30c/mini.png)](https://insight.sensiolabs.com/projects/7cfbd581-fdb6-405d-be0a-afee0f70d30c)
 
 
 A lightweight PSR-7 implementation and and highly customized CURL wrapper for making RESt calls. 
 
-# Main Features
+## Main Features
 
 This class implements:
 * PSR-7 objects;
@@ -13,7 +18,7 @@ This class implements:
 * Helper to create Request instances with the most common use cases;
 * Wrapper to execute several requests in parallel;
 
-# PSR-7 Implementation and basic usage
+## PSR-7 Implementation and basic usage
 
 Since the implementation follow the PSR7 implementation there is no much explanation about the usage.
 
@@ -28,7 +33,7 @@ The implementation to send the request object is defined by the class `HttpClien
 This class follow partially the PSR-18 implementation.
 So, once you have a Request instance defined just need to call `HttpClient::sendRequest($request);`
 
-## Basic Usage
+### Basic Usage
 
 ```php
 <?php
@@ -37,7 +42,7 @@ $request = \ByJG\Util\Psr7\Request::getInstance($uri);
 $response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
 
-## Passing arguments
+### Passing arguments
 
 ```php
 <?php
@@ -48,11 +53,11 @@ $request = \ByJG\Util\Psr7\Request::getInstance($uri);
 $response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
 
-# Helper Classes
+## Helper Classes
 
 The WebRequest package has Helper classes to make it easy to create Request instances for some use cases. 
 
-## Passing a string payload (JSON)
+### Passing a string payload (JSON)
 
 ```php
 <?php
@@ -65,7 +70,7 @@ $request = \ByJG\Util\Helper\RequestJson::build(
 $response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
 
-## Create a Form Url Encoded (emulate HTTP form)
+### Create a Form Url Encoded (emulate HTTP form)
 
 ```php
 <?php
@@ -77,7 +82,7 @@ $request = \ByJG\Util\Helper\RequestFormUrlEncoded::build(
 $response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
 
-## Create a Multi Part request (upload documents)
+### Create a Multi Part request (upload documents)
 
 ```php
 <?php
@@ -104,7 +109,7 @@ $request = \ByJG\Util\Helper\RequestMultiPart::build(Uri::getInstanceFromString(
 $response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```
 
-# Customizing the Http Client
+## Customizing the Http Client
 
 The customizations options are:
 
@@ -121,7 +126,7 @@ $client = \ByJG\Util\HttpClient::getInstance()
 ```
 
 
-# HttpClientParallel
+## HttpClientParallel
 
 You can use the HttpClient to do several differents requests in parallel. 
 
@@ -171,14 +176,14 @@ $multi->execute();
 ```
 
 
-# Mocking Http Client
+## Mocking Http Client
 
 The class `MockClient` has the same methods that HttpClient except by:
 - Do not send any request to the server;
 - You can add the expected Response object;
 - You can collect information from the CURL after submit the request. 
 
-## Setting the expected response object:
+### Setting the expected response object:
 
 ```php
 <?php
@@ -190,7 +195,7 @@ $response = $mock->sendRequest(new Request("http://example.com"));
 assertEquals($expectedResponse, $response);
 ```
 
-## Debuging the CURL options:
+### Debuging the CURL options:
 
 ```php
 <?php
@@ -216,7 +221,7 @@ $expectedCurlOptions = [
 assertEquals($expectedCurlOptions, $mock->getCurlConfiguration());
 ```
 
-## Other methods in the MockClient
+### Other methods in the MockClient
 
 The methods below are available *after* the execution of the method `sendRequest()`:
 * getCurlConfiguration()
@@ -224,31 +229,33 @@ The methods below are available *after* the execution of the method `sendRequest
 * getExpectedResponse()
 
 
-# Install
+## Install
 
-```
+```bash
 composer install "byjg/webrequest=2.0.*"
 ```
 
-# Running Tests
+## Running Tests
 
-## Starting the server
+### Starting the server
+
+We provide a docker-compose to enable start the test server easily. 
 
 ```bash
-php -S localhost:8080 -t tests/server & 
+docker-compose up -d 
 ```
 
-**Note:** It is more assertive create a webserver with the server folder instead to use the PHP built-in webserver.
+### Running the integration tests
 
-## Running the integration tests
-
-```php
+```bash
 phpunit
 ```
 
-## Stopping the server
+### Stopping the server
 
-```php
-killall -9 php
+```bash
+docker-compose down
 ```
 
+----
+[Open source ByJG](http://opensource.byjg.com)
