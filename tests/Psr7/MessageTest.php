@@ -1,7 +1,7 @@
 <?php
 
 use ByJG\Util\Psr7\Message;
-use MintWare\Streams\MemoryStream;
+use ByJG\Util\Psr7\MemoryStream;
 use PHPUnit\Framework\TestCase;
 
 class MessageTest extends TestCase
