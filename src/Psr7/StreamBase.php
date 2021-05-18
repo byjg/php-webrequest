@@ -4,10 +4,11 @@
 namespace ByJG\Util\Psr7;
 
 
+use ByJG\Util\Helper\ExtendedStreamInterface;
 use Psr\Http\Message\StreamInterface;
 use \RuntimeException;
 
-abstract class StreamBase implements StreamInterface
+abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
 {
 
     protected $resource;
@@ -241,4 +242,28 @@ abstract class StreamBase implements StreamInterface
     {
         return (!isset($this->resource) || !is_resource($this->resource));
     }
+
+    /**
+     * @param StreamInterface $stream
+     */
+    function appendStream($stream)
+    {
+        if (!($stream instanceof StreamInterface)) {
+            throw new RuntimeException("You need to pass a stream");
+        }
+        $this->seek(0, SEEK_END);
+        $stream->rewind();
+        $this->write($stream->getContents());
+    }
+
+    /**
+     * @param string $filter
+     * @param string $mode (r)ead or (w)rite
+     */
+    function addFilter($filter, $mode = "r")
+    {
+        stream_filter_append($this->resource, $filter,$mode == "r" ? STREAM_FILTER_READ : STREAM_FILTER_WRITE);
+    }
+
+
 }
