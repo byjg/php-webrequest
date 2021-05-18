@@ -15,6 +15,10 @@ abstract class StreamBaseTest extends TestCase
 
     abstract public function tearDownResource();
 
+    abstract public function isWriteable();
+
+    abstract public function canOverwrite();
+
     /**
      * @var StreamBase
      */
@@ -89,21 +93,41 @@ abstract class StreamBaseTest extends TestCase
 
     public function testIsWritable()
     {
-        $this->assertTrue($this->stream->isWritable());
+        if ($this->isWriteable()) {
+            $this->assertTrue($this->stream->isWritable());
+        } else {
+            $this->assertFalse($this->stream->isWritable());
+        }
+
     }
 
     public function testOverwrite()
     {
-        $this->stream->rewind();
-        $this->stream->write("test");
-        $this->assertEquals("test" . substr(self::TEXT1, 4), (string)$this->stream);
+        if ($this->isWriteable()) {
+            $this->stream->rewind();
+            $result = $this->stream->write("test");
+            if ($this->canOverwrite()) {
+                $this->assertEquals("test" . substr(self::TEXT1, 4), (string)$this->stream);
+                $this->assertSame(4, $result);
+            } else {
+                $this->assertNotEquals("test" . substr(self::TEXT1, 4), (string)$this->stream);
+            }
+        }
     }
 
     public function testAppend()
     {
-        $this->stream->seek(0, SEEK_END);
-        $this->stream->write("test");
-        $this->assertEquals(self::TEXT1 . "test", (string)$this->stream);
+        if ($this->isWriteable()) {
+            $this->stream->seek(0, SEEK_END);
+            $result = $this->stream->write("test");
+            $this->assertEquals(self::TEXT1 . "test", (string)$this->stream);
+            $this->assertSame(4, $result);
+        }
+    }
+
+    public function testIsReadble()
+    {
+        $this->assertTrue($this->stream->isReadable());
     }
 
     public function testRead1()

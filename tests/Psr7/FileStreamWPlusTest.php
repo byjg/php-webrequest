@@ -18,7 +18,7 @@ class FileStreamTest extends StreamBaseTest
             unlink(self::FILENAME);
         }
         file_put_contents(self::FILENAME, $data);
-        return new \ByJG\Util\Psr7\FileStream(self::FILENAME);
+        return new \ByJG\Util\Psr7\FileStream(self::FILENAME, "rw+");
     }
 
     public function tearDownResource()
@@ -26,5 +26,14 @@ class FileStreamTest extends StreamBaseTest
         $this->stream->close();
         $this->stream = null;
         unlink(self::FILENAME);
+    }
+    public function isWriteable()
+    {
+        return true;
+    }
+
+    public function canOverwrite()
+    {
+        return true;
     }
 }

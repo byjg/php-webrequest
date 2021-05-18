@@ -19,6 +19,11 @@ abstract class StreamBase implements StreamInterface
         }
     }
 
+    public function __destruct()
+    {
+        $this->close();
+    }
+
     /**
      * @inheritDoc
      */
@@ -150,7 +155,8 @@ abstract class StreamBase implements StreamInterface
         if ($this->isDetached()) {
             throw new RuntimeException("Stream is detached");
         }
-        return stristr($this->getMetadata('mode'), 'w') !== false;
+        return stristr($this->getMetadata('mode'), 'w') !== false
+            || stristr($this->getMetadata('mode'), 'a') !== false;
     }
 
     /**
@@ -162,7 +168,16 @@ abstract class StreamBase implements StreamInterface
         if (!$this->isWritable()) {
             throw new RuntimeException("Stream is not writable");
         }
-        return fwrite($this->resource, $string);
+
+        $result = fwrite($this->resource, $string);
+
+        if ($result === false) {
+            throw new RuntimeException("Could not write to stream");
+        }
+
+        fflush($this->resource);
+
+        return $result;
     }
 
     /**
@@ -176,6 +191,7 @@ abstract class StreamBase implements StreamInterface
         }
         $mode = $this->getMetadata('mode');
         return stristr($mode, 'w+') !== false
+            || stristr($mode, 'a+') !== false
             || stristr($mode, 'r') !== false;
     }
 
@@ -186,6 +202,9 @@ abstract class StreamBase implements StreamInterface
     {
         if ($this->isDetached()) {
             throw new RuntimeException("Stream is detached");
+        }
+        if (feof($this->resource)) {
+            return "";
         }
         return fread($this->resource, $length);
     }
