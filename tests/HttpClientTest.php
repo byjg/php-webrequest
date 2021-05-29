@@ -595,7 +595,7 @@ class HttpClientTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $result = ParseBody::parse($response);
 
-        $this->assertContains('multipart/form-data; boundary=', $result['content-type']);
+        $this->assertStringContainsString('multipart/form-data; boundary=', $result['content-type']);
         $this->assertEquals('POST', $result['method']);
         $this->assertEquals([], $result['query_string']);
         $this->assertEquals(['field1' => 'value1', 'field3' => 'value3'], $result['post_string']);

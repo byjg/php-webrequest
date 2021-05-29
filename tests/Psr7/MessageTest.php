@@ -144,12 +144,12 @@ class MessageTest extends TestCase
     }
 
     /**
-     * @expectedException \ByJG\Util\Psr7\MessageException
-     * @expectedExceptionMessage Invalid Protocol Version
      * @throws \ByJG\Util\Psr7\MessageException
      */
     public function testWithProtocolVersionInvalid()
     {
+        $this->expectException('\ByJG\Util\Psr7\MessageException');
+        $this->expectExceptionMessage('Invalid Protocol Version');
         $this->message->withProtocolVersion("3.0");
     }
 }
