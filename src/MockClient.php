@@ -3,7 +3,6 @@
 namespace ByJG\Util;
 
 use ByJG\Util\Psr7\Response;
-use MintWare\Streams\MemoryStream;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 
@@ -23,7 +22,7 @@ class MockClient extends HttpClient
     {
         if (is_null($expectedResponse)) {
             $expectedResponse = (new Response(200))
-                                    ->withBody(new MemoryStream('{"key":"value"}'));
+                                    ->withBody(\GuzzleHttp\Psr7\Utils::streamFor('{"key":"value"}'));
         }
         $this->expectedResponse = $expectedResponse;
     }

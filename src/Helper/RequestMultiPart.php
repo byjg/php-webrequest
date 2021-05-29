@@ -5,7 +5,6 @@ namespace ByJG\Util\Helper;
 use ByJG\Util\MultiPartItem;
 use ByJG\Util\Psr7\MessageException;
 use ByJG\Util\Psr7\Request;
-use MintWare\Streams\MemoryStream;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -38,7 +37,7 @@ class RequestMultiPart extends Request
      */
     public static function buildMultiPart($multiPartItems, $request, $boundary = null)
     {
-        $stream = new MemoryStream();
+        $stream = \GuzzleHttp\Psr7\Utils::streamFor();
 
         $boundary = (is_null($boundary) ? md5(time()) : $boundary);
 

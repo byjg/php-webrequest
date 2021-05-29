@@ -464,7 +464,7 @@ class MockClientTest extends TestCase
     public function testMockResponse()
     {
         $expectedResponse = \ByJG\Util\Psr7\Response::getInstance(404)
-            ->withBody(new \MintWare\Streams\MemoryStream("<h1>Not Found</h1>"));
+            ->withBody(\GuzzleHttp\Psr7\Utils::streamFor("<h1>Not Found</h1>"));
 
         $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
 

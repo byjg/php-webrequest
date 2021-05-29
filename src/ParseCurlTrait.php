@@ -5,7 +5,6 @@ namespace ByJG\Util;
 
 
 use ByJG\Util\Psr7\Response;
-use MintWare\Streams\MemoryStream;
 use Psr\Http\Message\MessageInterface;
 
 trait ParseCurlTrait
@@ -27,7 +26,7 @@ trait ParseCurlTrait
         }
 
         $response = Response::getInstance($status)
-            ->withBody(new MemoryStream(substr($body, $headerSize)))
+            ->withBody(\GuzzleHttp\Psr7\Utils::streamFor(substr($body, $headerSize)))
             ->withHeader("X-Effective-Url", $effectiveUrl);
 
         $response = $this->parseHeader($response, substr($body, 0, $headerSize));

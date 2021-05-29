@@ -8,7 +8,6 @@ use ByJG\Util\HttpClient;
 use ByJG\Util\ParseBody;
 use ByJG\Util\Psr7\Request;
 use ByJG\Util\Uri;
-use MintWare\Streams\MemoryStream;
 use PHPUnit\Framework\TestCase;
 
 class HttpClientTest extends TestCase
@@ -109,7 +108,7 @@ class HttpClientTest extends TestCase
     public function testGet()
     {
         $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
-            ->withBody(new MemoryStream("A"));
+            ->withBody(\GuzzleHttp\Psr7\Utils::streamFor("A"));
 
         $this->object->sendRequest($request);
     }

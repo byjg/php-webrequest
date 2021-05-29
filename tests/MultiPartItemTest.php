@@ -9,7 +9,7 @@ class MultiPartItemTest extends TestCase
 
     public function testBuild1()
     {
-        $stream = new \MintWare\Streams\MemoryStream();
+        $stream = \GuzzleHttp\Psr7\Utils::streamFor('');
 
         $multiPartItem = new MultiPartItem("fieldname", "Lorem ipsum dolor sit amet");
 
@@ -29,7 +29,7 @@ class MultiPartItemTest extends TestCase
 
     public function testBuild2()
     {
-        $stream = new \MintWare\Streams\MemoryStream();
+        $stream = \GuzzleHttp\Psr7\Utils::streamFor('');
 
         $multiPartItem = new MultiPartItem("fieldname", "Lorem ipsum dolor sit amet", "text.txt", "text/html");
 
@@ -50,7 +50,7 @@ class MultiPartItemTest extends TestCase
 
     public function testBuild3()
     {
-        $stream = new \MintWare\Streams\MemoryStream();
+        $stream = \GuzzleHttp\Psr7\Utils::streamFor('');
 
         $multiPartItem = new MultiPartItem("fieldname");
         $multiPartItem
@@ -75,7 +75,7 @@ class MultiPartItemTest extends TestCase
 
     public function testBuild4()
     {
-        $stream = new \MintWare\Streams\MemoryStream();
+        $stream = \GuzzleHttp\Psr7\Utils::streamFor('');
 
         $multiPartItem = new MultiPartItem("fieldname");
         $multiPartItem
@@ -103,7 +103,7 @@ class MultiPartItemTest extends TestCase
 
     public function testBuild5()
     {
-        $stream = new \MintWare\Streams\MemoryStream();
+        $stream = \GuzzleHttp\Psr7\Utils::streamFor('');
 
         $multiPartItem = new MultiPartItem("fieldname");
         $multiPartItem

@@ -4,7 +4,6 @@ namespace ByJG\Util\Helper;
 
 use ByJG\Util\Psr7\MessageException;
 use ByJG\Util\Psr7\Request;
-use MintWare\Streams\MemoryStream;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -24,7 +23,7 @@ class RequestFormUrlEncoded extends Request
         }
         return Request::getInstance($uri)
             ->withMethod("POST")
-            ->withBody(new MemoryStream($params))
+            ->withBody(\GuzzleHttp\Psr7\Utils::streamFor($params))
             ->withHeader("content-type", "application/x-www-form-urlencoded");
     }
 }

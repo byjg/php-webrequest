@@ -1,7 +1,6 @@
 <?php
 
 use ByJG\Util\Psr7\Message;
-use MintWare\Streams\MemoryStream;
 use PHPUnit\Framework\TestCase;
 
 class MessageTest extends TestCase
@@ -130,7 +129,7 @@ class MessageTest extends TestCase
 
     public function testWithBody()
     {
-        $stream = new MemoryStream("<html>ok</html>");
+        $stream = \GuzzleHttp\Psr7\Utils::streamFor("<html>ok</html>");
         $message = $this->message->withBody($stream);
         $this->assertEquals("<html>ok</html>", $message->getBody());
     }
