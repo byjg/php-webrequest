@@ -482,7 +482,7 @@ class WebRequestTest extends TestCase
 
     public function testSoapFail()
     {
-        $this->expectException('\SoapFault').
+        $this->expectException('\SoapFault');
         $this->object = new WebRequest(self::SERVER_TEST);
         $this->object->soapCall('test', ['param1' => 'teste', 'param2' => 1]);
     }
