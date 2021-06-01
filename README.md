@@ -5,8 +5,6 @@
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/webrequest/)
 [![GitHub license](https://img.shields.io/github/license/byjg/webrequest.svg)](https://opensource.byjg.com/opensource/licensing.html)
 [![GitHub release](https://img.shields.io/github/release/byjg/webrequest.svg)](https://github.com/byjg/webrequest/releases/)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/7cfbd581-fdb6-405d-be0a-afee0f70d30c/mini.png)](https://insight.sensiolabs.com/projects/7cfbd581-fdb6-405d-be0a-afee0f70d30c)
-
 
 A lightweight PSR-7 implementation and and highly customized CURL wrapper for making RESt calls. 
 
