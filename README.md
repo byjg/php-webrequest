@@ -173,7 +173,6 @@ $multi
 $multi->execute();
 ```
 
-
 ## Mocking Http Client
 
 The class `MockClient` has the same methods that HttpClient except by:
