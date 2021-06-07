@@ -8,7 +8,7 @@ use ByJG\Util\HttpClient;
 use ByJG\Util\ParseBody;
 use ByJG\Util\Psr7\Request;
 use ByJG\Util\Uri;
-use MintWare\Streams\MemoryStream;
+use ByJG\Util\Psr7\MemoryStream;
 use PHPUnit\Framework\TestCase;
 
 class HttpClientTest extends TestCase

@@ -5,7 +5,7 @@ namespace ByJG\Util\Helper;
 use ByJG\Util\MultiPartItem;
 use ByJG\Util\Psr7\MessageException;
 use ByJG\Util\Psr7\Request;
-use MintWare\Streams\MemoryStream;
+use ByJG\Util\Psr7\MemoryStream;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;

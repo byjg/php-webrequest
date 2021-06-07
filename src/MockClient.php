@@ -3,7 +3,7 @@
 namespace ByJG\Util;
 
 use ByJG\Util\Psr7\Response;
-use MintWare\Streams\MemoryStream;
+use ByJG\Util\Psr7\MemoryStream;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 
