@@ -120,7 +120,8 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
         if ($this->isDetached()) {
             throw new RuntimeException("Stream is detached");
         }
-        return $this->getMetadata('seekable');
+        $seekable = $this->getMetadata('seekable');
+        return is_null($seekable) ? false : $seekable;
     }
 
     /**
@@ -156,8 +157,12 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
         if ($this->isDetached()) {
             throw new RuntimeException("Stream is detached");
         }
-        return stristr($this->getMetadata('mode'), 'w') !== false
-            || stristr($this->getMetadata('mode'), 'a') !== false;
+        $mode = $this->getMetadata('mode');
+        if (is_null($mode)) {
+            return false;
+        }
+        return stristr($mode, 'w') !== false
+            || stristr($mode, 'a') !== false;
     }
 
     /**
@@ -191,6 +196,9 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
             throw new RuntimeException("Stream is detached");
         }
         $mode = $this->getMetadata('mode');
+        if (is_null($mode)) {
+            return false;
+        }
         return stristr($mode, 'w+') !== false
             || stristr($mode, 'a+') !== false
             || stristr($mode, 'r') !== false;
@@ -246,7 +254,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     /**
      * @param StreamInterface $stream
      */
-    function appendStream($stream)
+    public function appendStream($stream)
     {
         if (!($stream instanceof StreamInterface)) {
             throw new RuntimeException("You need to pass a stream");
@@ -260,10 +268,8 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @param string $filter
      * @param string $mode (r)ead or (w)rite
      */
-    function addFilter($filter, $mode = "r")
+    public function addFilter($filter, $mode = "r")
     {
-        stream_filter_append($this->resource, $filter,$mode == "r" ? STREAM_FILTER_READ : STREAM_FILTER_WRITE);
+        stream_filter_append($this->resource, $filter, $mode == "r" ? STREAM_FILTER_READ : STREAM_FILTER_WRITE);
     }
-
-
 }
