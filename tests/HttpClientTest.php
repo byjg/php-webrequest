@@ -1,5 +1,6 @@
 <?php
 
+use ByJG\Util\Exception\CurlException;
 use ByJG\Util\Helper\RequestFormUrlEncoded;
 use ByJG\Util\Helper\RequestJson;
 use ByJG\Util\Helper\RequestMultiPart;
@@ -101,12 +102,12 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws \ByJG\Util\Exception\CurlException
+     * @throws CurlException
      * @throws \ByJG\Util\Psr7\MessageException
      */
     public function testGet()
     {
-        $this->expectException('\ByJG\Util\Exception\CurlException');
+        $this->expectException(CurlException::class);
         $this->expectExceptionMessage('Cannot set body with method GET');
         $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
             ->withBody(new MemoryStream("A"));

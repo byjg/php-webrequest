@@ -1,5 +1,6 @@
 <?php
 
+use ByJG\Util\Exception\CurlException;
 use ByJG\Util\MultiPartItem;
 use ByJG\Util\WebRequest;
 use PHPUnit\Framework\TestCase;
@@ -465,7 +466,7 @@ class WebRequestTest extends TestCase
 
     public function testCurlException()
     {
-        $this->expectException('\ByJG\Util\Exception\CurlException');
+        $this->expectException(CurlException::class);
         $this->object = new WebRequest('http://laloiuyakkkall.iiiuqq/');
 
         $this->object->get();
@@ -482,7 +483,7 @@ class WebRequestTest extends TestCase
 
     public function testSoapFail()
     {
-        $this->expectException('\SoapFault');
+        $this->expectException(SoapFault::class);
         $this->object = new WebRequest(self::SERVER_TEST);
         $this->object->soapCall('test', ['param1' => 'teste', 'param2' => 1]);
     }
