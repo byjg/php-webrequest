@@ -1,5 +1,6 @@
 <?php
 
+use ByJG\Util\Exception\CurlException;
 use ByJG\Util\MultiPartItem;
 use ByJG\Util\WebRequest;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +21,7 @@ class WebRequestTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->object = new WebRequest(self::SERVER_TEST);
     }
@@ -29,7 +30,7 @@ class WebRequestTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
 
     }
@@ -449,7 +450,7 @@ class WebRequestTest extends TestCase
         $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
 
-        $this->assertContains('multipart/form-data; boundary=boundary-', $result['content-type']);
+        $this->assertStringContainsString('multipart/form-data; boundary=boundary-', $result['content-type']);
         $this->assertEquals('POST', $result['method']);
         $this->assertEquals([], $result['query_string']);
         $this->assertEquals(['field1' => 'value1', 'field3' => 'value3'], $result['post_string']);
@@ -463,11 +464,9 @@ class WebRequestTest extends TestCase
         ]], $result['files']);
     }
 
-    /**
-     * @expectedException \ByJG\Util\Exception\CurlException
-     */
     public function testCurlException()
     {
+        $this->expectException(CurlException::class);
         $this->object = new WebRequest('http://laloiuyakkkall.iiiuqq/');
 
         $this->object->get();
@@ -482,11 +481,9 @@ class WebRequestTest extends TestCase
         $this->assertEquals("another call - 2018", $resutl);
     }
 
-    /**
-     * @expectedException \SoapFault
-     */
     public function testSoapFail()
     {
+        $this->expectException(SoapFault::class);
         $this->object = new WebRequest(self::SERVER_TEST);
         $this->object->soapCall('test', ['param1' => 'teste', 'param2' => 1]);
     }
