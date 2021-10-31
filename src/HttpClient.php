@@ -83,6 +83,8 @@ class HttpClient
         } else {
             unset($this->defaultCurlOptions[$key]);
         }
+
+        return $this;
     }
 
 
