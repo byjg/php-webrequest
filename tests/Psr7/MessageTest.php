@@ -8,12 +8,12 @@ class MessageTest extends TestCase
 {
     private $message;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->message = new Message();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->message = null;
     }
@@ -144,13 +144,10 @@ class MessageTest extends TestCase
         $this->assertEquals("1.1", $message->getProtocolVersion());
     }
 
-    /**
-     * @expectedException \ByJG\Util\Psr7\MessageException
-     * @expectedExceptionMessage Invalid Protocol Version
-     * @throws \ByJG\Util\Psr7\MessageException
-     */
     public function testWithProtocolVersionInvalid()
     {
+        $this->expectedException(MessageException);
+        $this->expectedExceptionMessage("Invalid Protocol Version");
         $this->message->withProtocolVersion("3.0");
     }
 }

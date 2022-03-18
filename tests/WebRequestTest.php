@@ -20,19 +20,11 @@ class WebRequestTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->object = new WebRequest(self::SERVER_TEST);
     }
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-
-    }
 
     public function testSetCredentials()
     {
@@ -463,11 +455,9 @@ class WebRequestTest extends TestCase
         ]], $result['files']);
     }
 
-    /**
-     * @expectedException \ByJG\Util\Exception\CurlException
-     */
     public function testCurlException()
     {
+        $this->expectedException(\ByJG\Util\Exception\CurlException);
         $this->object = new WebRequest('http://laloiuyakkkall.iiiuqq/');
 
         $this->object->get();
@@ -482,11 +472,9 @@ class WebRequestTest extends TestCase
         $this->assertEquals("another call - 2018", $resutl);
     }
 
-    /**
-     * @expectedException \SoapFault
-     */
     public function testSoapFail()
     {
+        $this->expectedException(\SoapFault);
         $this->object = new WebRequest(self::SERVER_TEST);
         $this->object->soapCall('test', ['param1' => 'teste', 'param2' => 1]);
     }

@@ -9,11 +9,6 @@ class HttpClientParallelTest extends TestCase
 
     const SERVER_TEST = 'http://localhost:8080/multirequest.php';
 
-    protected function setUp()
-    {
-
-    }
-
     public function testMultiRequest()
     {
         $httpClient = \ByJG\Util\HttpClient::getInstance();
