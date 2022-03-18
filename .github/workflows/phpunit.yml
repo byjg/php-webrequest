@@ -36,6 +36,11 @@ jobs:
           - "8080:80"
         volumes:
           - /tmp/nginx:/var/www/html
+        options: >-
+          --health-cmd="echo 'OK'" 
+          --health-interval=10s 
+          --health-timeout=20s 
+          --health-retries=10
 
     steps:
       - uses: actions/checkout@v2
