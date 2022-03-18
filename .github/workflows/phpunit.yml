@@ -50,7 +50,7 @@ jobs:
           docker ps
           echo docker cp "tests/server/*" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html"
           find $PWD -type f -print
-          docker cp "$PWD/tests/server/*" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html"
+          docker cp "$PWD/tests/server/" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html"
       - run: composer install
       - run: ./vendor/bin/phpunit
 
