@@ -51,7 +51,7 @@ jobs:
       - name: Prepare Test Server
         run: |
           apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community docker
-          docker cp "$PWD/tests/server/" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html"
+          docker cp "$PWD/tests/server/**" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html"
       - run: composer install
       - run: ./vendor/bin/phpunit
 
