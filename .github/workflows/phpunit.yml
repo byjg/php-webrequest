@@ -42,14 +42,15 @@ jobs:
           --health-timeout=20s 
           --health-retries=10
 
+    env:
+      HTTP_TEST_HOST: "http_test_server"
+      HTTP_TEST_PORT: "8080"
+
     steps:
       - uses: actions/checkout@v2
       - name: Prepare Test Server
         run: |
           apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community docker
-          docker ps
-          echo docker cp "tests/server/*" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html"
-          find $PWD -type f -print
           docker cp "$PWD/tests/server/" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html"
       - run: composer install
       - run: ./vendor/bin/phpunit

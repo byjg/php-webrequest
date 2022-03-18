@@ -7,8 +7,16 @@ use PHPUnit\Framework\TestCase;
 class HttpClientParallelTest extends TestCase
 {
 
-    const SERVER_TEST = 'http://localhost:8080/multirequest.php';
+    protected $SERVER_TEST;
 
+    public function setUp(): void
+    {
+        $host = empty(getenv('HTTP_TEST_HOST')) ?  "localhost" : getenv('HTTP_TEST_HOST');
+        $port = empty(getenv('HTTP_TEST_PORT')) ?  "8080" : getenv('HTTP_TEST_PORT');
+
+        $this->SERVER_TEST = "http://$host:$port/multirequest.php";
+    }
+    
     public function testMultiRequest()
     {
         $httpClient = \ByJG\Util\HttpClient::getInstance();
@@ -32,9 +40,9 @@ class HttpClientParallelTest extends TestCase
             $onError
         );
 
-        $request1 = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("param=1"));
-        $request2 = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("param=2"));
-        $request3 = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("param=3"));
+        $request1 = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("param=1"));
+        $request2 = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("param=2"));
+        $request3 = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("param=3"));
 
         $multi
             ->addRequest($request1)

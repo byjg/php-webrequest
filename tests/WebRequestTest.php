@@ -7,8 +7,11 @@ use PHPUnit\Framework\TestCase;
 class WebRequestTest extends TestCase
 {
 
-    const SERVER_TEST = 'http://localhost:8080/rest.php';
-    const SOAP_TEST = 'http://localhost:8080/soap.php';
+    protected $BASE_URL_TEST;
+
+    protected $SERVER_TEST;
+    protected $REDIRECT_TEST;
+    protected $SOAP_TEST;
 
     /**
      * @var WebRequest
@@ -22,7 +25,16 @@ class WebRequestTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->object = new WebRequest(self::SERVER_TEST);
+        $host = empty(getenv('HTTP_TEST_HOST')) ?  "localhost" : getenv('HTTP_TEST_HOST');
+        $port = empty(getenv('HTTP_TEST_PORT')) ?  "8080" : getenv('HTTP_TEST_PORT');
+
+        $this->BASE_URL_TEST = "$host:$port";
+
+        $this->SERVER_TEST = "http://$host:$port/rest.php";
+        $this->REDIRECT_TEST = "http://$host:$port/redirect.php";
+        $this->SOAP_TEST = "http://$host:$port/soap.php";
+        
+        $this->object = new WebRequest($this->SERVER_TEST);
     }
 
 
@@ -131,7 +143,7 @@ class WebRequestTest extends TestCase
 
     public function testGet5()
     {
-        $this->object = new WebRequest(self::SERVER_TEST . '?extraparam=ok');
+        $this->object = new WebRequest($this->SERVER_TEST . '?extraparam=ok');
         $response = $this->object->get(['param1' => 'value1']);
         $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
@@ -209,7 +221,7 @@ class WebRequestTest extends TestCase
 
     public function testPost5()
     {
-        $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
+        $this->object = new WebRequest($this->SERVER_TEST . '?extra=ok');
         $response = $this->object->post(['param' => 'value']);
         $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
@@ -225,7 +237,7 @@ class WebRequestTest extends TestCase
 
     public function testPostPayload()
     {
-        $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
+        $this->object = new WebRequest($this->SERVER_TEST . '?extra=ok');
         $response = $this->object->postPayload('{teste: "ok"}', 'application/json');
         $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
@@ -301,7 +313,7 @@ class WebRequestTest extends TestCase
 
     public function testPut5()
     {
-        $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
+        $this->object = new WebRequest($this->SERVER_TEST . '?extra=ok');
         $response = $this->object->put(['param' => 'value']);
         $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
@@ -317,7 +329,7 @@ class WebRequestTest extends TestCase
 
     public function testPutPayload()
     {
-        $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
+        $this->object = new WebRequest($this->SERVER_TEST . '?extra=ok');
         $response = $this->object->putPayload('{teste: "ok"}', 'application/json');
         $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
@@ -393,7 +405,7 @@ class WebRequestTest extends TestCase
 
     public function testDelete5()
     {
-        $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
+        $this->object = new WebRequest($this->SERVER_TEST . '?extra=ok');
         $response = $this->object->delete(['param' => 'value']);
         $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
@@ -409,7 +421,7 @@ class WebRequestTest extends TestCase
 
     public function testDeletePayload()
     {
-        $this->object = new WebRequest(self::SERVER_TEST . '?extra=ok');
+        $this->object = new WebRequest($this->SERVER_TEST . '?extra=ok');
         $response = $this->object->deletePayload('{teste: "ok"}', 'application/json');
         $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
@@ -425,7 +437,7 @@ class WebRequestTest extends TestCase
 
     public function testPostMultiPartForm()
     {
-        $this->object = new WebRequest(self::SERVER_TEST);
+        $this->object = new WebRequest($this->SERVER_TEST);
 
         $uploadFile = [];
         $uploadFile[] = new MultiPartItem('field1', 'value1');
@@ -441,7 +453,7 @@ class WebRequestTest extends TestCase
         $this->assertEquals(200, $this->object->getLastStatus());
         $result = json_decode($response, true);
 
-        $this->assertContains('multipart/form-data; boundary=boundary-', $result['content-type']);
+        $this->assertStringContainsString('multipart/form-data; boundary=boundary-', $result['content-type']);
         $this->assertEquals('POST', $result['method']);
         $this->assertEquals([], $result['query_string']);
         $this->assertEquals(['field1' => 'value1', 'field3' => 'value3'], $result['post_string']);
@@ -457,7 +469,7 @@ class WebRequestTest extends TestCase
 
     public function testCurlException()
     {
-        $this->expectedException(\ByJG\Util\Exception\CurlException);
+        $this->expectException(\ByJG\Util\Exception\CurlException::class);
         $this->object = new WebRequest('http://laloiuyakkkall.iiiuqq/');
 
         $this->object->get();
@@ -465,7 +477,7 @@ class WebRequestTest extends TestCase
 
     public function testSoap()
     {
-        $this->object = new WebRequest(self::SOAP_TEST);
+        $this->object = new WebRequest($this->SOAP_TEST);
         $resutl = $this->object->soapCall('test', ['param1' => 'teste', 'param2' => 1]);
         $this->assertEquals("teste - 1", $resutl);
         $resutl = $this->object->soapCall('test', ['param1' => 'another call', 'param2' => 2018]);
@@ -474,8 +486,8 @@ class WebRequestTest extends TestCase
 
     public function testSoapFail()
     {
-        $this->expectedException(\SoapFault);
-        $this->object = new WebRequest(self::SERVER_TEST);
+        $this->expectException(\SoapFault::class);
+        $this->object = new WebRequest($this->SERVER_TEST);
         $this->object->soapCall('test', ['param1' => 'teste', 'param2' => 1]);
     }
 }
