@@ -51,7 +51,11 @@ jobs:
       - name: Prepare Test Server
         run: |
           apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community docker
-          docker cp "$PWD/tests/server/**" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html"
+          docker cp "$PWD/tests/server/multirequest.php" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html/multirequest.php"
+          docker cp "$PWD/tests/server/redirect.php" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html/redirect.php"
+          docker cp "$PWD/tests/server/rest.php" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html/rest.php"
+          docker cp "$PWD/tests/server/soap.php" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html/soap.php"
+          docker cp "$PWD/tests/server/soap.wsdl" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html/soap.wsdl"
       - run: composer install
       - run: ./vendor/bin/phpunit
 
