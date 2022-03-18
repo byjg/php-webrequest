@@ -49,4 +49,4 @@ jobs:
       DOC_GITHUB_TOKEN: '${{ secrets.DOC_TOKEN }}'
     steps:
       - uses: actions/checkout@v2
-      - run: curl https://opensource.byjg.com/add-doc.sh | bash /dev/stdin php migration
+      - run: curl https://opensource.byjg.com/add-doc.sh | bash /dev/stdin php webrequest
