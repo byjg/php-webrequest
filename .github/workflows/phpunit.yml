@@ -35,7 +35,7 @@ jobs:
         ports:
           - "8080:80"
         volumes:
-          - /tmp/nginx:/var/www/html
+          - data:/var/www/html
         options: >-
           --health-cmd="echo 'OK'" 
           --health-interval=10s 
@@ -44,7 +44,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: cp -rv tests/server/* /tmp/nginx/
+      - name: Prepare Test Server
+        run: |
+          apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community docker
+          docker ps
+          docker cp tests/server/* $(docker ps | grep nginx | cut -d" " -f1):/var/www/html
       - run: composer install
       - run: ./vendor/bin/phpunit
 
