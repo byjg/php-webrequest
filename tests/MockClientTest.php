@@ -12,9 +12,11 @@ use PHPUnit\Framework\TestCase;
 class MockClientTest extends TestCase
 {
 
-    const SERVER_TEST = 'http://localhost:8080/rest.php';
-    const REDIRECT_TEST = 'http://localhost:8080/redirect.php';
-    const SOAP_TEST = 'http://localhost:8080/soap.php';
+    protected $BASE_URL_TEST;
+
+    protected $SERVER_TEST;
+    protected $REDIRECT_TEST;
+    protected $SOAP_TEST;
 
     /**
      * @var MockClient
@@ -25,6 +27,15 @@ class MockClientTest extends TestCase
     
     public function setUp(): void
     {
+        $host = empty(getenv('HTTP_TEST_HOST')) ?  "localhost" : getenv('HTTP_TEST_HOST');
+        $port = empty(getenv('HTTP_TEST_PORT')) ?  "8080" : getenv('HTTP_TEST_PORT');
+
+        $this->BASE_URL_TEST = "$host:$port";
+
+        $this->SERVER_TEST = "http://$host:$port/rest.php";
+        $this->REDIRECT_TEST = "http://$host:$port/redirect.php";
+        $this->SOAP_TEST = "http://$host:$port/soap.php";
+        
         $this->object = new MockClient();
         
         $this->curlOptions = [
@@ -37,14 +48,14 @@ class MockClientTest extends TestCase
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_SSL_VERIFYPEER => 1,
             CURLOPT_HTTPHEADER => [
-                'Host: localhost:8080'
+                "Host: $this->BASE_URL_TEST"
             ],
         ];
     }
 
     public function testGetLastStatus()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
         $response = $this->object->sendRequest($request);
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -53,7 +64,7 @@ class MockClientTest extends TestCase
 
     public function testWithCredentials()
     {
-        $uri = Uri::getInstanceFromString(self::SERVER_TEST)
+        $uri = Uri::getInstanceFromString($this->SERVER_TEST)
             ->withUserInfo("user", "pass");
 
         $request = Request::getInstance($uri);
@@ -69,7 +80,7 @@ class MockClientTest extends TestCase
 
     public function testReferer()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("referer", "http://example.com/abc");
 
         $response = $this->object->sendRequest($request);
@@ -84,13 +95,13 @@ class MockClientTest extends TestCase
     {
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
 
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("X-Custom-Header", "Defined");
 
         $response = $this->object->sendRequest($request);
 
         $curlOptions = $this->curlOptions + [
-            CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'X-Custom-Header: Defined'],
+            CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'X-Custom-Header: Defined'],
         ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
@@ -99,7 +110,7 @@ class MockClientTest extends TestCase
     {
         unset($this->curlOptions[CURLOPT_FOLLOWLOCATION]);
 
-        $request = Request::getInstance(Uri::getInstanceFromString(self::REDIRECT_TEST));
+        $request = Request::getInstance(Uri::getInstanceFromString($this->REDIRECT_TEST));
         $this->object = MockClient::getInstance()
             ->withNoFollowRedirect();
         $response = $this->object->sendRequest($request);
@@ -122,7 +133,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_SSL_VERIFYHOST]);
         unset($this->curlOptions[CURLOPT_SSL_VERIFYPEER]);
 
-        $request = Request::getInstance(Uri::getInstanceFromString(self::REDIRECT_TEST));
+        $request = Request::getInstance(Uri::getInstanceFromString($this->REDIRECT_TEST));
         $this->object = MockClient::getInstance()
             ->withNoSSLVerification();
         $response = $this->object->sendRequest($request);
@@ -143,7 +154,7 @@ class MockClientTest extends TestCase
 
     public function testGet1()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("GET");
         $response = $this->object->sendRequest($request);
 
@@ -153,7 +164,7 @@ class MockClientTest extends TestCase
 
     public function testPost1()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("POST");
         
 
@@ -167,7 +178,7 @@ class MockClientTest extends TestCase
 
     public function testPost2()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
         ]);
@@ -177,7 +188,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
             CURLOPT_POST => true,
-            CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: application/x-www-form-urlencoded'],
+            CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: application/x-www-form-urlencoded'],
             CURLOPT_POSTFIELDS => "param1=value1&param2=value2"
         ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
@@ -185,14 +196,14 @@ class MockClientTest extends TestCase
 
     public function testPost4()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string=value1&just_string2=value2');
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2');
 
         $response = $this->object->sendRequest($request);
 
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
             CURLOPT_POST => true,
-            CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: application/x-www-form-urlencoded'],
+            CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: application/x-www-form-urlencoded'],
             CURLOPT_POSTFIELDS => "just_string=value1&just_string2=value2"
         ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
@@ -200,7 +211,7 @@ class MockClientTest extends TestCase
 
     public function testPost5()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ]);
 
@@ -209,7 +220,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
             CURLOPT_POST => true,
-            CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: application/x-www-form-urlencoded'],
+            CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: application/x-www-form-urlencoded'],
             CURLOPT_POSTFIELDS => "param=value"
         ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
@@ -217,7 +228,7 @@ class MockClientTest extends TestCase
 
     public function testPostPayload()
     {
-        $request = RequestJson::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"),
+        $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
             "POST",
             '{teste: "ok"}'
         );
@@ -227,7 +238,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
             CURLOPT_POST => true,
-            CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: application/json'],
+            CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: application/json'],
             CURLOPT_POSTFIELDS => '{teste: "ok"}'
         ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
@@ -236,7 +247,7 @@ class MockClientTest extends TestCase
 
     public function testPut1()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("PUT");
 
 
@@ -250,7 +261,7 @@ class MockClientTest extends TestCase
 
     public function testPut2()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
         ])->withMethod("PUT");
@@ -260,7 +271,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
                 CURLOPT_CUSTOMREQUEST => "PUT",
-                CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: application/x-www-form-urlencoded'],
+                CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: application/x-www-form-urlencoded'],
                 CURLOPT_POSTFIELDS => "param1=value1&param2=value2"
             ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
@@ -268,7 +279,7 @@ class MockClientTest extends TestCase
 
     public function testPut4()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string=value1&just_string2=value2')
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("PUT");
 
         $response = $this->object->sendRequest($request);
@@ -276,7 +287,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
                 CURLOPT_CUSTOMREQUEST => "PUT",
-                CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: application/x-www-form-urlencoded'],
+                CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: application/x-www-form-urlencoded'],
                 CURLOPT_POSTFIELDS => "just_string=value1&just_string2=value2"
             ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
@@ -284,7 +295,7 @@ class MockClientTest extends TestCase
 
     public function testPut5()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ])->withMethod("PUT");
 
@@ -293,7 +304,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
                 CURLOPT_CUSTOMREQUEST => "PUT",
-                CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: application/x-www-form-urlencoded'],
+                CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: application/x-www-form-urlencoded'],
                 CURLOPT_POSTFIELDS => "param=value"
             ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
@@ -301,7 +312,7 @@ class MockClientTest extends TestCase
 
     public function testPutPayload()
     {
-        $request = RequestJson::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"),
+        $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
             "PUT",
             '{teste: "ok"}'
         )->withMethod("PUT");
@@ -311,7 +322,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
                 CURLOPT_CUSTOMREQUEST => "PUT",
-                CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: application/json'],
+                CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: application/json'],
                 CURLOPT_POSTFIELDS => '{teste: "ok"}'
             ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
@@ -322,7 +333,7 @@ class MockClientTest extends TestCase
 
     public function testDelete1()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("DELETE");
 
 
@@ -336,7 +347,7 @@ class MockClientTest extends TestCase
 
     public function testDelete2()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
         ])->withMethod("DELETE");
@@ -346,7 +357,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
                 CURLOPT_CUSTOMREQUEST => "DELETE",
-                CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: application/x-www-form-urlencoded'],
+                CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: application/x-www-form-urlencoded'],
                 CURLOPT_POSTFIELDS => "param1=value1&param2=value2"
             ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
@@ -354,7 +365,7 @@ class MockClientTest extends TestCase
 
     public function testDelete4()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string=value1&just_string2=value2')
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("DELETE");
 
         $response = $this->object->sendRequest($request);
@@ -362,7 +373,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
                 CURLOPT_CUSTOMREQUEST => "DELETE",
-                CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: application/x-www-form-urlencoded'],
+                CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: application/x-www-form-urlencoded'],
                 CURLOPT_POSTFIELDS => "just_string=value1&just_string2=value2"
             ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
@@ -370,7 +381,7 @@ class MockClientTest extends TestCase
 
     public function testDelete5()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ])->withMethod("DELETE");
 
@@ -379,7 +390,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
                 CURLOPT_CUSTOMREQUEST => "DELETE",
-                CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: application/x-www-form-urlencoded'],
+                CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: application/x-www-form-urlencoded'],
                 CURLOPT_POSTFIELDS => "param=value"
             ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
@@ -387,7 +398,7 @@ class MockClientTest extends TestCase
 
     public function testDeletePayload()
     {
-        $request = RequestJson::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"),
+        $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
             "DELETE",
             '{teste: "ok"}'
         )->withMethod("DELETE");
@@ -397,7 +408,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
                 CURLOPT_CUSTOMREQUEST => "DELETE",
-                CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: application/json'],
+                CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: application/json'],
                 CURLOPT_POSTFIELDS => '{teste: "ok"}'
             ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
@@ -416,7 +427,7 @@ class MockClientTest extends TestCase
         );
         $uploadFile[] = new MultiPartItem('field3', 'value3');
 
-        $request = RequestMultiPart::build(Uri::getInstanceFromString(self::SERVER_TEST),
+        $request = RequestMultiPart::build(Uri::getInstanceFromString($this->SERVER_TEST),
             "POST",
             $uploadFile,
             "12345"
@@ -428,7 +439,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
         $curlOptions = $this->curlOptions + [
                 CURLOPT_POST => true,
-                CURLOPT_HTTPHEADER => ['Host: localhost:8080', 'Content-Type: multipart/form-data; boundary=12345'],
+                CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: multipart/form-data; boundary=12345'],
                 CURLOPT_POSTFIELDS => "--12345\n".
                     "Content-Disposition: form-data; name=\"field1\";\n".
                     "\n".
@@ -449,7 +460,7 @@ class MockClientTest extends TestCase
 
     public function testWithCurlOption()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
 
         $this->object->withCurlOption(CURLOPT_NOBODY, 1);
 
@@ -466,7 +477,7 @@ class MockClientTest extends TestCase
         $expectedResponse = \ByJG\Util\Psr7\Response::getInstance(404)
             ->withBody(new \ByJG\Util\Psr7\MemoryStream("<h1>Not Found</h1>"));
 
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
 
         $this->object = new MockClient($expectedResponse);
 

@@ -15,9 +15,11 @@ use PHPUnit\Framework\TestCase;
 class HttpClientTest extends TestCase
 {
 
-    const SERVER_TEST = 'http://localhost:8080/rest.php';
-    const REDIRECT_TEST = 'http://localhost:8080/redirect.php';
-    const SOAP_TEST = 'http://localhost:8080/soap.php';
+    protected $BASE_URL_TEST;
+
+    protected $SERVER_TEST;
+    protected $REDIRECT_TEST;
+    protected $SOAP_TEST;
 
     /**
      * @var HttpClient
@@ -32,6 +34,15 @@ class HttpClientTest extends TestCase
     protected function setUp(): void
     {
         $this->object = HttpClient::getInstance();
+
+        $host = empty(getenv('HTTP_TEST_HOST')) ?  "localhost" : getenv('HTTP_TEST_HOST');
+        $port = empty(getenv('HTTP_TEST_PORT')) ?  "8080" : getenv('HTTP_TEST_PORT');
+
+        $this->BASE_URL_TEST = "$host:$port";
+
+        $this->SERVER_TEST = "http://$host:$port/rest.php";
+        $this->REDIRECT_TEST = "http://$host:$port/redirect.php";
+        $this->SOAP_TEST = "http://$host:$port/soap.php";
     }
 
     /**
@@ -45,7 +56,7 @@ class HttpClientTest extends TestCase
 
     public function testGetLastStatus()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
         $response = $this->object->sendRequest($request);
         $body = ParseBody::parse($response);
 
@@ -56,7 +67,7 @@ class HttpClientTest extends TestCase
 
     public function testWithCredentials()
     {
-        $uri = Uri::getInstanceFromString(self::SERVER_TEST)
+        $uri = Uri::getInstanceFromString($this->SERVER_TEST)
             ->withUserInfo("user", "pass");
 
         $request = Request::getInstance($uri);
@@ -69,7 +80,7 @@ class HttpClientTest extends TestCase
 
     public function testReferer()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("referer", "http://example.com/abc");
 
         $response = $this->object->sendRequest($request);
@@ -79,7 +90,7 @@ class HttpClientTest extends TestCase
 
     public function testCustomHeader()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("X-Custom-Header", "Defined");
 
         $response = $this->object->sendRequest($request);
@@ -89,7 +100,7 @@ class HttpClientTest extends TestCase
 
     public function testisFollowingLocation()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::REDIRECT_TEST));
+        $request = Request::getInstance(Uri::getInstanceFromString($this->REDIRECT_TEST));
         $this->object = HttpClient::getInstance()
             ->withNoFollowRedirect();
         $response = $this->object->sendRequest($request);
@@ -107,9 +118,9 @@ class HttpClientTest extends TestCase
      */
     public function testGet()
     {
-        $this->expectException(CurlException::class);
-        $this->expectExceptionMessage('Cannot set body with method GET');
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $this->expectException(\ByJG\Util\Exception\CurlException::class);
+        $this->expectExceptionMessage("Cannot set body with method GET");
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withBody(new MemoryStream("A"));
 
         $this->object->sendRequest($request);
@@ -117,7 +128,7 @@ class HttpClientTest extends TestCase
 
     public function testGet1()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("GET");
         $response = $this->object->sendRequest($request);
 
@@ -135,7 +146,7 @@ class HttpClientTest extends TestCase
 
     public function testGet2()
     {
-        $uri = Uri::getInstanceFromString(self::SERVER_TEST)
+        $uri = Uri::getInstanceFromString($this->SERVER_TEST)
             ->withQuery(http_build_query(['param1' => 'value1', 'param2' => 'value2']));
 
         $request = Request::getInstance($uri);
@@ -156,7 +167,7 @@ class HttpClientTest extends TestCase
 
     public function testGet3()
     {
-        $uri = Uri::getInstanceFromString(self::SERVER_TEST)
+        $uri = Uri::getInstanceFromString($this->SERVER_TEST)
             ->withQuery("just string");
 
         $request = Request::getInstance($uri);
@@ -177,7 +188,7 @@ class HttpClientTest extends TestCase
 
     public function testGet4()
     {
-        $uri = Uri::getInstanceFromString(self::SERVER_TEST)
+        $uri = Uri::getInstanceFromString($this->SERVER_TEST)
             ->withQuery('just_string=value1&just_string2=value2');
 
         $request = Request::getInstance($uri);
@@ -198,7 +209,7 @@ class HttpClientTest extends TestCase
 
     public function testPost1()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("POST");
         
 
@@ -218,7 +229,7 @@ class HttpClientTest extends TestCase
 
     public function testPost2()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
         ]);
@@ -240,7 +251,7 @@ class HttpClientTest extends TestCase
 
     public function testPost3()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string');
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string');
         
 
         $response = $this->object->sendRequest($request);
@@ -261,7 +272,7 @@ class HttpClientTest extends TestCase
 
     public function testPost4()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string=value1&just_string2=value2');
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2');
         
 
         $response = $this->object->sendRequest($request);
@@ -280,7 +291,7 @@ class HttpClientTest extends TestCase
 
     public function testPost5()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ]);
         
@@ -301,7 +312,7 @@ class HttpClientTest extends TestCase
 
     public function testPostPayload()
     {
-        $request = RequestJson::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"),
+        $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
             "POST",
             '{teste: "ok"}'
         );
@@ -323,7 +334,7 @@ class HttpClientTest extends TestCase
 
     public function testPut1()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("content-type",  'application/x-www-form-urlencoded')
             ->withMethod("PUT");
         
@@ -344,7 +355,7 @@ class HttpClientTest extends TestCase
 
     public function testPut2()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
         ])->withMethod("PUT");
@@ -366,7 +377,7 @@ class HttpClientTest extends TestCase
 
     public function testPut3()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string')
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string')
             ->withMethod("PUT");
         
 
@@ -386,7 +397,7 @@ class HttpClientTest extends TestCase
 
     public function testPut4()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string=value1&just_string2=value2')
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("PUT");
         
 
@@ -406,7 +417,7 @@ class HttpClientTest extends TestCase
 
     public function testPut5()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ])->withMethod("PUT");
         
@@ -427,7 +438,7 @@ class HttpClientTest extends TestCase
 
     public function testPutPayload()
     {
-        $request = RequestJson::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"),
+        $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
             "PUT",
             '{teste: "ok"}'
         );
@@ -450,7 +461,7 @@ class HttpClientTest extends TestCase
 
     public function testDelete1()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("content-type",  'application/x-www-form-urlencoded')
             ->withMethod("DELETE");
         
@@ -471,7 +482,7 @@ class HttpClientTest extends TestCase
 
     public function testDelete2()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
         ])->withMethod("DELETE");
@@ -493,7 +504,7 @@ class HttpClientTest extends TestCase
 
     public function testDelete3()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string')
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string')
             ->withMethod("DELETE");
         
 
@@ -513,7 +524,7 @@ class HttpClientTest extends TestCase
 
     public function testDelete4()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST), 'just_string=value1&just_string2=value2')
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("DELETE");
         
 
@@ -533,7 +544,7 @@ class HttpClientTest extends TestCase
 
     public function testDelete5()
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ])->withMethod("DELETE");
         
@@ -554,7 +565,7 @@ class HttpClientTest extends TestCase
 
     public function testDeletePayload()
     {
-        $request = RequestJson::build(Uri::getInstanceFromString(self::SERVER_TEST)->withQuery("extra=ok"),
+        $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
             "DELETE",
             '{teste: "ok"}'
         );
@@ -586,7 +597,7 @@ class HttpClientTest extends TestCase
         );
         $uploadFile[] = new MultiPartItem('field3', 'value3');
 
-        $request = RequestMultiPart::build(Uri::getInstanceFromString(self::SERVER_TEST),
+        $request = RequestMultiPart::build(Uri::getInstanceFromString($this->SERVER_TEST),
             "POST",
             $uploadFile
         );
@@ -608,12 +619,12 @@ class HttpClientTest extends TestCase
             'error' => 0,
             'size' => 17,
             'content' => "{\"key\": \"value2\"}"
-        ]], $result['files']);
+        ] + (PHP_VERSION_ID >= 80100 ? ["full_path" => "filename.json"] :[])], $result['files']);
     }
 
     public function testWithCurlOption()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST));
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
 
         $this->object->withCurlOption(CURLOPT_NOBODY, 1);
 
@@ -627,7 +638,7 @@ class HttpClientTest extends TestCase
 
     public function testHead1()
     {
-        $request = Request::getInstance(Uri::getInstanceFromString(self::SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader( "Connection", "Keep-Alive")
             ->withMethod("HEAD");
 

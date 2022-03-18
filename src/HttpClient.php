@@ -74,14 +74,22 @@ class HttpClient
 
     public function withCurlOption(int $key, $value): HttpClient
     {
-        $this->defaultCurlOptions[$key] = $value;
+        if (!is_int($key)) {
+            throw new InvalidArgumentException('It is not a CURL_OPT argument');
+        }
+
+        if (!is_null($value)) {
+            $this->defaultCurlOptions[$key] = $value;
+        } else {
+            unset($this->defaultCurlOptions[$key]);
+        }
+
         return $this;
     }
 
     public function withoutCurlOption(int $key): HttpClient
     {
-        unset($this->defaultCurlOptions[$key]);
-        return $this;
+        return $this->withCurlOption($key, null);
     }
 
 
