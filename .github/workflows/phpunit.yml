@@ -49,8 +49,8 @@ jobs:
           apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community docker
           docker ps
           echo docker cp "tests/server/*" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html"
-          find ${{ github.workspace }} -type f -print
-          docker cp "${{ github.workspace }}/tests/server/*" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html"
+          find $PWD -type f -print
+          docker cp "$PWD/tests/server/*" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html"
       - run: composer install
       - run: ./vendor/bin/phpunit
 
