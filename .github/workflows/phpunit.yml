@@ -44,7 +44,7 @@ jobs:
 
     env:
       HTTP_TEST_HOST: "http_test_server"
-      HTTP_TEST_PORT: "8080"
+      HTTP_TEST_PORT: "80"
 
     steps:
       - uses: actions/checkout@v2
