@@ -464,7 +464,7 @@ class WebRequestTest extends TestCase
             'error' => 0,
             'size' => 17,
             'content' => "{\"key\": \"value2\"}"
-        ]], $result['files']);
+        ] + (PHP_VERSION_ID >= 80100 ? ["full_path" => "filename.json"] :[])], $result['files']);
     }
 
     public function testCurlException()
