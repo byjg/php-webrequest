@@ -283,11 +283,12 @@ class WebRequest
      */
     protected function defaultCurlOptions()
     {
+        $curl_version = curl_version();
         $this->curlOptions[CURLOPT_CONNECTTIMEOUT] = 30;
         $this->curlOptions[CURLOPT_TIMEOUT] = 30;
         $this->curlOptions[CURLOPT_HEADER] = true;
         $this->curlOptions[CURLOPT_RETURNTRANSFER] = true;
-        $this->curlOptions[CURLOPT_USERAGENT] = "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)";
+        $this->curlOptions[CURLOPT_USERAGENT] = "WebRequest/2.0.4 curl/" . $curl_version["version"] . " PHP/" . phpversion();
         $this->curlOptions[CURLOPT_FOLLOWLOCATION] = true;
         $this->curlOptions[CURLOPT_SSL_VERIFYHOST] = false;
         $this->curlOptions[CURLOPT_SSL_VERIFYPEER] = false;
