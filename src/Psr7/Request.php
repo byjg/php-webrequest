@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ByJG\Util\Psr7;
 
 use Psr\Http\Message\RequestInterface;
@@ -51,7 +50,7 @@ class Request extends Message implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function withRequestTarget($requestTarget): Request
+    public function withRequestTarget(string $requestTarget): RequestInterface
     {
         $clone = clone $this;
         $parts = explode("?", $requestTarget);
@@ -76,7 +75,7 @@ class Request extends Message implements RequestInterface
      * @inheritDoc
      * @throws MessageException
      */
-    public function withMethod($method): Request
+    public function withMethod(string $method): RequestInterface
     {
         $method = strtoupper($method);
 
@@ -101,7 +100,7 @@ class Request extends Message implements RequestInterface
      * @inheritDoc
      * @throws MessageException
      */
-    public function withUri(UriInterface $uri, $preserveHost = false): Request
+    public function withUri(UriInterface $uri, bool $preserveHost = false): RequestInterface
     {
         $clone = clone $this;
         $clone->setUri($uri, $preserveHost);

@@ -49,7 +49,7 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
-    public function hasHeader($name): bool
+    public function hasHeader(string $name): bool
     {
         return (isset($this->headers[$this->normalize($name)]));
     }
@@ -57,7 +57,7 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
-    public function getHeader($name): array
+    public function getHeader(string $name): array
     {
         if ($this->hasHeader($name)) {
             return $this->headers[$this->normalize($name)];
@@ -78,7 +78,7 @@ class Message implements MessageInterface
      * @inheritDoc
      * @throws MessageException
      */
-    public function withHeader($name, $value): MessageInterface
+    public function withHeader(string $name, $value): MessageInterface
     {
         $clone = clone $this;
         $clone->setHeader($name, $value, true);
@@ -89,7 +89,7 @@ class Message implements MessageInterface
      * @inheritDoc
      * @throws MessageException
      */
-    public function withAddedHeader($name, $value): MessageInterface
+    public function withAddedHeader(string $name, $value): MessageInterface
     {
         $clone = clone $this;
         $clone->setHeader($name, $value, false);
@@ -120,7 +120,7 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
-    public function withoutHeader($name): MessageInterface
+    public function withoutHeader(string $name): MessageInterface
     {
         $clone = clone $this;
         if ($clone->hasHeader($name)) {
@@ -132,9 +132,11 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
-    public function getBody(): ?StreamInterface
+    public function getBody(): StreamInterface
     {
-        if (!is_null($this->body)) {
+        if (is_null($this->body)) {
+            $this->body = new MemoryStream();
+        } else {
             $this->body->rewind();
         }
         return $this->body;

@@ -125,7 +125,7 @@ class Response extends Message implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function withStatus($code, $reasonPhrase = ''): Response
+    public function withStatus(int $code, string $reasonPhrase = ''): ResponseInterface
     {
         $clone = clone $this;
         $clone->setStatus($code, $reasonPhrase);

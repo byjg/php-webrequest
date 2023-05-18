@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ByJG\Util\Psr7;
 
 
@@ -128,7 +127,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @inheritDoc
      * @throws RuntimeException
      */
-    public function seek($offset, $whence = SEEK_SET): void
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
         if (!$this->isSeekable()) {
             throw new RuntimeException("Stream is not seekable");
@@ -169,7 +168,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @inheritDoc
      * @throws RuntimeException
      */
-    public function write($string): int
+    public function write(string $string): int
     {
         if (!$this->isWritable()) {
             throw new RuntimeException("Stream is not writable");
@@ -207,12 +206,12 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     /**
      * @inheritDoc
      */
-    public function read($length): string
+    public function read(int $length): string
     {
         if ($this->isDetached()) {
             throw new RuntimeException("Stream is detached");
         }
-        if (feof($this->resource)) {
+        if (feof($this->resource) || $length === 0) {
             return "";
         }
         return fread($this->resource, $length);

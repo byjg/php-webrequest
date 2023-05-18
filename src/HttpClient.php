@@ -4,6 +4,7 @@ namespace ByJG\Util;
 
 use ByJG\Util\Exception\CurlException;
 use ByJG\Util\Psr7\Response;
+use CurlHandle;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -115,7 +116,7 @@ class HttpClient
 
     /**
      * @param RequestInterface $request
-     * @return resource
+     * @return resource|CurlHandle
      * @throws CurlException
      */
     public function createCurlHandle(RequestInterface $request)
@@ -138,7 +139,7 @@ class HttpClient
     /**
      * Request the method using the CURLOPT defined previously;
      *
-     * @return resource
+     * @return resource|CurlHandle
      */
     protected function curlInit()
     {
@@ -181,10 +182,15 @@ class HttpClient
     {
         $stream = $this->request->getBody();
         if (!is_null($stream)) {
-            if (!$this->getCurl(CURLOPT_POST) && !$this->getCurl(CURLOPT_CUSTOMREQUEST)) {
-                throw new CurlException("Cannot set body with method GET");
+            $contents = $stream->getContents();
+            $isGet = !$this->getCurl(CURLOPT_POST) && !$this->getCurl(CURLOPT_CUSTOMREQUEST);
+            if (!empty($contents)) {
+                if ($isGet) {
+                    throw new CurlException("Cannot set body with method GET");
+                } else {
+                    $this->setCurl(CURLOPT_POSTFIELDS, $contents);
+                }
             }
-            $this->setCurl(CURLOPT_POSTFIELDS, $stream->getContents());
         }
     }
 

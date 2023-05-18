@@ -6,11 +6,12 @@
 [![GitHub license](https://img.shields.io/github/license/byjg/webrequest.svg)](https://opensource.byjg.com/opensource/licensing.html)
 [![GitHub release](https://img.shields.io/github/release/byjg/webrequest.svg)](https://github.com/byjg/webrequest/releases/)
 
-A lightweight PSR-7 implementation and and highly customized CURL wrapper for making RESt calls. 
+A lightweight PSR-7 implementation and and highly customized CURL wrapper for making RESt calls.
 
 ## Main Features
 
 This class implements:
+
 * PSR-7 objects;
 * HttpClient customizable with partial implementation PSR-18
 * Helper to create Request instances with the most common use cases;
@@ -21,13 +22,14 @@ This class implements:
 Since the implementation follow the PSR7 implementation there is no much explanation about the usage.
 
 The key elements are:
+
 * URI - Will define the URI with parameters, path, host, schema, etc
 * Request - Will set the request headers and method;
-* Response - Will receive the response header, body and status code. 
+* Response - Will receive the response header, body and status code.
 
-More information about the PSR-7 here: https://www.php-fig.org/psr/psr-7/
+More information about the PSR-7 here: <https://www.php-fig.org/psr/psr-7/>
 
-The implementation to send the request object is defined by the class `HttpClient`. 
+The implementation to send the request object is defined by the class `HttpClient`.
 This class follow partially the PSR-18 implementation.
 So, once you have a Request instance defined just need to call `HttpClient::sendRequest($request);`
 
@@ -53,7 +55,7 @@ $response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 
 ## Helper Classes
 
-The WebRequest package has Helper classes to make it easy to create Request instances for some use cases. 
+The WebRequest package has Helper classes to make it easy to create Request instances for some use cases.
 
 ### Passing a string payload (JSON)
 
@@ -115,18 +117,17 @@ The customizations options are:
 <?php
 
 $client = \ByJG\Util\HttpClient::getInstance()
-    ->withNoFollowRedirect()         // HttpClient will not follow redirects (status codes 301 and 302). Default is follow 
+    ->withNoFollowRedirect()         // HttpClient will not follow redirects (status codes 301 and 302). Default is follow
     ->withNoSSLVerification()        // HttpClient will not validate the SSL certificate. Default is validate.
-    ->withProxy($uri)                // Define a http Proxy based on the URI. 
+    ->withProxy($uri)                // Define a http Proxy based on the URI.
     ->withCurlOption($key, $value)   // Set an arbitrary CURL option (use with caution)
 ;
 
 ```
 
-
 ## HttpClientParallel
 
-You can use the HttpClient to do several differents requests in parallel. 
+You can use the HttpClient to do several differents requests in parallel.
 
 To use this funcionallity you need:
 
@@ -134,7 +135,7 @@ To use this funcionallity you need:
 2. Add the RequestInterface instance
 3. Execute
 
-The results will be processed as soon is ready. 
+The results will be processed as soon is ready.
 
 Below a basic example:
 
@@ -169,18 +170,19 @@ $multi
     ->addRequest($request3);
 
 // Start execute and wait to finish
-// The results will be get from the closure defined above. 
+// The results will be get from the closure defined above.
 $multi->execute();
 ```
 
 ## Mocking Http Client
 
 The class `MockClient` has the same methods that HttpClient except by:
-- Do not send any request to the server;
-- You can add the expected Response object;
-- You can collect information from the CURL after submit the request. 
 
-### Setting the expected response object:
+* Do not send any request to the server;
+* You can add the expected Response object;
+* You can collect information from the CURL after submit the request.
+
+### Setting the expected response object
 
 ```php
 <?php
@@ -192,7 +194,7 @@ $response = $mock->sendRequest(new Request("http://example.com"));
 assertEquals($expectedResponse, $response);
 ```
 
-### Debuging the CURL options:
+### Debuging the CURL options
 
 ```php
 <?php
@@ -221,31 +223,31 @@ assertEquals($expectedCurlOptions, $mock->getCurlConfiguration());
 ### Other methods in the MockClient
 
 The methods below are available *after* the execution of the method `sendRequest()`:
+
 * getCurlConfiguration()
 * getRequestedObject()
 * getExpectedResponse()
 
-
 ## Install
 
 ```bash
-composer install "byjg/webrequest=2.0.*"
+composer install "byjg/webrequest=5.0.*"
 ```
 
 ## Running Tests
 
 ### Starting the server
 
-We provide a docker-compose to enable start the test server easily. 
+We provide a docker-compose to enable start the test server easily.
 
 ```bash
-docker-compose up -d 
+docker-compose up -d
 ```
 
 ### Running the integration tests
 
 ```bash
-phpunit
+vendor/bin/phpunit
 ```
 
 ### Stopping the server
