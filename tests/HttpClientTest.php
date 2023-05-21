@@ -1,5 +1,6 @@
 <?php
 
+use ByJG\Util\Exception\CurlException;
 use ByJG\Util\Helper\RequestFormUrlEncoded;
 use ByJG\Util\Helper\RequestJson;
 use ByJG\Util\Helper\RequestMultiPart;
@@ -15,7 +16,7 @@ class HttpClientTest extends TestCase
 {
 
     protected $BASE_URL_TEST;
-    
+
     protected $SERVER_TEST;
     protected $REDIRECT_TEST;
     protected $SOAP_TEST;
@@ -112,7 +113,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws \ByJG\Util\Exception\CurlException
+     * @throws CurlException
      * @throws \ByJG\Util\Psr7\MessageException
      */
     public function testGet()

@@ -2,6 +2,7 @@
 
 use ByJG\Util\Psr7\Message;
 use ByJG\Util\Psr7\MemoryStream;
+use ByJG\Util\Psr7\MessageException;
 use PHPUnit\Framework\TestCase;
 
 class MessageTest extends TestCase
@@ -40,7 +41,7 @@ class MessageTest extends TestCase
      * @dataProvider headerDataProvider
      * @param $header
      * @param $expected
-     * @throws \ByJG\Util\Psr7\MessageException
+     * @throws MessageException
      */
     public function testWithHeader($header, $expected)
     {
@@ -52,7 +53,7 @@ class MessageTest extends TestCase
      * @dataProvider headerDataProvider
      * @param $header
      * @param $expected
-     * @throws \ByJG\Util\Psr7\MessageException
+     * @throws MessageException
      */
     public function testHasHeader($header, $expected)
     {
@@ -65,7 +66,7 @@ class MessageTest extends TestCase
      * @dataProvider headerDataProvider
      * @param $header
      * @param $expected
-     * @throws \ByJG\Util\Psr7\MessageException
+     * @throws MessageException
      */
     public function testGetHeader($header, $expected)
     {
@@ -83,7 +84,7 @@ class MessageTest extends TestCase
      * @dataProvider headerDataProvider
      * @param $header
      * @param $expected
-     * @throws \ByJG\Util\Psr7\MessageException
+     * @throws MessageException
      */
     public function testGetHeaderLine($header, $expected)
     {
@@ -96,7 +97,7 @@ class MessageTest extends TestCase
      * @dataProvider headerDataProvider
      * @param $header
      * @param $expected
-     * @throws \ByJG\Util\Psr7\MessageException
+     * @throws MessageException
      */
     public function testWithoutHeader($header, $expected)
     {
@@ -115,7 +116,7 @@ class MessageTest extends TestCase
      * @dataProvider headerDataProvider
      * @param $header
      * @param $expected
-     * @throws \ByJG\Util\Psr7\MessageException
+     * @throws MessageException
      */
     public function testWithAddedHeader($header, $expected)
     {
@@ -144,6 +145,9 @@ class MessageTest extends TestCase
         $this->assertEquals("1.1", $message->getProtocolVersion());
     }
 
+    /**
+     * @throws MessageException
+     */
     public function testWithProtocolVersionInvalid()
     {
         $this->expectException(\ByJG\Util\Psr7\MessageException::class);

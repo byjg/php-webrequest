@@ -16,7 +16,7 @@ class HttpClientParallelTest extends TestCase
 
         $this->SERVER_TEST = "http://$host:$port/multirequest.php";
     }
-    
+
     public function testMultiRequest()
     {
         $httpClient = \ByJG\Util\HttpClient::getInstance();
