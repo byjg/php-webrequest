@@ -263,11 +263,12 @@ class HttpClient
      */
     protected function defaultCurlOptions(): void
     {
+        $curl_version = curl_version();
         $this->setCurl(CURLOPT_CONNECTTIMEOUT, 30);
         $this->setCurl(CURLOPT_TIMEOUT, 30);
         $this->setCurl(CURLOPT_HEADER, true);
         $this->setCurl(CURLOPT_RETURNTRANSFER, true);
-        $this->setCurl(CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
+        $this->setCurl(CURLOPT_USERAGENT, "WebRequest/2.0.4 curl/" . $curl_version["version"] . " PHP/" . phpversion());
         $this->setCurl(CURLOPT_FOLLOWLOCATION, true);
         $this->setCurl(CURLOPT_SSL_VERIFYHOST, 2);
         $this->setCurl(CURLOPT_SSL_VERIFYPEER, 1);

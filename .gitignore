@@ -4,4 +4,4 @@ nbproject
 *~
 composer.lock
 vendor
-/.phpunit.result.cache
+.phpunit.result.cache
