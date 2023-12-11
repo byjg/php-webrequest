@@ -2,9 +2,9 @@
 
 namespace ByJG\Util\Helper;
 
-use ByJG\Util\Psr7\MessageException;
-use ByJG\Util\Psr7\Request;
+use ByJG\Util\Exception\MessageException;
 use ByJG\Util\Psr7\MemoryStream;
+use ByJG\Util\Psr7\Request;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;

@@ -11,7 +11,8 @@ A lightweight PSR-7 implementation and and highly customized CURL wrapper for ma
 ## Main Features
 
 This class implements:
-* PSR-7 objects;
+* PSR-7 Request and Response;
+* PSR-18 Http Client
 * HttpClient customizable with partial implementation PSR-18
 * Helper to create Request instances with the most common use cases;
 * Wrapper to execute several requests in parallel;

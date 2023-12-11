@@ -3,22 +3,22 @@
 namespace ByJG\Util;
 
 use ByJG\Util\Exception\CurlException;
-use ByJG\Util\Psr7\Response;
+use ByJG\Util\Exception\NetworkException;
+use ByJG\Util\Exception\RequestException;
 use InvalidArgumentException;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
-class HttpClient
+class HttpClient implements ClientInterface
 {
     use ParseCurlTrait;
 
     protected $defaultCurlOptions = [];
     protected $curlOptions = [];
 
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
+    protected RequestInterface $request;
 
     /**
      * @return HttpClient
@@ -95,11 +95,11 @@ class HttpClient
 
     /**
      * @param RequestInterface $request
-     * @return Response
+     * @return ResponseInterface
      * @throws CurlException
-     * @throws Psr7\MessageException
+     * @throws \ByJG\Util\Exception\MessageException
      */
-    public function sendRequest(RequestInterface $request): Response
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $curlHandle = $this->createCurlHandle($request);
 
@@ -107,7 +107,7 @@ class HttpClient
         $error = curl_error($curlHandle);
         if ($result === false) {
             curl_close($curlHandle);
-            throw new CurlException("CURL - " . $error);
+            throw new NetworkException($this->request, "CURL - " . $error);
         }
 
         return $this->parseCurl($result, $curlHandle);
@@ -182,7 +182,7 @@ class HttpClient
         $stream = $this->request->getBody();
         if (!is_null($stream)) {
             if (!$this->getCurl(CURLOPT_POST) && !$this->getCurl(CURLOPT_CUSTOMREQUEST)) {
-                throw new CurlException("Cannot set body with method GET");
+                throw new RequestException($this->request,"Cannot set body with method GET");
             }
             $this->setCurl(CURLOPT_POSTFIELDS, $stream->getContents());
         }

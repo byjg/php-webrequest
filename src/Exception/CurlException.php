@@ -2,7 +2,10 @@
 
 namespace ByJG\Util\Exception;
 
-class CurlException extends \Exception
+use Exception;
+use Psr\Http\Client\ClientExceptionInterface;
+
+class CurlException extends Exception implements ClientExceptionInterface
 {
-    //put your code here
+
 }
