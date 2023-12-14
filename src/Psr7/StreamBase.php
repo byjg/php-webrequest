@@ -212,7 +212,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
         if ($this->isDetached()) {
             throw new RuntimeException("Stream is detached");
         }
-        if (feof($this->resource)) {
+        if (feof($this->resource) || $length == 0) {
             return "";
         }
         return fread($this->resource, $length);
