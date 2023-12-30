@@ -255,5 +255,15 @@ phpunit
 docker-compose down
 ```
 
+## Dependencies
+
+```mermaid
+flowchart TD
+    WebRequest --> psr/http-message
+    WebRequest --> psr/http-client
+    WebRequest --> ext-json
+    WebRequest --> URI
+```
+
 ----
 [Open source ByJG](http://opensource.byjg.com)
