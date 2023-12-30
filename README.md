@@ -259,10 +259,10 @@ docker-compose down
 
 ```mermaid
 flowchart TD
-    WebRequest --> psr/http-message
-    WebRequest --> psr/http-client
-    WebRequest --> ext-json
-    WebRequest --> URI
+    byjg/webrequest --> psr/http-message
+    byjg/webrequest --> psr/http-client
+    byjg/webrequest --> ext-json
+    byjg/webrequest --> byjg/uri
 ```
 
 ----
