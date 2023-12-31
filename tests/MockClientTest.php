@@ -38,12 +38,13 @@ class MockClientTest extends TestCase
         
         $this->object = new MockClient();
         
+        $curl_version = curl_version();
         $this->curlOptions = [
             CURLOPT_CONNECTTIMEOUT => 30,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HEADER => true,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_USERAGENT => "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)",
+            CURLOPT_USERAGENT => "WebRequest/2.0.4 curl/" . $curl_version["version"] . " PHP/" . phpversion(),
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_SSL_VERIFYPEER => 1,
