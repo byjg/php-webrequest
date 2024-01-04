@@ -3,6 +3,7 @@
 namespace ByJG\Util\Helper;
 
 use ByJG\Util\Exception\MessageException;
+use ByJG\Util\Exception\RequestException;
 use ByJG\Util\MultiPartItem;
 use ByJG\Util\Psr7\MemoryStream;
 use ByJG\Util\Psr7\Request;
@@ -16,18 +17,17 @@ class RequestMultiPart extends Request
      * @param UriInterface $uri
      * @param string $method
      * @param MultiPartItem[] $multiPartItem
-     * @param string $boundary
+     * @param null $boundary
      * @return Request|MessageInterface|RequestInterface
      * @throws MessageException
+     * @throws RequestException
      */
     public static function build(UriInterface $uri, $method, $multiPartItem, $boundary = null)
     {
         $request = Request::getInstance($uri)
             ->withMethod($method);
 
-        $request = self::buildMultiPart($multiPartItem, $request, $boundary);
-
-        return $request;
+        return self::buildMultiPart($multiPartItem, $request, $boundary);
     }
 
     /**

@@ -1,7 +1,10 @@
 <?php
 
+namespace Test;
 
+use ByJG\Util\FileNotFoundException;
 use ByJG\Util\MultiPartItem;
+use ByJG\Util\Psr7\MemoryStream;
 use PHPUnit\Framework\TestCase;
 
 class MultiPartItemTest extends TestCase
@@ -9,7 +12,7 @@ class MultiPartItemTest extends TestCase
 
     public function testBuild1()
     {
-        $stream = new \ByJG\Util\Psr7\MemoryStream();
+        $stream = new MemoryStream();
 
         $multiPartItem = new MultiPartItem("fieldname", "Lorem ipsum dolor sit amet");
 
@@ -29,7 +32,7 @@ class MultiPartItemTest extends TestCase
 
     public function testBuild2()
     {
-        $stream = new \ByJG\Util\Psr7\MemoryStream();
+        $stream = new MemoryStream();
 
         $multiPartItem = new MultiPartItem("fieldname", "Lorem ipsum dolor sit amet", "text.txt", "text/html");
 
@@ -50,7 +53,7 @@ class MultiPartItemTest extends TestCase
 
     public function testBuild3()
     {
-        $stream = new \ByJG\Util\Psr7\MemoryStream();
+        $stream = new MemoryStream();
 
         $multiPartItem = new MultiPartItem("fieldname");
         $multiPartItem
@@ -75,7 +78,7 @@ class MultiPartItemTest extends TestCase
 
     public function testBuild4()
     {
-        $stream = new \ByJG\Util\Psr7\MemoryStream();
+        $stream = new MemoryStream();
 
         $multiPartItem = new MultiPartItem("fieldname");
         $multiPartItem
@@ -101,9 +104,12 @@ class MultiPartItemTest extends TestCase
         $this->assertEquals(implode("\n", $expected), $stream->getContents());
     }
 
+    /**
+     * @throws FileNotFoundException
+     */
     public function testBuild5()
     {
-        $stream = new \ByJG\Util\Psr7\MemoryStream();
+        $stream = new MemoryStream();
 
         $multiPartItem = new MultiPartItem("fieldname");
         $multiPartItem

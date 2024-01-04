@@ -51,6 +51,7 @@ class Request extends Message implements RequestInterface
 
     /**
      * @inheritDoc
+     * @throws MessageException
      */
     public function withRequestTarget(string $requestTarget): RequestInterface
     {
@@ -76,6 +77,7 @@ class Request extends Message implements RequestInterface
     /**
      * @inheritDoc
      * @throws MessageException
+     * @throws RequestException
      */
     public function withMethod(string $method): RequestInterface
     {

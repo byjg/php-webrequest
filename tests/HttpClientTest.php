@@ -1,6 +1,11 @@
 <?php
 
+namespace Test;
+
 use ByJG\Util\Exception\CurlException;
+use ByJG\Util\Exception\MessageException;
+use ByJG\Util\Exception\NetworkException;
+use ByJG\Util\Exception\RequestException;
 use ByJG\Util\Helper\RequestFormUrlEncoded;
 use ByJG\Util\Helper\RequestJson;
 use ByJG\Util\Helper\RequestMultiPart;
@@ -54,6 +59,12 @@ class HttpClientTest extends TestCase
         $this->object = null;
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testGetLastStatus()
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
@@ -65,6 +76,12 @@ class HttpClientTest extends TestCase
         $this->assertFalse(isset($body["authinfo"]));
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testWithCredentials()
     {
         $uri = Uri::getInstanceFromString($this->SERVER_TEST)
@@ -78,6 +95,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals("user:pass", $body["authinfo"]);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testReferer()
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
@@ -88,6 +111,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals('http://example.com/abc', $body["referer"]);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testCustomHeader()
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
@@ -98,6 +127,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals('Defined', $body["custom_header"]);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testisFollowingLocation()
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->REDIRECT_TEST));
@@ -114,11 +149,13 @@ class HttpClientTest extends TestCase
 
     /**
      * @throws CurlException
-     * @throws \ByJG\Util\Exception\MessageException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
      */
     public function testGet()
     {
-        $this->expectException(\ByJG\Util\Exception\RequestException::class);
+        $this->expectException(RequestException::class);
         $this->expectExceptionMessage("Cannot set body with method GET");
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withBody(new MemoryStream("A"));
@@ -126,6 +163,12 @@ class HttpClientTest extends TestCase
         $this->object->sendRequest($request);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testGet1()
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
@@ -144,6 +187,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testGet2()
     {
         $uri = Uri::getInstanceFromString($this->SERVER_TEST)
@@ -165,6 +214,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testGet3()
     {
         $uri = Uri::getInstanceFromString($this->SERVER_TEST)
@@ -186,6 +241,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testGet4()
     {
         $uri = Uri::getInstanceFromString($this->SERVER_TEST)
@@ -207,6 +268,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPost1()
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
@@ -227,6 +294,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPost2()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
@@ -249,6 +322,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPost3()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string');
@@ -270,6 +349,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPost4()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2');
@@ -289,6 +374,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPost5()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
@@ -310,6 +401,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPostPayload()
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
@@ -332,6 +429,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPut1()
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
@@ -353,6 +456,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPut2()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
@@ -375,6 +484,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPut3()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string')
@@ -395,6 +510,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPut4()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
@@ -415,6 +536,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPut5()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
@@ -436,6 +563,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPutPayload()
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
@@ -459,6 +592,12 @@ class HttpClientTest extends TestCase
     }
 
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testDelete1()
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
@@ -480,6 +619,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testDelete2()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
@@ -502,6 +647,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testDelete3()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string')
@@ -522,6 +673,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testDelete4()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
@@ -542,6 +699,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testDelete5()
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
@@ -563,6 +726,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testDeletePayload()
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
@@ -585,6 +754,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPostMultiPartForm()
     {
         $uploadFile = [];
@@ -622,6 +797,12 @@ class HttpClientTest extends TestCase
         ] + (PHP_VERSION_ID >= 80100 ? ["full_path" => "filename.json"] :[])], $result['files']);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testWithCurlOption()
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
@@ -636,6 +817,12 @@ class HttpClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testHead1()
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
@@ -651,9 +838,15 @@ class HttpClientTest extends TestCase
         $this->assertNotEmpty($response->getHeaders());
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testInvalid()
     {
-        $this->expectException(\ByJG\Util\Exception\NetworkException::class);
+        $this->expectException(NetworkException::class);
         $this->expectExceptionMessage("CURL - Could not resolve host: abc.def");
 
         $request = Request::getInstance(Uri::getInstanceFromString("http://abc.def"));

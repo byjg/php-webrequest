@@ -1,17 +1,15 @@
 <?php
 
-use ByJG\Util\Psr7\StreamBase;
+namespace Test\Psr7;
+
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\StreamInterface;
 
 abstract class StreamBaseTest extends TestCase
 {
     const TEXT1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam auctor augue justo, id condimentum tortor molestie et. Quisque at egestas dui. Vestibulum id lectus et mi interdum lobortis non sit.";
 
-    /**
-     * @param $data
-     * @return StreamBase
-     */
-    abstract public function getResource($data);
+    abstract public function getResource(string $data): StreamInterface;
 
     abstract public function tearDownResource();
 
@@ -19,10 +17,7 @@ abstract class StreamBaseTest extends TestCase
 
     abstract public function canOverwrite();
 
-    /**
-     * @var StreamBase
-     */
-    protected $stream;
+    protected ?StreamInterface $stream;
 
     public function setUp(): void
     {

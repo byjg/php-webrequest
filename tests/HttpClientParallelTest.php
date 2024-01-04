@@ -1,5 +1,11 @@
 <?php
 
+namespace Test;
+
+use ByJG\Util\Exception\CurlException;
+use ByJG\Util\Exception\MessageException;
+use ByJG\Util\HttpClient;
+use ByJG\Util\HttpClientParallel;
 use ByJG\Util\Psr7\Request;
 use ByJG\Util\Uri;
 use PHPUnit\Framework\TestCase;
@@ -17,9 +23,13 @@ class HttpClientParallelTest extends TestCase
         $this->SERVER_TEST = "http://$host:$port/multirequest.php";
     }
 
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     */
     public function testMultiRequest()
     {
-        $httpClient = \ByJG\Util\HttpClient::getInstance();
+        $httpClient = HttpClient::getInstance();
 
         $count = 0;
         $results = [];
@@ -34,7 +44,7 @@ class HttpClientParallelTest extends TestCase
             $fail[] = $error;
         };
 
-        $multi = new \ByJG\Util\HttpClientParallel(
+        $multi = new HttpClientParallel(
             $httpClient,
             $onSucess,
             $onError

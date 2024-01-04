@@ -1,11 +1,18 @@
 <?php
 
+namespace Test\Psr7;
+
+use ByJG\Util\Exception\MessageException;
+use ByJG\Util\Exception\RequestException;
 use ByJG\Util\Psr7\Request;
 use ByJG\Util\Uri;
 use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase
 {
+    /**
+     * @throws MessageException
+     */
     public function uriProvider()
     {
         return [
@@ -44,7 +51,7 @@ class RequestTest extends TestCase
 
     /**
      * @dataProvider uriProvider
-     * @param \ByJG\Util\Psr7\Request $request
+     * @param Request $request
      * @param string[] $expected
      */
     public function testGetRequestTarget($request, $expected)
@@ -54,8 +61,9 @@ class RequestTest extends TestCase
 
     /**
      * @dataProvider uriProvider
-     * @param \ByJG\Util\Psr7\Request $request
+     * @param Request $request
      * @param string[] $expected
+     * @throws MessageException
      */
     public function testWithRequestTarget($request, $expected)
     {
@@ -67,12 +75,19 @@ class RequestTest extends TestCase
         $this->assertEquals($query, $request->getUri()->getQuery());
     }
 
+    /**
+     * @throws MessageException
+     */
     public function testGetMethod()
     {
         $request = new Request(new Uri());
         $this->assertEquals("GET", $request->getMethod());
     }
 
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
     public function testWithMethod()
     {
         $request = new Request(new Uri());
@@ -83,6 +98,9 @@ class RequestTest extends TestCase
         }
     }
 
+    /**
+     * @throws MessageException
+     */
     public function testWithUri()
     {
         $uri = new Uri("http://somehost.com");
@@ -91,7 +109,7 @@ class RequestTest extends TestCase
         $this->assertEquals($uri, $request->getUri());
 
         $uri = new Uri("https://anotherhost.uk:9090/test");
-        $request = $request->withUri($uri, false);
+        $request = $request->withUri($uri);
         $this->assertEquals(["anotherhost.uk:9090"], $request->getHeader("host"));
         $this->assertEquals($uri, $request->getUri());
 

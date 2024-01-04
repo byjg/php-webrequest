@@ -3,6 +3,7 @@
 namespace ByJG\Util\Helper;
 
 use ByJG\Util\Exception\MessageException;
+use ByJG\Util\Exception\RequestException;
 use ByJG\Util\Psr7\MemoryStream;
 use ByJG\Util\Psr7\Request;
 use Psr\Http\Message\MessageInterface;
@@ -17,6 +18,7 @@ class RequestJson extends Request
      * @param $json
      * @return Request|MessageInterface|RequestInterface
      * @throws MessageException
+     * @throws RequestException
      */
     public static function build(UriInterface $uri, $method, $json)
     {

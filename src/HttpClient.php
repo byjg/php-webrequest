@@ -3,6 +3,7 @@
 namespace ByJG\Util;
 
 use ByJG\Util\Exception\CurlException;
+use ByJG\Util\Exception\MessageException;
 use ByJG\Util\Exception\NetworkException;
 use ByJG\Util\Exception\RequestException;
 use InvalidArgumentException;
@@ -74,10 +75,6 @@ class HttpClient implements ClientInterface
 
     public function withCurlOption(int $key, $value): HttpClient
     {
-        if (!is_int($key)) {
-            throw new InvalidArgumentException('It is not a CURL_OPT argument');
-        }
-
         if (!is_null($value)) {
             $this->defaultCurlOptions[$key] = $value;
         } else {
@@ -97,7 +94,9 @@ class HttpClient implements ClientInterface
      * @param RequestInterface $request
      * @return ResponseInterface
      * @throws CurlException
-     * @throws \ByJG\Util\Exception\MessageException
+     * @throws MessageException
+     * @throws RequestException
+     * @throws NetworkException
      */
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
@@ -117,6 +116,7 @@ class HttpClient implements ClientInterface
      * @param RequestInterface $request
      * @return resource|CurlHandle
      * @throws CurlException
+     * @throws RequestException
      */
     public function createCurlHandle(RequestInterface $request)
     {
@@ -176,6 +176,7 @@ class HttpClient implements ClientInterface
 
     /**
      * @throws CurlException
+     * @throws RequestException
      */
     protected function setBody(): void
     {

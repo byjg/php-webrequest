@@ -1,24 +1,21 @@
 <?php
 
-use ByJG\Util\Psr7\StreamBase;
-use PHPUnit\Framework\TestCase;
+namespace Test\Psr7;
 
-require_once __DIR__ . "/StreamBaseTest.php";
+use ByJG\Util\Psr7\FileStream;
+use Psr\Http\Message\StreamInterface;
 
 class FileStreamAPlusTest extends StreamBaseTest
 {
     const FILENAME = "/tmp/filestream-test.txt";
-    /**
-     * @param $data
-     * @return StreamBase
-     */
-    public function getResource($data)
+
+    public function getResource(string $data): StreamInterface
     {
         if (file_exists(self::FILENAME)) {
             unlink(self::FILENAME);
         }
         file_put_contents(self::FILENAME, $data);
-        return new \ByJG\Util\Psr7\FileStream(self::FILENAME, "a+");
+        return new FileStream(self::FILENAME, "a+");
     }
 
     public function tearDownResource()

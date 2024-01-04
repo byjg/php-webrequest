@@ -7,6 +7,7 @@ namespace ByJG\Util;
 use ByJG\Util\Exception\RequestException;
 use ByJG\Util\Psr7\MemoryStream;
 use ByJG\Util\Psr7\Response;
+use Exception;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -17,6 +18,7 @@ trait ParseCurlTrait
      * @param $curlHandle
      * @param bool $close
      * @return Response|MessageInterface
+     * @throws RequestException
      */
     public function parseCurl(string $body, $curlHandle, bool $close = true): Response
     {
@@ -33,7 +35,7 @@ trait ParseCurlTrait
                 ->withHeader("X-Effective-Url", $effectiveUrl);
 
             return $this->parseHeader($response, substr($body, 0, $headerSize));
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             throw new RequestException($this->request, $ex->getMessage(), $ex->getCode(), $ex);
         }
     }
@@ -49,7 +51,7 @@ trait ParseCurlTrait
             $headerLine = explode(':', $headerLine, 2);
 
             if (isset($headerLine[1])) {
-                $response = $response->withHeader($headerLine[0], preg_replace("/^\s+/", "", $headerLine[1]));
+                $response = $response->withHeader($headerLine[0], ltrim($headerLine[1]));
             }
         }
 

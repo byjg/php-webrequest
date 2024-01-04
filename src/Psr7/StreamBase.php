@@ -5,7 +5,7 @@ namespace ByJG\Util\Psr7;
 
 use ByJG\Util\Helper\ExtendedStreamInterface;
 use Psr\Http\Message\StreamInterface;
-use \RuntimeException;
+use RuntimeException;
 
 abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
 {
