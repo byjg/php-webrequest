@@ -26,7 +26,7 @@ The key elements are:
 * Request - Will set the request headers and method;
 * Response - Will receive the response header, body and status code.
 
-More information about the PSR-7 here: <https://www.php-fig.org/psr/psr-7/>
+More information about the PSR-7 [here](https://www.php-fig.org/psr/psr-7/).
 
 The implementation to send the request object is defined by the class `HttpClient`.
 This class follow partially the PSR-18 implementation.
