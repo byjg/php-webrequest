@@ -153,7 +153,7 @@ class HttpClientParallel
     /**
      * @param $multiInitHandle
      * @param $handle
-     * @throws Psr7\MessageException
+     * @throws \ByJG\Util\Exception\MessageException
      */
     protected function getContent($multiInitHandle, $handle): void
     {

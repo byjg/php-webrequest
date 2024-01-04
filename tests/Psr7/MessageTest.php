@@ -1,8 +1,8 @@
 <?php
 
-use ByJG\Util\Psr7\Message;
+use ByJG\Util\Exception\MessageException;
 use ByJG\Util\Psr7\MemoryStream;
-use ByJG\Util\Psr7\MessageException;
+use ByJG\Util\Psr7\Message;
 use PHPUnit\Framework\TestCase;
 
 class MessageTest extends TestCase
@@ -150,7 +150,7 @@ class MessageTest extends TestCase
      */
     public function testWithProtocolVersionInvalid()
     {
-        $this->expectException(\ByJG\Util\Psr7\MessageException::class);
+        $this->expectException(\ByJG\Util\Exception\MessageException::class);
         $this->expectExceptionMessage("Invalid Protocol Version");
         $this->message->withProtocolVersion("3.0");
     }

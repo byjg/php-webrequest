@@ -4,12 +4,12 @@ use ByJG\Util\Exception\CurlException;
 use ByJG\Util\Helper\RequestFormUrlEncoded;
 use ByJG\Util\Helper\RequestJson;
 use ByJG\Util\Helper\RequestMultiPart;
-use ByJG\Util\MultiPartItem;
 use ByJG\Util\HttpClient;
+use ByJG\Util\MultiPartItem;
 use ByJG\Util\ParseBody;
+use ByJG\Util\Psr7\MemoryStream;
 use ByJG\Util\Psr7\Request;
 use ByJG\Util\Uri;
-use ByJG\Util\Psr7\MemoryStream;
 use PHPUnit\Framework\TestCase;
 
 class HttpClientTest extends TestCase
@@ -114,11 +114,11 @@ class HttpClientTest extends TestCase
 
     /**
      * @throws CurlException
-     * @throws \ByJG\Util\Psr7\MessageException
+     * @throws \ByJG\Util\Exception\MessageException
      */
     public function testGet()
     {
-        $this->expectException(\ByJG\Util\Exception\CurlException::class);
+        $this->expectException(\ByJG\Util\Exception\RequestException::class);
         $this->expectExceptionMessage("Cannot set body with method GET");
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withBody(new MemoryStream("A"));
@@ -649,6 +649,15 @@ class HttpClientTest extends TestCase
         $this->assertEquals(null, $result);
 
         $this->assertNotEmpty($response->getHeaders());
+    }
+
+    public function testInvalid()
+    {
+        $this->expectException(\ByJG\Util\Exception\NetworkException::class);
+        $this->expectExceptionMessage("CURL - Could not resolve host: abc.def");
+
+        $request = Request::getInstance(Uri::getInstanceFromString("http://abc.def"));
+        $this->object->sendRequest($request);
     }
 
 }
