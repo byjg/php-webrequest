@@ -5,4 +5,3 @@ nbproject
 composer.lock
 vendor
 .phpunit.result.cache
-ignore.php
