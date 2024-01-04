@@ -2,6 +2,8 @@
 
 namespace ByJG\Util\Psr7;
 
+use ByJG\Util\Exception\MessageException;
+use ByJG\Util\Exception\RequestException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -80,7 +82,7 @@ class Request extends Message implements RequestInterface
         $method = strtoupper($method);
 
         if (!in_array($method, $this->validMethods)) {
-            throw new MessageException("Invalid Method " . $method);
+            throw new RequestException($this, "Invalid Method " . $method);
         }
 
         $clone = clone $this;

@@ -2,8 +2,8 @@
 
 namespace ByJG\Util;
 
-use ByJG\Util\Psr7\Response;
 use ByJG\Util\Psr7\MemoryStream;
+use ByJG\Util\Psr7\Response;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -20,7 +20,7 @@ class MockClient extends HttpClient
      * MockClient constructor.
      * @param Response|MessageInterface $expectedResponse
      */
-    public function __construct(Response $expectedResponse = null)
+    public function __construct(ResponseInterface $expectedResponse = null)
     {
         if (is_null($expectedResponse)) {
             $expectedResponse = (new Response(200))
@@ -40,9 +40,9 @@ class MockClient extends HttpClient
     /**
      * @param RequestInterface $request
      * @return Response
-     * @throws Psr7\MessageException
+     * @throws \ByJG\Util\Exception\MessageException
      */
-    public function sendRequest(RequestInterface $request): Response
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $curlHandle = $this->createCurlHandle($request);
 

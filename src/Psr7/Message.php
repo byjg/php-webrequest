@@ -3,6 +3,7 @@
 
 namespace ByJG\Util\Psr7;
 
+use ByJG\Util\Exception\MessageException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 

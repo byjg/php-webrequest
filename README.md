@@ -11,9 +11,8 @@ A lightweight PSR-7 implementation and and highly customized CURL wrapper for ma
 ## Main Features
 
 This class implements:
-
-* PSR-7 objects;
-* HttpClient customizable with partial implementation PSR-18
+* PSR-7 Request and Response;
+* PSR-18 Http Client
 * Helper to create Request instances with the most common use cases;
 * Wrapper to execute several requests in parallel;
 
@@ -231,7 +230,7 @@ The methods below are available *after* the execution of the method `sendRequest
 ## Install
 
 ```bash
-composer install "byjg/webrequest=5.0.*"
+composer install "byjg/webrequest"
 ```
 
 ## Running Tests
@@ -254,6 +253,16 @@ vendor/bin/phpunit
 
 ```bash
 docker-compose down
+```
+
+## Dependencies
+
+```mermaid
+flowchart TD
+    byjg/webrequest --> psr/http-message
+    byjg/webrequest --> psr/http-client
+    byjg/webrequest --> ext-json
+    byjg/webrequest --> byjg/uri
 ```
 
 ----

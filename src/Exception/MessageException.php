@@ -1,6 +1,6 @@
 <?php
 
-namespace ByJG\Util\Psr7;
+namespace ByJG\Util\Exception;
 
 use Exception;
 
