@@ -230,7 +230,7 @@ The methods below are available *after* the execution of the method `sendRequest
 ## Install
 
 ```bash
-composer install "byjg/webrequest=2.0.*"
+composer install "byjg/webrequest"
 ```
 
 ## Running Tests
@@ -246,7 +246,7 @@ docker-compose up -d
 ### Running the integration tests
 
 ```bash
-phpunit
+vendor/bin/phpunit
 ```
 
 ### Stopping the server
