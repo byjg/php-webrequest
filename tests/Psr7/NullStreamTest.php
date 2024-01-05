@@ -92,7 +92,7 @@ class NullStreamTest extends TestCase
     public function testOverwrite()
     {
         $this->stream->rewind();
-        $result = $this->stream->write("test");
+        $result = $this->stream->write('test');
 
         $this->assertEquals("", (string)$this->stream);
         $this->assertSame(0, $result);
