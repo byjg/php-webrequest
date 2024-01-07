@@ -2,7 +2,6 @@
 
 namespace Test;
 
-use ByJG\Util\Exception\CurlException;
 use ByJG\Util\Exception\MessageException;
 use ByJG\Util\Exception\NetworkException;
 use ByJG\Util\Exception\RequestException;
@@ -16,21 +15,22 @@ use ByJG\Util\Psr7\MemoryStream;
 use ByJG\Util\Psr7\Request;
 use ByJG\Util\Uri;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Client\ClientExceptionInterface;
 
 class HttpClientTest extends TestCase
 {
 
-    protected $BASE_URL_TEST;
+    protected string $BASE_URL_TEST;
 
-    protected $SERVER_TEST;
-    protected $REDIRECT_TEST;
-    protected $SOAP_TEST;
+    protected string $SERVER_TEST;
+    protected string $REDIRECT_TEST;
+    protected string $SOAP_TEST;
 
     /**
-     * @var HttpClient
+     * @var ?HttpClient
      */
 
-    protected $object;
+    protected ?HttpClient $object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -60,10 +60,10 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
+     * @throws ClientExceptionInterface
      */
     public function testGetLastStatus()
     {
@@ -77,7 +77,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -96,7 +96,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -112,7 +112,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -128,7 +128,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -148,7 +148,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -164,7 +164,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -188,7 +188,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -215,7 +215,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -242,7 +242,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -269,7 +269,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -295,7 +295,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -323,7 +323,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -350,7 +350,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -375,7 +375,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -402,7 +402,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -430,7 +430,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -457,7 +457,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -485,7 +485,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -511,7 +511,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -537,7 +537,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -564,7 +564,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -593,7 +593,7 @@ class HttpClientTest extends TestCase
 
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -620,7 +620,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -648,7 +648,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -674,7 +674,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -700,7 +700,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -727,7 +727,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -755,7 +755,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -798,7 +798,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -818,7 +818,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException
@@ -839,7 +839,7 @@ class HttpClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
+     * @throws ClientExceptionInterface
      * @throws MessageException
      * @throws NetworkException
      * @throws RequestException

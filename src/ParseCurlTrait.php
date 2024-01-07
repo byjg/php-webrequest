@@ -8,7 +8,6 @@ use ByJG\Util\Exception\RequestException;
 use ByJG\Util\Psr7\MemoryStream;
 use ByJG\Util\Psr7\Response;
 use Exception;
-use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 
 trait ParseCurlTrait
@@ -17,10 +16,10 @@ trait ParseCurlTrait
      * @param string $body
      * @param $curlHandle
      * @param bool $close
-     * @return Response|MessageInterface
+     * @return ResponseInterface
      * @throws RequestException
      */
-    public function parseCurl(string $body, $curlHandle, bool $close = true): Response
+    public function parseCurl(string $body, $curlHandle, bool $close = true): ResponseInterface
     {
         try {
             $headerSize = curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE);

@@ -9,13 +9,13 @@ use Psr\Http\Message\StreamInterface;
 
 class Message implements MessageInterface
 {
-    protected $protocolVersion = "1.1";
-    protected $headers = [];
+    protected string $protocolVersion = "1.1";
+    protected array $headers = [];
 
     /**
-     * @var StreamInterface
+     * @var ?StreamInterface
      */
-    protected $body = null;
+    protected ?StreamInterface $body = null;
 
     /**
      * @inheritDoc

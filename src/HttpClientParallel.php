@@ -3,6 +3,7 @@
 namespace ByJG\Util;
 
 use ByJG\Util\Exception\CurlException;
+use ByJG\Util\Exception\RequestException;
 use Closure;
 use Exception;
 use Psr\Http\Message\RequestInterface;
@@ -15,27 +16,27 @@ class HttpClientParallel
     /**
      * @var array
      */
-    protected $curlClients = [];
+    protected array $curlClients = [];
 
     /**
-     * @var HttpClient
+     * @var ?HttpClient
      */
-    protected $httpClient = null;
+    protected ?HttpClient $httpClient = null;
 
     /**
-     * @var Closure
+     * @var ?Closure
      */
-    protected $defaultOnSuccess = null;
+    protected ?Closure $defaultOnSuccess = null;
 
     /**
-     * @var Closure
+     * @var ?Closure
      */
-    protected $defaultOnError = null;
+    protected ?Closure $defaultOnError = null;
 
     /**
      * @var array
      */
-    protected $errorList = [];
+    protected array $errorList = [];
 
     public function __construct(HttpClient $httpClient, Closure $defaultOnSuccess = null, Closure $defaultOnError = null)
     {
@@ -85,6 +86,7 @@ class HttpClientParallel
     }
 
     /**
+     * @throws RequestException
      * @throws CurlException
      */
     public function execute(): void
@@ -102,7 +104,6 @@ class HttpClientParallel
         }
 
         // execute the handles
-        $running = null;
         $this->errorList = [];
         do {
             $status = curl_multi_exec($multiInitHandle, $running);

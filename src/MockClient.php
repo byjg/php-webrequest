@@ -2,10 +2,10 @@
 
 namespace ByJG\Util;
 
-use ByJG\Util\Exception\CurlException;
 use ByJG\Util\Exception\RequestException;
 use ByJG\Util\Psr7\MemoryStream;
 use ByJG\Util\Psr7\Response;
+use CurlHandle;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -14,7 +14,7 @@ class MockClient extends HttpClient
     /**
      * @var Response
      */
-    protected $expectedResponse;
+    protected ResponseInterface $expectedResponse;
 
 
     /**
@@ -33,7 +33,7 @@ class MockClient extends HttpClient
     /**
      * @return MockClient
      */
-    public static function getInstance()
+    public static function getInstance(): MockClient
     {
         return new MockClient(new Response(200));
     }
@@ -41,12 +41,12 @@ class MockClient extends HttpClient
     /**
      * @param RequestInterface $request
      * @return Response
-     * @throws CurlException
      * @throws RequestException
      */
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $curlHandle = $this->createCurlHandle($request);
+        curl_close($curlHandle);
 
         return $this->parseCurl("", $curlHandle);
     }
@@ -58,11 +58,10 @@ class MockClient extends HttpClient
 
     /**
      * @param RequestInterface $request
-     * @return resource
-     * @throws CurlException
      * @throws RequestException
+     * @return CurlHandle
      */
-    public function createCurlHandle(RequestInterface $request)
+    public function createCurlHandle(RequestInterface $request): CurlHandle
     {
         $this->request = clone $request;
         $this->curlOptions = [];
@@ -82,11 +81,11 @@ class MockClient extends HttpClient
     /**
      * Request the method using the CURLOPT defined previously;
      *
-     * @return resource
+     * @return CurlHandle
      */
-    protected function curlInit()
+    protected function curlInit(): CurlHandle
     {
-        return 65535;
+        return curl_init();
     }
 
     /**

@@ -10,7 +10,7 @@ use RuntimeException;
 abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
 {
 
-    protected $resource;
+    protected mixed $resource;
 
     public function __construct()
     {

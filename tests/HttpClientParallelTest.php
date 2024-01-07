@@ -4,6 +4,7 @@ namespace Test;
 
 use ByJG\Util\Exception\CurlException;
 use ByJG\Util\Exception\MessageException;
+use ByJG\Util\Exception\RequestException;
 use ByJG\Util\HttpClient;
 use ByJG\Util\HttpClientParallel;
 use ByJG\Util\Psr7\Request;
@@ -13,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 class HttpClientParallelTest extends TestCase
 {
 
-    protected $SERVER_TEST;
+    protected string $SERVER_TEST;
 
     public function setUp(): void
     {
@@ -26,6 +27,7 @@ class HttpClientParallelTest extends TestCase
     /**
      * @throws CurlException
      * @throws MessageException
+     * @throws RequestException
      */
     public function testMultiRequest()
     {

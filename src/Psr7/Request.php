@@ -9,13 +9,13 @@ use Psr\Http\Message\UriInterface;
 
 class Request extends Message implements RequestInterface
 {
-    protected $method = "GET";
-    protected $validMethods = [ "GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH" ];
+    protected string $method = "GET";
+    protected array $validMethods = [ "GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH" ];
 
     /**
      * @var UriInterface
      */
-    protected $uri;
+    protected UriInterface $uri;
 
     /**
      * Request constructor.
@@ -76,7 +76,6 @@ class Request extends Message implements RequestInterface
 
     /**
      * @inheritDoc
-     * @throws MessageException
      * @throws RequestException
      */
     public function withMethod(string $method): RequestInterface

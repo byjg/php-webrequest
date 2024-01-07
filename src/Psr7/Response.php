@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class Response extends Message implements ResponseInterface
 {
-    protected static $codes = [
+    protected static array $codes = [
         "100" => "Continue",
         "101" => "Switching Protocols",
         "102" => "Processing ",
@@ -102,14 +102,15 @@ class Response extends Message implements ResponseInterface
         "598" => "Network read timeout error",
     ];
 
-    protected $statusCode = ["", ""];
+    protected int $statusCode;
+    protected string $reasonPhrase;
 
-    public function __construct($code = 200)
+    public function __construct(int $code = 200)
     {
         $this->setStatus($code);
     }
 
-    public static function getInstance($code = 200): Response
+    public static function getInstance(int $code = 200): Response
     {
         return new Response($code);
     }
@@ -119,7 +120,7 @@ class Response extends Message implements ResponseInterface
      */
     public function getStatusCode(): int
     {
-        return $this->statusCode[0];
+        return $this->statusCode;
     }
 
     /**
@@ -132,15 +133,14 @@ class Response extends Message implements ResponseInterface
         return $clone;
     }
 
-    protected function setStatus($code, $reasonPhrase = ""): void
+    protected function setStatus(int $code, $reasonPhrase = ""): void
     {
-        $code = intval($code);
         if ($code < 100 || $code > 599) {
             throw new InvalidArgumentException('Status code has to be an integer between 100 and 599');
         }
 
-        $this->statusCode[0] = $code;
-        $this->statusCode[1] = (empty($reasonPhrase) && isset(self::$codes[$code])) ? self::$codes[$code] : $reasonPhrase;
+        $this->statusCode = $code;
+        $this->reasonPhrase = (empty($reasonPhrase) && isset(self::$codes[$code])) ? self::$codes[$code] : $reasonPhrase;
     }
 
     /**
@@ -148,7 +148,7 @@ class Response extends Message implements ResponseInterface
      */
     public function getReasonPhrase(): string
     {
-        return $this->statusCode[1];
+        return $this->reasonPhrase;
     }
 }
 

@@ -7,7 +7,6 @@ use ByJG\Util\Exception\RequestException;
 use ByJG\Util\MultiPartItem;
 use ByJG\Util\Psr7\MemoryStream;
 use ByJG\Util\Psr7\Request;
-use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -18,11 +17,11 @@ class RequestMultiPart extends Request
      * @param string $method
      * @param MultiPartItem[] $multiPartItem
      * @param null $boundary
-     * @return Request|MessageInterface|RequestInterface
+     * @return RequestInterface
      * @throws MessageException
      * @throws RequestException
      */
-    public static function build(UriInterface $uri, $method, $multiPartItem, $boundary = null)
+    public static function build(UriInterface $uri, string $method, array $multiPartItem, $boundary = null): RequestInterface
     {
         $request = Request::getInstance($uri)
             ->withMethod($method);
@@ -33,10 +32,10 @@ class RequestMultiPart extends Request
     /**
      * @param MultiPartItem[] $multiPartItems
      * @param RequestInterface $request
-     * @param string $boundary
+     * @param string|null $boundary
      * @return RequestInterface
      */
-    public static function buildMultiPart($multiPartItems, $request, $boundary = null)
+    public static function buildMultiPart(array $multiPartItems, RequestInterface $request, ?string $boundary = null): RequestInterface
     {
         $stream = new MemoryStream();
 

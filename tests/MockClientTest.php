@@ -2,7 +2,6 @@
 
 namespace Test;
 
-use ByJG\Util\Exception\CurlException;
 use ByJG\Util\Exception\MessageException;
 use ByJG\Util\Exception\RequestException;
 use ByJG\Util\Helper\RequestFormUrlEncoded;
@@ -19,18 +18,18 @@ use PHPUnit\Framework\TestCase;
 class MockClientTest extends TestCase
 {
 
-    protected $BASE_URL_TEST;
+    protected string $BASE_URL_TEST;
 
-    protected $SERVER_TEST;
-    protected $REDIRECT_TEST;
-    protected $SOAP_TEST;
+    protected string $SERVER_TEST;
+    protected string $REDIRECT_TEST;
+    protected string $SOAP_TEST;
 
     /**
      * @var MockClient
      */
-    protected $object;
+    protected MockClient $object;
     
-    protected $curlOptions;
+    protected array $curlOptions;
     
     public function setUp(): void
     {
@@ -62,7 +61,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -76,7 +74,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -97,7 +94,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -115,7 +111,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -135,7 +130,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -162,7 +156,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -191,7 +184,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -206,7 +198,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -225,7 +216,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -248,7 +238,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -268,7 +257,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -290,7 +278,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -314,7 +301,6 @@ class MockClientTest extends TestCase
 
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -333,7 +319,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -356,7 +341,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -377,7 +361,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -399,7 +382,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -423,7 +405,6 @@ class MockClientTest extends TestCase
 
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -442,7 +423,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -465,7 +445,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -486,7 +465,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -508,7 +486,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -532,7 +509,6 @@ class MockClientTest extends TestCase
 
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -580,7 +556,6 @@ class MockClientTest extends TestCase
     }
 
     /**
-     * @throws CurlException
      * @throws MessageException
      * @throws RequestException
      */
@@ -600,7 +575,6 @@ class MockClientTest extends TestCase
 
     /**
      * @throws MessageException
-     * @throws CurlException
      * @throws RequestException
      */
     public function testMockResponse()
