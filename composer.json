@@ -17,11 +17,13 @@
         "Test\\": "tests/"
       }
     },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
     "php": ">=8.1",
     "ext-curl": "*",
     "ext-json": "*",
-    "byjg/uri": "^5.0",
+    "byjg/uri": "5.0.x-dev",
     "psr/http-message": "^2.0",
     "psr/http-client": "^1.0"
   },
