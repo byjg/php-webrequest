@@ -12,9 +12,9 @@ class ParseBody
      * @param MessageInterface $response
      * @return mixed
      */
-    public static function parse(MessageInterface $response)
+    public static function parse(MessageInterface $response): mixed
     {
-        if (strpos("application/json", $response->getHeaderLine("content-type")) !== 0) {
+        if (!str_starts_with("application/json", $response->getHeaderLine("content-type"))) {
             return json_decode($response->getBody(), true);
         }
 

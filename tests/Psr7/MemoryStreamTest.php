@@ -1,19 +1,15 @@
 <?php
 
-use ByJG\Util\Psr7\StreamBase;
-use PHPUnit\Framework\TestCase;
+namespace Test\Psr7;
 
-require_once __DIR__ . "/StreamBaseTest.php";
+use ByJG\Util\Psr7\MemoryStream;
+use Psr\Http\Message\StreamInterface;
 
 class MemoryStreamTest extends StreamBaseTest
 {
-    /**
-     * @param $data
-     * @return StreamBase
-     */
-    public function getResource($data)
+    public function getResource(string $data): StreamInterface
     {
-        return new \ByJG\Util\Psr7\MemoryStream($data);
+        return new MemoryStream($data);
     }
 
     public function tearDownResource()

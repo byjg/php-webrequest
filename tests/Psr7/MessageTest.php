@@ -1,5 +1,7 @@
 <?php
 
+namespace Test\Psr7;
+
 use ByJG\Util\Exception\MessageException;
 use ByJG\Util\Psr7\MemoryStream;
 use ByJG\Util\Psr7\Message;
@@ -136,6 +138,9 @@ class MessageTest extends TestCase
         $this->assertEquals("<html>ok</html>", $message->getBody());
     }
 
+    /**
+     * @throws MessageException
+     */
     public function testWithProtocolVersion()
     {
         $message = $this->message->withProtocolVersion("1.0");
@@ -150,7 +155,7 @@ class MessageTest extends TestCase
      */
     public function testWithProtocolVersionInvalid()
     {
-        $this->expectException(\ByJG\Util\Exception\MessageException::class);
+        $this->expectException(MessageException::class);
         $this->expectExceptionMessage("Invalid Protocol Version");
         $this->message->withProtocolVersion("3.0");
     }

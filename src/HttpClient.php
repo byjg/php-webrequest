@@ -2,9 +2,9 @@
 
 namespace ByJG\Util;
 
-use ByJG\Util\Exception\CurlException;
 use ByJG\Util\Exception\NetworkException;
 use ByJG\Util\Exception\RequestException;
+use CurlHandle;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
@@ -15,15 +15,15 @@ class HttpClient implements ClientInterface
 {
     use ParseCurlTrait;
 
-    protected $defaultCurlOptions = [];
-    protected $curlOptions = [];
+    protected array $defaultCurlOptions = [];
+    protected array $curlOptions = [];
 
     protected RequestInterface $request;
 
     /**
      * @return HttpClient
      */
-    public static function getInstance()
+    public static function getInstance(): HttpClient
     {
         return new HttpClient();
     }
@@ -74,10 +74,6 @@ class HttpClient implements ClientInterface
 
     public function withCurlOption(int $key, $value): HttpClient
     {
-        if (!is_int($key)) {
-            throw new InvalidArgumentException('It is not a CURL_OPT argument');
-        }
-
         if (!is_null($value)) {
             $this->defaultCurlOptions[$key] = $value;
         } else {
@@ -96,8 +92,8 @@ class HttpClient implements ClientInterface
     /**
      * @param RequestInterface $request
      * @return ResponseInterface
-     * @throws CurlException
-     * @throws \ByJG\Util\Exception\MessageException
+     * @throws RequestException
+     * @throws NetworkException
      */
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
@@ -115,10 +111,10 @@ class HttpClient implements ClientInterface
 
     /**
      * @param RequestInterface $request
-     * @return resource
-     * @throws CurlException
+     * @return CurlHandle
+     * @throws RequestException
      */
-    public function createCurlHandle(RequestInterface $request)
+    public function createCurlHandle(RequestInterface $request): CurlHandle
     {
         $this->request = $request;
         $this->curlOptions = [];
@@ -138,9 +134,9 @@ class HttpClient implements ClientInterface
     /**
      * Request the method using the CURLOPT defined previously;
      *
-     * @return resource
+     * @return CurlHandle
      */
-    protected function curlInit()
+    protected function curlInit(): CurlHandle
     {
         $curlHandle = curl_init();
 
@@ -175,16 +171,21 @@ class HttpClient implements ClientInterface
     }
 
     /**
-     * @throws CurlException
+     * @throws RequestException
      */
     protected function setBody(): void
     {
         $stream = $this->request->getBody();
         if (!is_null($stream)) {
-            if (!$this->getCurl(CURLOPT_POST) && !$this->getCurl(CURLOPT_CUSTOMREQUEST)) {
-                throw new RequestException($this->request,"Cannot set body with method GET");
+            $contents = $stream->getContents();
+            $isGet = !$this->getCurl(CURLOPT_POST) && !$this->getCurl(CURLOPT_CUSTOMREQUEST);
+            if (!empty($contents)) {
+                if ($isGet) {
+                    throw new RequestException($this->request,"Cannot set body with method GET");
+                } else {
+                    $this->setCurl(CURLOPT_POSTFIELDS, $contents);
+                }
             }
-            $this->setCurl(CURLOPT_POSTFIELDS, $stream->getContents());
         }
     }
 
@@ -228,7 +229,7 @@ class HttpClient implements ClientInterface
      * @param mixed $value
      * @throws InvalidArgumentException
      */
-    protected function setCurl(int $key, $value): void
+    protected function setCurl(int $key, mixed $value): void
     {
         if (!is_null($value)) {
             $this->curlOptions[$key] = $value;
@@ -258,7 +259,7 @@ class HttpClient implements ClientInterface
 
     /**
      * Set the default curl options.
-     * You can override this method to setup your own default options.
+     * You can override this method to set up your own default options.
      * You can pass the options to the constructor also;
      */
     protected function defaultCurlOptions(): void

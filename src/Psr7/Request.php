@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ByJG\Util\Psr7;
 
 use ByJG\Util\Exception\MessageException;
@@ -10,13 +9,13 @@ use Psr\Http\Message\UriInterface;
 
 class Request extends Message implements RequestInterface
 {
-    protected $method = "GET";
-    protected $validMethods = [ "GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH" ];
+    protected string $method = "GET";
+    protected array $validMethods = [ "GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH" ];
 
     /**
      * @var UriInterface
      */
-    protected $uri;
+    protected UriInterface $uri;
 
     /**
      * Request constructor.
@@ -52,8 +51,9 @@ class Request extends Message implements RequestInterface
 
     /**
      * @inheritDoc
+     * @throws MessageException
      */
-    public function withRequestTarget($requestTarget): Request
+    public function withRequestTarget(string $requestTarget): RequestInterface
     {
         $clone = clone $this;
         $parts = explode("?", $requestTarget);
@@ -76,9 +76,9 @@ class Request extends Message implements RequestInterface
 
     /**
      * @inheritDoc
-     * @throws MessageException
+     * @throws RequestException
      */
-    public function withMethod($method): Request
+    public function withMethod(string $method): RequestInterface
     {
         $method = strtoupper($method);
 
@@ -103,7 +103,7 @@ class Request extends Message implements RequestInterface
      * @inheritDoc
      * @throws MessageException
      */
-    public function withUri(UriInterface $uri, $preserveHost = false): Request
+    public function withUri(UriInterface $uri, bool $preserveHost = false): RequestInterface
     {
         $clone = clone $this;
         $clone->setUri($uri, $preserveHost);
