@@ -5,6 +5,7 @@ namespace ByJG\Util;
 use ByJG\Util\Exception\CurlException;
 use ByJG\Util\Exception\NetworkException;
 use ByJG\Util\Exception\RequestException;
+use ByJG\Util\Psr7\NullStream;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
@@ -180,7 +181,7 @@ class HttpClient implements ClientInterface
     protected function setBody(): void
     {
         $stream = $this->request->getBody();
-        if (!is_null($stream)) {
+        if (!$stream instanceof NullStream) {
             if (!$this->getCurl(CURLOPT_POST) && !$this->getCurl(CURLOPT_CUSTOMREQUEST)) {
                 throw new RequestException($this->request,"Cannot set body with method GET");
             }

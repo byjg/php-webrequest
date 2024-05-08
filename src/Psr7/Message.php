@@ -133,11 +133,12 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
-    public function getBody(): ?StreamInterface
+    public function getBody(): StreamInterface
     {
-        if (!is_null($this->body)) {
-            $this->body->rewind();
+        if (is_null($this->body)) {
+            $this->body = new NullStream();
         }
+        $this->body->rewind();
         return $this->body;
     }
 
