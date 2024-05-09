@@ -23,7 +23,7 @@ class NullStream implements ExtendedStreamInterface, StreamInterface
         return "";
     }
 
-    public function close()
+    public function close(): void
     {
         // TODO: Implement close() method.
     }
@@ -33,57 +33,58 @@ class NullStream implements ExtendedStreamInterface, StreamInterface
         // TODO: Implement detach() method.
     }
 
-    public function getSize()
+    public function getSize(): ?int
     {
         return 0;
     }
 
-    public function tell()
+    public function tell(): int
     {
         return 0;
     }
 
-    public function eof()
+    public function eof(): bool
     {
         return true;
     }
 
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return true;
     }
 
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET): void
     {
-        return 0;
+        // TODO: Implement seek() method.
     }
 
-    public function rewind()
+    public function rewind(): void
     {
-        return 0;
+        // TODO: Implement rewind() method.
     }
 
-    public function isWritable()
+    public function isWritable(): bool
     {
         return true;
     }
 
-    public function write($string)
+    public function write($string): int
     {
         // TODO: Implement write() method.
+		return 0;
     }
 
-    public function isReadable()
+    public function isReadable(): bool
     {
         return true;
     }
 
-    public function read($length)
+    public function read($length): string
     {
         return "";
     }
 
-    public function getContents()
+    public function getContents(): string
     {
         return "";
     }
