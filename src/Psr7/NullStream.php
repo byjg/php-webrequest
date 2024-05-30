@@ -18,7 +18,7 @@ class NullStream implements ExtendedStreamInterface, StreamInterface
         // TODO: Implement addFilter() method.
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return "";
     }
