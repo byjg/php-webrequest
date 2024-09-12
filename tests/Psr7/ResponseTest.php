@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 class ResponseTest extends TestCase
 {
 
-    public function testGetStatusCode()
+    public function testGetStatusCode(): void
     {
         $response = new Response();
         $this->assertEquals(200, $response->getStatusCode());

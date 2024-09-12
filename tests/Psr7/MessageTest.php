@@ -21,7 +21,12 @@ class MessageTest extends TestCase
         $this->message = null;
     }
 
-    public function headerDataProvider()
+    /**
+     * @return (string|string[])[][][]
+     *
+     * @psalm-return list{list{list{'mime-type', 'text/plain'}, array{'Mime-Type': list{'text/plain'}}}, list{list{'MIME-TYPE', 'text/plain'}, array{'Mime-Type': list{'text/plain'}}}, list{list{'accept-encoding', list{'gzip', 'deflate', 'br'}}, array{'Accept-Encoding': list{'gzip', 'deflate', 'br'}}}}
+     */
+    public function headerDataProvider(): array
     {
         return [
             [
@@ -41,11 +46,13 @@ class MessageTest extends TestCase
 
     /**
      * @dataProvider headerDataProvider
+     *
      * @param $header
      * @param $expected
+     *
      * @throws MessageException
      */
-    public function testWithHeader($header, $expected)
+    public function testWithHeader($header, $expected): void
     {
         $message = $this->message->withHeader($header[0], $header[1]);
         $this->assertEquals($expected, $message->getHeaders());
@@ -53,11 +60,13 @@ class MessageTest extends TestCase
 
     /**
      * @dataProvider headerDataProvider
+     *
      * @param $header
      * @param $expected
+     *
      * @throws MessageException
      */
-    public function testHasHeader($header, $expected)
+    public function testHasHeader($header, $expected): void
     {
         $message = $this->message->withHeader($header[0], $header[1]);
         $this->assertTrue($message->hasHeader($header[0]));
@@ -66,29 +75,33 @@ class MessageTest extends TestCase
 
     /**
      * @dataProvider headerDataProvider
+     *
      * @param $header
      * @param $expected
+     *
      * @throws MessageException
      */
-    public function testGetHeader($header, $expected)
+    public function testGetHeader($header, $expected): void
     {
         $message = $this->message->withHeader($header[0], $header[1]);
         $expected = array_values($expected);
         $this->assertEquals($expected[0], $message->getHeader($header[0]));
     }
 
-    public function testGetProtocolVersion()
+    public function testGetProtocolVersion(): void
     {
         $this->assertEquals("1.1", $this->message->getProtocolVersion());
     }
 
     /**
      * @dataProvider headerDataProvider
+     *
      * @param $header
      * @param $expected
+     *
      * @throws MessageException
      */
-    public function testGetHeaderLine($header, $expected)
+    public function testGetHeaderLine($header, $expected): void
     {
         $message = $this->message->withHeader($header[0], $header[1]);
         $expected = array_values($expected);
@@ -97,11 +110,13 @@ class MessageTest extends TestCase
 
     /**
      * @dataProvider headerDataProvider
+     *
      * @param $header
      * @param $expected
+     *
      * @throws MessageException
      */
-    public function testWithoutHeader($header, $expected)
+    public function testWithoutHeader($header, $expected): void
     {
         $message = $this->message
             ->withHeader("accept-language", "en-US,en")
@@ -116,11 +131,13 @@ class MessageTest extends TestCase
 
     /**
      * @dataProvider headerDataProvider
+     *
      * @param $header
      * @param $expected
+     *
      * @throws MessageException
      */
-    public function testWithAddedHeader($header, $expected)
+    public function testWithAddedHeader($header, $expected): void
     {
         $message = $this->message->withHeader($header[0], $header[1])
             ->withAddedHeader($header[0], "added")
@@ -131,7 +148,7 @@ class MessageTest extends TestCase
         $this->assertEquals($expected, $message->getHeader($header[0]));
     }
 
-    public function testWithBody()
+    public function testWithBody(): void
     {
         $stream = new MemoryStream("<html>ok</html>");
         $message = $this->message->withBody($stream);
@@ -141,7 +158,7 @@ class MessageTest extends TestCase
     /**
      * @throws MessageException
      */
-    public function testWithProtocolVersion()
+    public function testWithProtocolVersion(): void
     {
         $message = $this->message->withProtocolVersion("1.0");
         $this->assertEquals("1.0", $message->getProtocolVersion());
@@ -153,7 +170,7 @@ class MessageTest extends TestCase
     /**
      * @throws MessageException
      */
-    public function testWithProtocolVersionInvalid()
+    public function testWithProtocolVersionInvalid(): void
     {
         $this->expectException(MessageException::class);
         $this->expectExceptionMessage("Invalid Protocol Version");

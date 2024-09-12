@@ -14,10 +14,10 @@ class ParseBody
      */
     public static function parse(MessageInterface $response): mixed
     {
-        if (!str_starts_with("application/json", $response->getHeaderLine("content-type"))) {
-            return json_decode($response->getBody(), true);
+        if (str_contains(trim($response->getHeaderLine("content-type")),  "application/json")) {
+            return json_decode($response->getBody()->getContents(), true);
         }
 
-        return (string)$response->getBody();
+        return $response->getBody()->getContents();
     }
 }

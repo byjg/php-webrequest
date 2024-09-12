@@ -21,7 +21,7 @@ class MockClient extends HttpClient
      * MockClient constructor.
      * @param ResponseInterface|null $expectedResponse
      */
-    public function __construct(ResponseInterface $expectedResponse = null)
+    public function __construct(?ResponseInterface $expectedResponse = null)
     {
         if (is_null($expectedResponse)) {
             $expectedResponse = (new Response(200))

@@ -44,12 +44,12 @@ class HttpClientParallel
 
         $this->defaultOnSuccess = $defaultOnSuccess;
         if (is_null($defaultOnSuccess)) {
-            $this->defaultOnSuccess = function () {};
+            $this->defaultOnSuccess = function (): void {};
         }
 
         $this->defaultOnError = $defaultOnError;
         if (is_null($defaultOnError)) {
-            $this->defaultOnError = function () {};
+            $this->defaultOnError = function (): void {};
         }
     }
 

@@ -33,9 +33,9 @@ class HttpClient implements ClientInterface
     /**
      * Set the CURLOPT_FOLLOWLOCATION
      *
-     * @return HttpClient
+     * @return static
      */
-    public function withNoFollowRedirect(): HttpClient
+    public function withNoFollowRedirect(): static
     {
         $this->withCurlOption(CURLOPT_FOLLOWLOCATION, false);
         return $this;
@@ -107,7 +107,7 @@ class HttpClient implements ClientInterface
             throw new NetworkException($this->request, "CURL - " . $error);
         }
 
-        return $this->parseCurl($result, $curlHandle);
+        return $this->parseCurl((string)$result, $curlHandle);
     }
 
     /**

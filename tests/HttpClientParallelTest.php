@@ -6,7 +6,6 @@ use ByJG\Util\Exception\CurlException;
 use ByJG\Util\Exception\MessageException;
 use ByJG\Util\Exception\RequestException;
 use ByJG\Util\HttpClient;
-use ByJG\Util\HttpClientParallel;
 use ByJG\Util\Psr7\Request;
 use ByJG\Util\Uri;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +28,7 @@ class HttpClientParallelTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testMultiRequest()
+    public function testMultiRequest(): void
     {
         $httpClient = HttpClient::getInstance();
 
@@ -37,12 +36,12 @@ class HttpClientParallelTest extends TestCase
         $results = [];
         $fail = [];
 
-        $onSucess = function ($response, $id) use (&$count, &$results) {
+        $onSucess = function ($response, $id) use (&$count, &$results): void {
             $results[] = $response->getStatusCode() . "-" . $response->getBody();
             $count++;
         };
 
-        $onError = function ($error, $id) use (&$fail) {
+        $onError = function ($error, $id) use (&$fail): void {
             $fail[] = $error;
         };
 

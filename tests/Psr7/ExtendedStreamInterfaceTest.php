@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class ExtendedStreamInterfaceTest extends TestCase
 {
-    public function testAppend()
+    public function testAppend(): void
     {
         $stream1 = new MemoryStream("text1");
         $stream2 = new MemoryStream("text2");
@@ -21,7 +21,7 @@ class ExtendedStreamInterfaceTest extends TestCase
         $this->assertEquals("text2", $stream2);
     }
 
-    public function testFilterRead()
+    public function testFilterRead(): void
     {
         $stream = new MemoryStream("ZW5jb2RlZCB0ZXh0");
         $stream->addFilter("convert.base64-decode");
@@ -29,7 +29,7 @@ class ExtendedStreamInterfaceTest extends TestCase
         $this->assertEquals("encoded text", $stream);
     }
 
-    public function testFilterWrite()
+    public function testFilterWrite(): void
     {
         $stream = new MemoryStream();
         $stream->addFilter("convert.base64-encode", "w");

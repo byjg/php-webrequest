@@ -4,9 +4,11 @@
 namespace ByJG\Util\Helper;
 
 
+use Psr\Http\Message\StreamInterface;
+
 interface ExtendedStreamInterface
 {
-    function appendStream($stream);
+    function appendStream(StreamInterface $stream): void;
 
-    function addFilter($filter);
+    function addFilter(string $filter, string $mode = "r"): void;
 }
