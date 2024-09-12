@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Unit Test" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+  <configuration default="false" name="PHPUnit" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
     <CommandLine>
       <envs>
         <env name="HTTP_TEST_HOST" value="127.0.01" />
