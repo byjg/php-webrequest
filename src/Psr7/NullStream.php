@@ -70,7 +70,7 @@ class NullStream implements ExtendedStreamInterface, StreamInterface
 
     public function write($string): int
     {
-		return 0;
+        return 0;
     }
 
     public function isReadable(): bool
