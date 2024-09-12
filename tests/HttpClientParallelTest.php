@@ -46,7 +46,8 @@ class HttpClientParallelTest extends TestCase
             $fail[] = $error;
         };
 
-        $multi = new HttpClientParallel(
+        $timeStart = time();
+        $multi = new \ByJG\Util\HttpClientParallel(
             $httpClient,
             $onSucess,
             $onError
@@ -62,6 +63,10 @@ class HttpClientParallelTest extends TestCase
             ->addRequest($request3);
 
         $multi->execute();
+
+        $diffSeconds = time() - $timeStart;
+        $this->assertGreaterThan(1, $diffSeconds);
+        $this->assertLessThanOrEqual(3, $diffSeconds);
 
         sort($results);
 
