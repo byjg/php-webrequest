@@ -23,8 +23,6 @@ class MessageTest extends TestCase
 
     /**
      * @return (string|string[])[][][]
-     *
-     * @psalm-return list{list{list{'mime-type', 'text/plain'}, array{'Mime-Type': list{'text/plain'}}}, list{list{'MIME-TYPE', 'text/plain'}, array{'Mime-Type': list{'text/plain'}}}, list{list{'accept-encoding', list{'gzip', 'deflate', 'br'}}, array{'Accept-Encoding': list{'gzip', 'deflate', 'br'}}}}
      */
     public function headerDataProvider(): array
     {

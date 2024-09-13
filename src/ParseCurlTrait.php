@@ -31,7 +31,6 @@ trait ParseCurlTrait
             ->withBody(new MemoryStream(substr($body, $headerSize)))
             ->withHeader("X-Effective-Url", $effectiveUrl);
 
-        /** @psalm-suppress InvalidArgument */
         return $this->parseHeader($response, substr($body, 0, $headerSize));
     }
 

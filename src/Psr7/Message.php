@@ -77,6 +77,7 @@ class Message implements MessageInterface
 
     /**
      * @inheritDoc
+     * @return $this
      * @throws MessageException
      */
     public function withHeader(string $name, $value): MessageInterface
@@ -144,6 +145,7 @@ class Message implements MessageInterface
 
     /**
      * @inheritDoc
+     * @return $this
      */
     public function withBody(StreamInterface $body): MessageInterface
     {

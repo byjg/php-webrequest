@@ -41,6 +41,9 @@ class HttpClient implements ClientInterface
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function withNoSSLVerification(): HttpClient
     {
         $this->withCurlOption(CURLOPT_SSL_VERIFYHOST, 0);

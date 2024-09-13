@@ -102,7 +102,6 @@ class MockClientTest extends TestCase
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("referer", "http://example.com/abc");
 
-        /** @psalm-suppress InvalidArgument */
         $response = $this->object->sendRequest($request);
 
         $curlOptions = $this->curlOptions + [
@@ -122,7 +121,6 @@ class MockClientTest extends TestCase
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("X-Custom-Header", "Defined");
 
-        /** @psalm-suppress InvalidArgument */
         $response = $this->object->sendRequest($request);
 
         $curlOptions = $this->curlOptions + [
@@ -174,7 +172,6 @@ class MockClientTest extends TestCase
             CURLOPT_SSL_VERIFYHOST => 0,
             CURLOPT_SSL_VERIFYPEER => 0,
         ];
-        /** @psalm-suppress UndefinedMethod */
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
 
         $this->object = MockClient::getInstance();
@@ -327,7 +324,6 @@ class MockClientTest extends TestCase
      */
     public function testPut2(): void
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
@@ -350,7 +346,6 @@ class MockClientTest extends TestCase
      */
     public function testPut4(): void
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("PUT");
 
@@ -371,7 +366,6 @@ class MockClientTest extends TestCase
      */
     public function testPut5(): void
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ])->withMethod("PUT");
@@ -434,7 +428,6 @@ class MockClientTest extends TestCase
      */
     public function testDelete2(): void
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
@@ -457,7 +450,6 @@ class MockClientTest extends TestCase
      */
     public function testDelete4(): void
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("DELETE");
 
@@ -478,7 +470,6 @@ class MockClientTest extends TestCase
      */
     public function testDelete5(): void
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ])->withMethod("DELETE");
@@ -593,7 +584,6 @@ class MockClientTest extends TestCase
 
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
 
-        /** @psalm-suppress InvalidArgument */
         $this->object = new MockClient($expectedResponse);
 
         $response = $this->object->sendRequest($request);

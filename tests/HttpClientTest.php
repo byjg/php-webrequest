@@ -106,7 +106,6 @@ class HttpClientTest extends TestCase
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("referer", "http://example.com/abc");
 
-        /** @psalm-suppress InvalidArgument */
         $response = $this->object->sendRequest($request);
         $body = ParseBody::parse($response);
         $this->assertEquals('http://example.com/abc', $body["referer"]);
@@ -123,7 +122,6 @@ class HttpClientTest extends TestCase
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("X-Custom-Header", "Defined");
 
-        /** @psalm-suppress InvalidArgument */
         $response = $this->object->sendRequest($request);
         $body = ParseBody::parse($response);
         $this->assertEquals('Defined', $body["custom_header"]);
@@ -162,7 +160,6 @@ class HttpClientTest extends TestCase
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withBody(new MemoryStream("A"));
 
-        /** @psalm-suppress InvalidArgument */
         $this->object->sendRequest($request);
     }
 
@@ -440,7 +437,6 @@ class HttpClientTest extends TestCase
      */
     public function testPut1(): void
     {
-        /** @psalm-suppress UndefinedMethod */
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("content-type",  'application/x-www-form-urlencoded')
             ->withMethod("PUT");
@@ -468,7 +464,6 @@ class HttpClientTest extends TestCase
      */
     public function testPut2(): void
     {
-        /** @psalm-suppress UndefinedMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
@@ -497,7 +492,6 @@ class HttpClientTest extends TestCase
      */
     public function testPut3(): void
     {
-        /** @psalm-suppress UndefinedMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string')
             ->withMethod("PUT");
         
@@ -524,7 +518,6 @@ class HttpClientTest extends TestCase
      */
     public function testPut4(): void
     {
-        /** @psalm-suppress UndefinedMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("PUT");
         
@@ -551,7 +544,6 @@ class HttpClientTest extends TestCase
      */
     public function testPut5(): void
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ])->withMethod("PUT");
@@ -608,7 +600,6 @@ class HttpClientTest extends TestCase
      */
     public function testDelete1(): void
     {
-        /** @psalm-suppress UndefinedMethod */
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("content-type",  'application/x-www-form-urlencoded')
             ->withMethod("DELETE");
@@ -636,7 +627,6 @@ class HttpClientTest extends TestCase
      */
     public function testDelete2(): void
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
@@ -665,7 +655,6 @@ class HttpClientTest extends TestCase
      */
     public function testDelete3(): void
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string')
             ->withMethod("DELETE");
         
@@ -692,7 +681,6 @@ class HttpClientTest extends TestCase
      */
     public function testDelete4(): void
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("DELETE");
         
@@ -719,7 +707,6 @@ class HttpClientTest extends TestCase
      */
     public function testDelete5(): void
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ])->withMethod("DELETE");
@@ -838,7 +825,6 @@ class HttpClientTest extends TestCase
      */
     public function testHead1(): void
     {
-        /** @psalm-suppress UndefinedMethod */
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader( "Connection", "Keep-Alive")
             ->withMethod("HEAD");

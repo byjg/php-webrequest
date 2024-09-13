@@ -76,6 +76,7 @@ class Request extends Message implements RequestInterface
 
     /**
      * @inheritDoc
+     * @return $this
      * @throws RequestException
      */
     public function withMethod(string $method): RequestInterface

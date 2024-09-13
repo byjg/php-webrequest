@@ -14,8 +14,6 @@ class RequestTest extends TestCase
      * @throws MessageException
      *
      * @return (Request|string[])[][]
-     *
-     * @psalm-return list{list{Request, list{'byjg.com:80', ''}}, list{Request, list{'byjg.com.br:8080', ''}}, list{Request, list{'byjg.com:80', '/full/path'}}, list{Request, list{'byjg.com:80', '/full/path?query=90&a=1'}}, list{Request, list{'byjg.com:80', '/full/path'}}}
      */
     public function uriProvider(): array
     {
