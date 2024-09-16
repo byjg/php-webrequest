@@ -136,10 +136,9 @@ class Message implements MessageInterface
     public function getBody(): StreamInterface
     {
         if (is_null($this->body)) {
-            $this->body = new MemoryStream();
-        } else {
-            $this->body->rewind();
+            $this->body = new NullStream();
         }
+        $this->body->rewind();
         return $this->body;
     }
 
