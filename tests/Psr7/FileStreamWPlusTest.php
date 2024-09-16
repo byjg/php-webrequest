@@ -2,14 +2,14 @@
 
 namespace Test\Psr7;
 
-use ByJG\Util\Psr7\FileStream;
+use ByJG\WebRequest\Psr7\FileStream;
 use Psr\Http\Message\StreamInterface;
 
 class FileStreamWPlusTest extends StreamBaseTest
 {
     const FILENAME = "/tmp/filestream-test.txt";
 
-    public function getResource(string $data): StreamInterface
+    public function getResource(?string $data): StreamInterface
     {
         if (file_exists(self::FILENAME)) {
             unlink(self::FILENAME);
@@ -18,17 +18,26 @@ class FileStreamWPlusTest extends StreamBaseTest
         return new FileStream(self::FILENAME, "rw+");
     }
 
+    /**
+     * @return void
+     */
     public function tearDownResource()
     {
         $this->stream->close();
         $this->stream = null;
         unlink(self::FILENAME);
     }
+    /**
+     * @return true
+     */
     public function isWriteable()
     {
         return true;
     }
 
+    /**
+     * @return true
+     */
     public function canOverwrite()
     {
         return true;

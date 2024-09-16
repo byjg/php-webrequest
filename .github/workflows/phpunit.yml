@@ -51,6 +51,7 @@ jobs:
           docker cp "$PWD/tests/server/soap.wsdl" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html/soap.wsdl"
       - run: composer install
       - run: ./vendor/bin/phpunit
+      - run: ./vendor/bin/psalm
 
   Documentation:
     if: github.ref == 'refs/heads/master'

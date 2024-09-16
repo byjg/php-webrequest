@@ -1,19 +1,19 @@
 <?php
 
-namespace ByJG\Util\Psr7;
+namespace ByJG\WebRequest\Psr7;
 
-use ByJG\Util\Helper\ExtendedStreamInterface;
+use ByJG\WebRequest\Helper\ExtendedStreamInterface;
 use Psr\Http\Message\StreamInterface;
 
 class NullStream implements ExtendedStreamInterface, StreamInterface
 {
 
-    function appendStream($stream)
+    function appendStream(StreamInterface $stream): void
     {
         // TODO: Implement appendStream() method.
     }
 
-    function addFilter($filter)
+    function addFilter($filter, string $mode = "r"): void
     {
         // TODO: Implement addFilter() method.
     }

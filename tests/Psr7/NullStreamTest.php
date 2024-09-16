@@ -2,7 +2,7 @@
 
 namespace Test\Psr7;
 
-use ByJG\Util\Psr7\NullStream;
+use ByJG\WebRequest\Psr7\NullStream;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
 
@@ -10,12 +10,12 @@ class NullStreamTest extends TestCase
 {
     protected ?StreamInterface $stream;
 
-    public function getResource(string $data): StreamInterface
+    public function getResource(?string $data): StreamInterface
     {
         return new NullStream();
     }
 
-    public function tearDownResource()
+    public function tearDownResource(): void
     {
         $this->stream = null;
     }
@@ -31,40 +31,40 @@ class NullStreamTest extends TestCase
         $this->stream = null;
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $this->assertEquals('', (string)$this->stream);
     }
 
-    public function TestToStringEmpty()
+    public function TestToStringEmpty(): void
     {
         $this->stream = $this->getResource(null);
         $this->assertEquals("", (string)$this->stream);
     }
 
-    public function testGetSize()
+    public function testGetSize(): void
     {
         $this->assertSame(0, $this->stream->getSize());
     }
 
-    public function testTell()
+    public function testTell(): void
     {
         $this->assertSame(0, $this->stream->tell());
         $this->stream->seek(10);
         $this->assertSame(0, $this->stream->tell());
     }
 
-    public function testEof()
+    public function testEof(): void
     {
         $this->assertTrue($this->stream->eof());
     }
 
-    public function testIsSeekable()
+    public function testIsSeekable(): void
     {
         $this->assertTrue($this->stream->isSeekable());
     }
 
-    public function testSeek()
+    public function testSeek(): void
     {
         $this->assertSame(0, $this->stream->tell());
         $this->stream->seek(10);
@@ -75,7 +75,7 @@ class NullStreamTest extends TestCase
         $this->assertSame(0, $this->stream->tell());
     }
 
-    public function testRewind()
+    public function testRewind(): void
     {
         $this->assertSame(0, $this->stream->tell());
         $this->stream->seek(0, SEEK_END);
@@ -84,12 +84,12 @@ class NullStreamTest extends TestCase
         $this->assertSame(0, $this->stream->tell());
     }
 
-    public function testIsWritable()
+    public function testIsWritable(): void
     {
         $this->assertTrue($this->stream->isWritable());
     }
 
-    public function testOverwrite()
+    public function testOverwrite(): void
     {
         $this->stream->rewind();
         $result = $this->stream->write('test');
@@ -98,7 +98,7 @@ class NullStreamTest extends TestCase
         $this->assertSame(0, $result);
     }
 
-    public function testAppend()
+    public function testAppend(): void
     {
         $this->stream->seek(0, SEEK_END);
         $result = $this->stream->write("test");
@@ -106,12 +106,12 @@ class NullStreamTest extends TestCase
         $this->assertSame(0, $result);
     }
 
-    public function testIsReadble()
+    public function testIsReadble(): void
     {
         $this->assertTrue($this->stream->isReadable());
     }
 
-    public function testRead1()
+    public function testRead1(): void
     {
         $result = $this->stream->read(6);
         $this->assertEquals("", $result);
@@ -119,7 +119,7 @@ class NullStreamTest extends TestCase
         $this->assertEquals("", $result);
     }
 
-    public function testGetContents1()
+    public function testGetContents1(): void
     {
         $result = $this->stream->read(6);
         $this->assertEquals("", $result);
@@ -127,7 +127,7 @@ class NullStreamTest extends TestCase
         $this->assertEquals("", $result);
     }
 
-    public function testGetContents2()
+    public function testGetContents2(): void
     {
         $this->stream->rewind();
         $result = $this->stream->getContents();

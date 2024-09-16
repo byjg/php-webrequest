@@ -1,9 +1,9 @@
-version: "3.0"
-
 services:
   webserver:
-    image: byjg/php:8.1-fpm-nginx
+    image: byjg/php:8.3-fpm-nginx
+    environment:
+      - VERBOSE=true
     volumes:
-    - ./tests/server:/var/www/html
+      - ./tests/server:/var/www/html
     ports:
       - "8080:80"

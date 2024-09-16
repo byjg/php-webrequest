@@ -1,9 +1,9 @@
 <?php
 
-namespace ByJG\Util\Psr7;
+namespace ByJG\WebRequest\Psr7;
 
-use ByJG\Util\Exception\MessageException;
-use ByJG\Util\Exception\RequestException;
+use ByJG\WebRequest\Exception\MessageException;
+use ByJG\WebRequest\Exception\RequestException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -76,6 +76,7 @@ class Request extends Message implements RequestInterface
 
     /**
      * @inheritDoc
+     * @return $this
      * @throws RequestException
      */
     public function withMethod(string $method): RequestInterface

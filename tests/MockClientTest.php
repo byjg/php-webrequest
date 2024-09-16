@@ -2,17 +2,17 @@
 
 namespace Test;
 
-use ByJG\Util\Exception\MessageException;
-use ByJG\Util\Exception\RequestException;
-use ByJG\Util\Helper\RequestFormUrlEncoded;
-use ByJG\Util\Helper\RequestJson;
-use ByJG\Util\Helper\RequestMultiPart;
-use ByJG\Util\MockClient;
-use ByJG\Util\MultiPartItem;
-use ByJG\Util\Psr7\MemoryStream;
-use ByJG\Util\Psr7\Request;
-use ByJG\Util\Psr7\Response;
 use ByJG\Util\Uri;
+use ByJG\WebRequest\Exception\MessageException;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\Helper\RequestFormUrlEncoded;
+use ByJG\WebRequest\Helper\RequestJson;
+use ByJG\WebRequest\Helper\RequestMultiPart;
+use ByJG\WebRequest\MockClient;
+use ByJG\WebRequest\MultiPartItem;
+use ByJG\WebRequest\Psr7\MemoryStream;
+use ByJG\WebRequest\Psr7\Request;
+use ByJG\WebRequest\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 class MockClientTest extends TestCase
@@ -64,7 +64,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testGetLastStatus()
+    public function testGetLastStatus(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
         $response = $this->object->sendRequest($request);
@@ -77,7 +77,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testWithCredentials()
+    public function testWithCredentials(): void
     {
         $uri = Uri::getInstanceFromString($this->SERVER_TEST)
             ->withUserInfo("user", "pass");
@@ -97,7 +97,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testReferer()
+    public function testReferer(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("referer", "http://example.com/abc");
@@ -114,7 +114,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testCustomHeader()
+    public function testCustomHeader(): void
     {
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
 
@@ -133,7 +133,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testisFollowingLocation()
+    public function testisFollowingLocation(): void
     {
         unset($this->curlOptions[CURLOPT_FOLLOWLOCATION]);
 
@@ -159,7 +159,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testisVerifySSL()
+    public function testisVerifySSL(): void
     {
         unset($this->curlOptions[CURLOPT_SSL_VERIFYHOST]);
         unset($this->curlOptions[CURLOPT_SSL_VERIFYPEER]);
@@ -187,7 +187,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testGet1()
+    public function testGet1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("GET");
@@ -201,7 +201,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testPost1()
+    public function testPost1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("POST");
@@ -219,7 +219,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testPost2()
+    public function testPost2(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
@@ -241,7 +241,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testPost4()
+    public function testPost4(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2');
 
@@ -260,7 +260,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testPost5()
+    public function testPost5(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
@@ -281,7 +281,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testPostPayload()
+    public function testPostPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
             "POST",
@@ -304,7 +304,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testPut1()
+    public function testPut1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("PUT");
@@ -322,7 +322,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testPut2()
+    public function testPut2(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
@@ -344,7 +344,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testPut4()
+    public function testPut4(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("PUT");
@@ -364,7 +364,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testPut5()
+    public function testPut5(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
@@ -385,7 +385,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testPutPayload()
+    public function testPutPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
             "PUT",
@@ -408,7 +408,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testDelete1()
+    public function testDelete1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("DELETE");
@@ -426,7 +426,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testDelete2()
+    public function testDelete2(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
@@ -448,7 +448,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testDelete4()
+    public function testDelete4(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("DELETE");
@@ -468,7 +468,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testDelete5()
+    public function testDelete5(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
@@ -489,7 +489,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testDeletePayload()
+    public function testDeletePayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
             "DELETE",
@@ -512,7 +512,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testPostMultiPartForm()
+    public function testPostMultiPartForm(): void
     {
         $uploadFile = [];
         $uploadFile[] = new MultiPartItem('field1', 'value1');
@@ -559,7 +559,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testWithCurlOption()
+    public function testWithCurlOption(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
 
@@ -577,7 +577,7 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testMockResponse()
+    public function testMockResponse(): void
     {
         $expectedResponse = Response::getInstance(404)
             ->withBody(new MemoryStream("<h1>Not Found</h1>"));

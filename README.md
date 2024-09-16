@@ -37,8 +37,8 @@ So, once you have a Request instance defined just need to call `HttpClient::send
 ```php
 <?php
 $uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
-$request = \ByJG\Util\Psr7\Request::getInstance($uri);
-$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
+$request = \ByJG\WebRequest\Psr7\Request::getInstance($uri);
+$response = \ByJG\WebRequest\HttpClient::getInstance()->sendRequest($request);
 ```
 
 ### Passing arguments
@@ -48,8 +48,8 @@ $response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 $uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page')
     ->withQuery(http_build_query(['param'=>'value']));
 
-$request = \ByJG\Util\Psr7\Request::getInstance($uri);
-$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
+$request = \ByJG\WebRequest\Psr7\Request::getInstance($uri);
+$response = \ByJG\WebRequest\HttpClient::getInstance()->sendRequest($request);
 ```
 
 ## Helper Classes
@@ -61,12 +61,12 @@ The WebRequest package has Helper classes to make it easy to create Request inst
 ```php
 <?php
 $uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
-$request = \ByJG\Util\Helper\RequestJson::build(
+$request = \ByJG\WebRequest\Helper\RequestJson::build(
    $uri,
    "POST",
    '{teste: "value"}'  // Support an associate array
 );
-$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
+$response = \ByJG\WebRequest\HttpClient::getInstance()->sendRequest($request);
 ```
 
 ### Create a Form Url Encoded (emulate HTTP form)
@@ -74,11 +74,11 @@ $response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
 ```php
 <?php
 $uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
-$request = \ByJG\Util\Helper\RequestFormUrlEncoded::build(
+$request = \ByJG\WebRequest\Helper\RequestFormUrlEncoded::build(
    $uri,
    ["param" => "value"]
 );
-$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
+$response = \ByJG\WebRequest\HttpClient::getInstance()->sendRequest($request);
 ```
 
 ### Create a Multi Part request (upload documents)
@@ -89,23 +89,23 @@ $uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
 
 // Define the contents to upload using a list of MultiPartItem objects
 $uploadFile = [];
-$uploadFile[] = new \ByJG\Util\MultiPartItem('field1', 'value1');
-$uploadFile[] = new \ByJG\Util\MultiPartItem(
+$uploadFile[] = new \ByJG\WebRequest\MultiPartItem('field1', 'value1');
+$uploadFile[] = new \ByJG\WebRequest\MultiPartItem(
     'field2',
     '{"key": "value2"}',
     'filename.json',
     'application/json; charset=UTF-8'
 );
-$uploadFile[] = new \ByJG\Util\MultiPartItem('field3', 'value3');
+$uploadFile[] = new \ByJG\WebRequest\MultiPartItem('field3', 'value3');
 
 // Use the Wrapper to create the Request
-$request = \ByJG\Util\Helper\RequestMultiPart::build(Uri::getInstanceFromString($uri),
+$request = \ByJG\WebRequest\Helper\RequestMultiPart::build(Uri::getInstanceFromString($uri),
     "POST",
     $uploadFile
 );
 
 // Do the request as usual
-$response = \ByJG\Util\HttpClient::getInstance()->sendRequest($request);
+$response = \ByJG\WebRequest\HttpClient::getInstance()->sendRequest($request);
 ```
 
 ## Customizing the Http Client
@@ -115,7 +115,7 @@ The customizations options are:
 ```php
 <?php
 
-$client = \ByJG\Util\HttpClient::getInstance()
+$client = \ByJG\WebRequest\HttpClient::getInstance()
     ->withNoFollowRedirect()         // HttpClient will not follow redirects (status codes 301 and 302). Default is follow
     ->withNoSSLVerification()        // HttpClient will not validate the SSL certificate. Default is validate.
     ->withProxy($uri)                // Define a http Proxy based on the URI.
@@ -141,7 +141,7 @@ Below a basic example:
 ```php
 <?php
 // Create the instances of the requirements
-$httpClient = \ByJG\Util\HttpClient::getInstance();
+$httpClient = \ByJG\WebRequest\HttpClient::getInstance();
 
 $onSucess = function ($response, $id) {
     // Do something with Response object
@@ -152,7 +152,7 @@ $onError = function ($error, $id) use (&$fail) {
 };
 
 // Create the HttpClientParallel
-$multi = new \ByJG\Util\HttpClientParallel(
+$multi = new \ByJG\WebRequest\HttpClientParallel(
     $httpClient,
     $onSucess,
     $onError

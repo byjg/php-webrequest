@@ -1,10 +1,10 @@
 <?php
 
-namespace ByJG\Util;
+namespace ByJG\WebRequest;
 
-use ByJG\Util\Exception\NetworkException;
-use ByJG\Util\Exception\RequestException;
-use ByJG\Util\Psr7\NullStream;
+use ByJG\WebRequest\Exception\NetworkException;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\Psr7\NullStream;
 use CurlHandle;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientInterface;
@@ -33,14 +33,17 @@ class HttpClient implements ClientInterface
     /**
      * Set the CURLOPT_FOLLOWLOCATION
      *
-     * @return HttpClient
+     * @return static
      */
-    public function withNoFollowRedirect(): HttpClient
+    public function withNoFollowRedirect(): static
     {
         $this->withCurlOption(CURLOPT_FOLLOWLOCATION, false);
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function withNoSSLVerification(): HttpClient
     {
         $this->withCurlOption(CURLOPT_SSL_VERIFYHOST, 0);
@@ -107,7 +110,7 @@ class HttpClient implements ClientInterface
             throw new NetworkException($this->request, "CURL - " . $error);
         }
 
-        return $this->parseCurl($result, $curlHandle);
+        return $this->parseCurl((string)$result, $curlHandle);
     }
 
     /**

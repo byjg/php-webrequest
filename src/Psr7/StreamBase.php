@@ -1,9 +1,9 @@
 <?php
 
-namespace ByJG\Util\Psr7;
+namespace ByJG\WebRequest\Psr7;
 
 
-use ByJG\Util\Helper\ExtendedStreamInterface;
+use ByJG\WebRequest\Helper\ExtendedStreamInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
@@ -75,7 +75,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     public function getSize(): ?int
     {
         if (!$this->isDetached()) {
-            return (int)fstat($this->resource)['size'];
+            return fstat($this->resource)['size'];
         }
         return null;
     }
@@ -120,7 +120,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
             throw new RuntimeException("Stream is detached");
         }
         $seekable = $this->getMetadata('seekable');
-        return is_null($seekable) ? false : $seekable;
+        return is_null($seekable) || is_array($seekable) ? false : $seekable;
     }
 
     /**
@@ -253,11 +253,8 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     /**
      * @param StreamInterface $stream
      */
-    public function appendStream($stream): void
+    public function appendStream(StreamInterface $stream): void
     {
-        if (!($stream instanceof StreamInterface)) {
-            throw new RuntimeException("You need to pass a stream");
-        }
         $this->seek(0, SEEK_END);
         $stream->rewind();
         $this->write($stream->getContents());
@@ -267,7 +264,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @param string $filter
      * @param string $mode (r)ead or (w)rite
      */
-    public function addFilter($filter, string $mode = "r")
+    public function addFilter(string $filter, string $mode = "r"): void
     {
         stream_filter_append($this->resource, $filter, $mode == "r" ? STREAM_FILTER_READ : STREAM_FILTER_WRITE);
     }

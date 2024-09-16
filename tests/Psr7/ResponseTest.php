@@ -2,13 +2,13 @@
 
 namespace Test\Psr7;
 
-use ByJG\Util\Psr7\Response;
+use ByJG\WebRequest\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase
 {
 
-    public function testGetStatusCode()
+    public function testGetStatusCode(): void
     {
         $response = new Response();
         $this->assertEquals(200, $response->getStatusCode());

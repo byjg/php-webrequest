@@ -1,9 +1,9 @@
 <?php
 
 
-namespace ByJG\Util\Psr7;
+namespace ByJG\WebRequest\Psr7;
 
-use ByJG\Util\Exception\MessageException;
+use ByJG\WebRequest\Exception\MessageException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -77,6 +77,7 @@ class Message implements MessageInterface
 
     /**
      * @inheritDoc
+     * @return $this
      * @throws MessageException
      */
     public function withHeader(string $name, $value): MessageInterface
@@ -144,6 +145,7 @@ class Message implements MessageInterface
 
     /**
      * @inheritDoc
+     * @return $this
      */
     public function withBody(StreamInterface $body): MessageInterface
     {

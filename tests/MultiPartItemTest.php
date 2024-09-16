@@ -2,15 +2,15 @@
 
 namespace Test;
 
-use ByJG\Util\FileNotFoundException;
-use ByJG\Util\MultiPartItem;
-use ByJG\Util\Psr7\MemoryStream;
+use ByJG\WebRequest\FileNotFoundException;
+use ByJG\WebRequest\MultiPartItem;
+use ByJG\WebRequest\Psr7\MemoryStream;
 use PHPUnit\Framework\TestCase;
 
 class MultiPartItemTest extends TestCase
 {
 
-    public function testBuild1()
+    public function testBuild1(): void
     {
         $stream = new MemoryStream();
 
@@ -30,7 +30,7 @@ class MultiPartItemTest extends TestCase
         $this->assertEquals(implode("\n", $expected), $stream->getContents());
     }
 
-    public function testBuild2()
+    public function testBuild2(): void
     {
         $stream = new MemoryStream();
 
@@ -51,7 +51,7 @@ class MultiPartItemTest extends TestCase
         $this->assertEquals(implode("\n", $expected), $stream->getContents());
     }
 
-    public function testBuild3()
+    public function testBuild3(): void
     {
         $stream = new MemoryStream();
 
@@ -76,7 +76,7 @@ class MultiPartItemTest extends TestCase
         $this->assertEquals(implode("\n", $expected), $stream->getContents());
     }
 
-    public function testBuild4()
+    public function testBuild4(): void
     {
         $stream = new MemoryStream();
 
@@ -107,7 +107,7 @@ class MultiPartItemTest extends TestCase
     /**
      * @throws FileNotFoundException
      */
-    public function testBuild5()
+    public function testBuild5(): void
     {
         $stream = new MemoryStream();
 

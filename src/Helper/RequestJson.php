@@ -1,12 +1,11 @@
 <?php
 
-namespace ByJG\Util\Helper;
+namespace ByJG\WebRequest\Helper;
 
-use ByJG\Util\Exception\MessageException;
-use ByJG\Util\Exception\RequestException;
-use ByJG\Util\Psr7\MemoryStream;
-use ByJG\Util\Psr7\Request;
-use Psr\Http\Message\RequestInterface;
+use ByJG\WebRequest\Exception\MessageException;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\Psr7\MemoryStream;
+use ByJG\WebRequest\Psr7\Request;
 use Psr\Http\Message\UriInterface;
 
 class RequestJson extends Request
@@ -15,11 +14,11 @@ class RequestJson extends Request
      * @param UriInterface $uri
      * @param $method
      * @param $json
-     * @return RequestInterface
+     * @return Request
      * @throws MessageException
      * @throws RequestException
      */
-    public static function build(UriInterface $uri, $method, $json): RequestInterface
+    public static function build(UriInterface $uri, $method, $json): Request
     {
         if (is_array($json)) {
             $json = json_encode($json);

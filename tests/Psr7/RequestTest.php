@@ -2,18 +2,20 @@
 
 namespace Test\Psr7;
 
-use ByJG\Util\Exception\MessageException;
-use ByJG\Util\Exception\RequestException;
-use ByJG\Util\Psr7\Request;
 use ByJG\Util\Uri;
+use ByJG\WebRequest\Exception\MessageException;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\Psr7\Request;
 use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase
 {
     /**
      * @throws MessageException
+     *
+     * @return (Request|string[])[][]
      */
-    public function uriProvider()
+    public function uriProvider(): array
     {
         return [
             [
@@ -51,21 +53,24 @@ class RequestTest extends TestCase
 
     /**
      * @dataProvider uriProvider
+     *
      * @param Request $request
      * @param string[] $expected
      */
-    public function testGetRequestTarget($request, $expected)
+    public function testGetRequestTarget($request, $expected): void
     {
         $this->assertEquals($request->getRequestTarget(), $expected[1]);
     }
 
     /**
      * @dataProvider uriProvider
+     *
      * @param Request $request
      * @param string[] $expected
+     *
      * @throws MessageException
      */
-    public function testWithRequestTarget($request, $expected)
+    public function testWithRequestTarget($request, $expected): void
     {
         $path = "/another" . rand(1000, 9000);
         $query = "query=" . rand(1000, 9000);
@@ -78,7 +83,7 @@ class RequestTest extends TestCase
     /**
      * @throws MessageException
      */
-    public function testGetMethod()
+    public function testGetMethod(): void
     {
         $request = new Request(new Uri());
         $this->assertEquals("GET", $request->getMethod());
@@ -88,7 +93,7 @@ class RequestTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
-    public function testWithMethod()
+    public function testWithMethod(): void
     {
         $request = new Request(new Uri());
         $methods = [ "GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH" ];
@@ -101,7 +106,7 @@ class RequestTest extends TestCase
     /**
      * @throws MessageException
      */
-    public function testWithUri()
+    public function testWithUri(): void
     {
         $uri = new Uri("http://somehost.com");
         $request  = new Request($uri);

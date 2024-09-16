@@ -1,13 +1,12 @@
 <?php
 
 
-namespace ByJG\Util;
+namespace ByJG\WebRequest;
 
 
-use ByJG\Util\Exception\RequestException;
-use ByJG\Util\Psr7\MemoryStream;
-use ByJG\Util\Psr7\Response;
-use Exception;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\Psr7\MemoryStream;
+use ByJG\WebRequest\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 
 trait ParseCurlTrait
@@ -21,22 +20,18 @@ trait ParseCurlTrait
      */
     public function parseCurl(string $body, $curlHandle, bool $close = true): ResponseInterface
     {
-        try {
-            $headerSize = curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE);
-            $status = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
-            $effectiveUrl = curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL);
-            if ($close) {
-                curl_close($curlHandle);
-            }
-
-            $response = Response::getInstance($status)
-                ->withBody(new MemoryStream(substr($body, $headerSize)))
-                ->withHeader("X-Effective-Url", $effectiveUrl);
-
-            return $this->parseHeader($response, substr($body, 0, $headerSize));
-        } catch (Exception $ex) {
-            throw new RequestException($this->request, $ex->getMessage(), $ex->getCode(), $ex);
+        $headerSize = curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE);
+        $status = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        $effectiveUrl = curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL);
+        if ($close) {
+            curl_close($curlHandle);
         }
+
+        $response = Response::getInstance($status)
+            ->withBody(new MemoryStream(substr($body, $headerSize)))
+            ->withHeader("X-Effective-Url", $effectiveUrl);
+
+        return $this->parseHeader($response, substr($body, 0, $headerSize));
     }
 
     /**

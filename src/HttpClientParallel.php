@@ -1,9 +1,9 @@
 <?php
 
-namespace ByJG\Util;
+namespace ByJG\WebRequest;
 
-use ByJG\Util\Exception\CurlException;
-use ByJG\Util\Exception\RequestException;
+use ByJG\WebRequest\Exception\CurlException;
+use ByJG\WebRequest\Exception\RequestException;
 use Closure;
 use Exception;
 use Psr\Http\Message\RequestInterface;
@@ -44,12 +44,12 @@ class HttpClientParallel
 
         $this->defaultOnSuccess = $defaultOnSuccess;
         if (is_null($defaultOnSuccess)) {
-            $this->defaultOnSuccess = function () {};
+            $this->defaultOnSuccess = function (): void {};
         }
 
         $this->defaultOnError = $defaultOnError;
         if (is_null($defaultOnError)) {
-            $this->defaultOnError = function () {};
+            $this->defaultOnError = function (): void {};
         }
     }
 
