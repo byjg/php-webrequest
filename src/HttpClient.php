@@ -188,6 +188,7 @@ class HttpClient implements ClientInterface
         }
     }
 
+
     /**
      * Defines Basic credentials for access the service.
      */
