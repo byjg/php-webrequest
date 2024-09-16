@@ -1,10 +1,10 @@
 <?php
 
-namespace ByJG\Util;
+namespace ByJG\WebRequest;
 
-use ByJG\Util\Exception\RequestException;
-use ByJG\Util\Psr7\MemoryStream;
-use ByJG\Util\Psr7\Response;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\Psr7\MemoryStream;
+use ByJG\WebRequest\Psr7\Response;
 use CurlHandle;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

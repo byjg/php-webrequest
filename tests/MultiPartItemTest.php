@@ -2,9 +2,9 @@
 
 namespace Test;
 
-use ByJG\Util\FileNotFoundException;
-use ByJG\Util\MultiPartItem;
-use ByJG\Util\Psr7\MemoryStream;
+use ByJG\WebRequest\FileNotFoundException;
+use ByJG\WebRequest\MultiPartItem;
+use ByJG\WebRequest\Psr7\MemoryStream;
 use PHPUnit\Framework\TestCase;
 
 class MultiPartItemTest extends TestCase

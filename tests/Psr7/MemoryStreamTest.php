@@ -2,7 +2,7 @@
 
 namespace Test\Psr7;
 
-use ByJG\Util\Psr7\MemoryStream;
+use ByJG\WebRequest\Psr7\MemoryStream;
 use Psr\Http\Message\StreamInterface;
 
 class MemoryStreamTest extends StreamBaseTest

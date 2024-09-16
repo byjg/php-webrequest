@@ -1,6 +1,6 @@
 <?php
 
-namespace ByJG\Util;
+namespace ByJG\WebRequest;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;

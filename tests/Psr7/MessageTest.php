@@ -2,9 +2,9 @@
 
 namespace Test\Psr7;
 
-use ByJG\Util\Exception\MessageException;
-use ByJG\Util\Psr7\MemoryStream;
-use ByJG\Util\Psr7\Message;
+use ByJG\WebRequest\Exception\MessageException;
+use ByJG\WebRequest\Psr7\MemoryStream;
+use ByJG\WebRequest\Psr7\Message;
 use PHPUnit\Framework\TestCase;
 
 class MessageTest extends TestCase

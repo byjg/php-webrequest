@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ByJG\Util;
+namespace ByJG\WebRequest;
 
 
 use Psr\Http\Message\MessageInterface;

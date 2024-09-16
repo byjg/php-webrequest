@@ -1,9 +1,9 @@
 <?php
 
-namespace ByJG\Util\Psr7;
+namespace ByJG\WebRequest\Psr7;
 
 
-use ByJG\Util\Helper\ExtendedStreamInterface;
+use ByJG\WebRequest\Helper\ExtendedStreamInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 

@@ -2,12 +2,12 @@
 
 namespace Test;
 
-use ByJG\Util\Exception\CurlException;
-use ByJG\Util\Exception\MessageException;
-use ByJG\Util\Exception\RequestException;
-use ByJG\Util\HttpClient;
-use ByJG\Util\Psr7\Request;
 use ByJG\Util\Uri;
+use ByJG\WebRequest\Exception\CurlException;
+use ByJG\WebRequest\Exception\MessageException;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\HttpClient;
+use ByJG\WebRequest\Psr7\Request;
 use PHPUnit\Framework\TestCase;
 
 class HttpClientParallelTest extends TestCase
@@ -46,7 +46,7 @@ class HttpClientParallelTest extends TestCase
         };
 
         $timeStart = time();
-        $multi = new \ByJG\Util\HttpClientParallel(
+        $multi = new \ByJG\WebRequest\HttpClientParallel(
             $httpClient,
             $onSucess,
             $onError

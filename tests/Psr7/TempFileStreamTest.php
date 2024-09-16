@@ -2,7 +2,7 @@
 
 namespace Test\Psr7;
 
-use ByJG\Util\Psr7\TempFileStream;
+use ByJG\WebRequest\Psr7\TempFileStream;
 use Psr\Http\Message\StreamInterface;
 
 class TempFileStreamTest extends StreamBaseTest

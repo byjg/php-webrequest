@@ -2,7 +2,7 @@
 
 namespace Test\Psr7;
 
-use ByJG\Util\Psr7\NullStream;
+use ByJG\WebRequest\Psr7\NullStream;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
 

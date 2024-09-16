@@ -2,7 +2,7 @@
 
 namespace Test\Psr7;
 
-use ByJG\Util\Psr7\Response;
+use ByJG\WebRequest\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase

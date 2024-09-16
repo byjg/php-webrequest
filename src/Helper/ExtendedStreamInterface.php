@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ByJG\Util\Helper;
+namespace ByJG\WebRequest\Helper;
 
 
 use Psr\Http\Message\StreamInterface;

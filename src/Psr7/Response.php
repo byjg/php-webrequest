@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ByJG\Util\Psr7;
+namespace ByJG\WebRequest\Psr7;
 
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;

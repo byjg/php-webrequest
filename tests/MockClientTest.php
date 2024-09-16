@@ -2,17 +2,17 @@
 
 namespace Test;
 
-use ByJG\Util\Exception\MessageException;
-use ByJG\Util\Exception\RequestException;
-use ByJG\Util\Helper\RequestFormUrlEncoded;
-use ByJG\Util\Helper\RequestJson;
-use ByJG\Util\Helper\RequestMultiPart;
-use ByJG\Util\MockClient;
-use ByJG\Util\MultiPartItem;
-use ByJG\Util\Psr7\MemoryStream;
-use ByJG\Util\Psr7\Request;
-use ByJG\Util\Psr7\Response;
 use ByJG\Util\Uri;
+use ByJG\WebRequest\Exception\MessageException;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\Helper\RequestFormUrlEncoded;
+use ByJG\WebRequest\Helper\RequestJson;
+use ByJG\WebRequest\Helper\RequestMultiPart;
+use ByJG\WebRequest\MockClient;
+use ByJG\WebRequest\MultiPartItem;
+use ByJG\WebRequest\Psr7\MemoryStream;
+use ByJG\WebRequest\Psr7\Request;
+use ByJG\WebRequest\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 class MockClientTest extends TestCase

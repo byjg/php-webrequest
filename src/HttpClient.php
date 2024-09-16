@@ -1,10 +1,10 @@
 <?php
 
-namespace ByJG\Util;
+namespace ByJG\WebRequest;
 
-use ByJG\Util\Exception\NetworkException;
-use ByJG\Util\Exception\RequestException;
-use ByJG\Util\Psr7\NullStream;
+use ByJG\WebRequest\Exception\NetworkException;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\Psr7\NullStream;
 use CurlHandle;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientInterface;

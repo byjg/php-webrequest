@@ -1,11 +1,11 @@
 <?php
 
-namespace ByJG\Util\Helper;
+namespace ByJG\WebRequest\Helper;
 
-use ByJG\Util\Exception\MessageException;
-use ByJG\Util\Exception\RequestException;
-use ByJG\Util\Psr7\MemoryStream;
-use ByJG\Util\Psr7\Request;
+use ByJG\WebRequest\Exception\MessageException;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\Psr7\MemoryStream;
+use ByJG\WebRequest\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 

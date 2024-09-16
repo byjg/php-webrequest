@@ -2,10 +2,10 @@
 
 namespace Test\Psr7;
 
-use ByJG\Util\Exception\MessageException;
-use ByJG\Util\Exception\RequestException;
-use ByJG\Util\Psr7\Request;
 use ByJG\Util\Uri;
+use ByJG\WebRequest\Exception\MessageException;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\Psr7\Request;
 use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase

@@ -2,7 +2,7 @@
 
 namespace Test\Psr7;
 
-use ByJG\Util\Psr7\FileStream;
+use ByJG\WebRequest\Psr7\FileStream;
 use Psr\Http\Message\StreamInterface;
 
 class FileStreamWPlusTest extends StreamBaseTest

@@ -9,7 +9,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "ByJG\\Util\\": "src/"
+      "ByJG\\WebRequest\\": "src/"
     }
   },
     "autoload-dev": {

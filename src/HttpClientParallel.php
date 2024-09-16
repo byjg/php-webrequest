@@ -1,9 +1,9 @@
 <?php
 
-namespace ByJG\Util;
+namespace ByJG\WebRequest;
 
-use ByJG\Util\Exception\CurlException;
-use ByJG\Util\Exception\RequestException;
+use ByJG\WebRequest\Exception\CurlException;
+use ByJG\WebRequest\Exception\RequestException;
 use Closure;
 use Exception;
 use Psr\Http\Message\RequestInterface;

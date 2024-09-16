@@ -1,6 +1,6 @@
 <?php
 
-namespace ByJG\Util\Psr7;
+namespace ByJG\WebRequest\Psr7;
 
 class TempFileStream extends StreamBase
 {

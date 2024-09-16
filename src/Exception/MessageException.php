@@ -1,6 +1,6 @@
 <?php
 
-namespace ByJG\Util\Exception;
+namespace ByJG\WebRequest\Exception;
 
 use Exception;
 
