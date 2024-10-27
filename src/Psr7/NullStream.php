@@ -55,12 +55,12 @@ class NullStream implements ExtendedStreamInterface, StreamInterface
 
     public function seek($offset, $whence = SEEK_SET): void
     {
-        // TODO: Implement seek() method.
+        // Nothing to do
     }
 
     public function rewind(): void
     {
-        // TODO: Implement rewind() method.
+        // Nothing to do
     }
 
     public function isWritable(): bool
