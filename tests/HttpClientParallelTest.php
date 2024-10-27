@@ -1,13 +1,19 @@
 <?php
 
-use ByJG\Util\Psr7\Request;
+namespace Test;
+
 use ByJG\Util\Uri;
+use ByJG\WebRequest\Exception\CurlException;
+use ByJG\WebRequest\Exception\MessageException;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\HttpClient;
+use ByJG\WebRequest\Psr7\Request;
 use PHPUnit\Framework\TestCase;
 
 class HttpClientParallelTest extends TestCase
 {
 
-    protected $SERVER_TEST;
+    protected string $SERVER_TEST;
 
     public function setUp(): void
     {
@@ -17,25 +23,30 @@ class HttpClientParallelTest extends TestCase
         $this->SERVER_TEST = "http://$host:$port/multirequest.php";
     }
 
-    public function testMultiRequest()
+    /**
+     * @throws CurlException
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testMultiRequest(): void
     {
-        $httpClient = \ByJG\Util\HttpClient::getInstance();
+        $httpClient = HttpClient::getInstance();
 
         $count = 0;
         $results = [];
         $fail = [];
 
-        $onSucess = function ($response, $id) use (&$count, &$results) {
+        $onSucess = function ($response, $id) use (&$count, &$results): void {
             $results[] = $response->getStatusCode() . "-" . $response->getBody();
             $count++;
         };
 
-        $onError = function ($error, $id) use (&$fail) {
+        $onError = function ($error, $id) use (&$fail): void {
             $fail[] = $error;
         };
 
         $timeStart = time();
-        $multi = new \ByJG\Util\HttpClientParallel(
+        $multi = new \ByJG\WebRequest\HttpClientParallel(
             $httpClient,
             $onSucess,
             $onError

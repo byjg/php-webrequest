@@ -1,37 +1,43 @@
 <?php
 
-use ByJG\Util\Psr7\StreamBase;
-use PHPUnit\Framework\TestCase;
+namespace Test\Psr7;
 
-require_once __DIR__ . "/StreamBaseTest.php";
+use ByJG\WebRequest\Psr7\FileStream;
+use Psr\Http\Message\StreamInterface;
 
-class FileStreamTest extends StreamBaseTest
+class FileStreamWPlusTest extends StreamBaseTest
 {
     const FILENAME = "/tmp/filestream-test.txt";
-    /**
-     * @param $data
-     * @return StreamBase
-     */
-    public function getResource($data)
+
+    public function getResource(?string $data): StreamInterface
     {
         if (file_exists(self::FILENAME)) {
             unlink(self::FILENAME);
         }
         file_put_contents(self::FILENAME, $data);
-        return new \ByJG\Util\Psr7\FileStream(self::FILENAME, "rw+");
+        return new FileStream(self::FILENAME, "rw+");
     }
 
+    /**
+     * @return void
+     */
     public function tearDownResource()
     {
         $this->stream->close();
         $this->stream = null;
         unlink(self::FILENAME);
     }
+    /**
+     * @return true
+     */
     public function isWriteable()
     {
         return true;
     }
 
+    /**
+     * @return true
+     */
     public function canOverwrite()
     {
         return true;

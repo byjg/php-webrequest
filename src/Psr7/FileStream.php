@@ -1,8 +1,8 @@
 <?php
 
-namespace ByJG\Util\Psr7;
+namespace ByJG\WebRequest\Psr7;
 
-use \RuntimeException;
+use RuntimeException;
 
 class FileStream extends StreamBase
 {

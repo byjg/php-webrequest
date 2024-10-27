@@ -1,24 +1,23 @@
 <?php
 
-namespace ByJG\Util;
+namespace ByJG\WebRequest;
 
 use InvalidArgumentException;
-use PhpParser\Node\Expr\AssignOp\Mul;
 use Psr\Http\Message\StreamInterface;
 
 class MultiPartItem
 {
-    protected $field;
+    protected string $field;
 
-    protected $content;
+    protected string $content;
 
-    protected $filename;
+    protected string $filename;
 
-    protected $contentType;
+    protected string $contentType;
 
-    protected $base64 = false;
+    protected bool $base64 = false;
 
-    protected $contentDisposition = "form-data";
+    protected string $contentDisposition = "form-data";
 
     /**
      * MultiPartItem constructor.

@@ -1,8 +1,9 @@
 <?php
 
-namespace ByJG\Util;
+namespace ByJG\WebRequest;
 
-use ByJG\Util\Exception\CurlException;
+use ByJG\WebRequest\Exception\CurlException;
+use ByJG\WebRequest\Exception\RequestException;
 use Closure;
 use Exception;
 use Psr\Http\Message\RequestInterface;
@@ -15,27 +16,27 @@ class HttpClientParallel
     /**
      * @var array
      */
-    protected $curlClients = [];
+    protected array $curlClients = [];
 
     /**
-     * @var HttpClient
+     * @var ?HttpClient
      */
-    protected $httpClient = null;
+    protected ?HttpClient $httpClient = null;
 
     /**
-     * @var Closure
+     * @var ?Closure
      */
-    protected $defaultOnSuccess = null;
+    protected ?Closure $defaultOnSuccess = null;
 
     /**
-     * @var Closure
+     * @var ?Closure
      */
-    protected $defaultOnError = null;
+    protected ?Closure $defaultOnError = null;
 
     /**
      * @var array
      */
-    protected $errorList = [];
+    protected array $errorList = [];
 
     public function __construct(HttpClient $httpClient, Closure $defaultOnSuccess = null, Closure $defaultOnError = null)
     {
@@ -43,12 +44,12 @@ class HttpClientParallel
 
         $this->defaultOnSuccess = $defaultOnSuccess;
         if (is_null($defaultOnSuccess)) {
-            $this->defaultOnSuccess = function () {};
+            $this->defaultOnSuccess = function (): void {};
         }
 
         $this->defaultOnError = $defaultOnError;
         if (is_null($defaultOnError)) {
-            $this->defaultOnError = function () {};
+            $this->defaultOnError = function (): void {};
         }
     }
 
@@ -85,6 +86,7 @@ class HttpClientParallel
     }
 
     /**
+     * @throws RequestException
      * @throws CurlException
      */
     public function execute(): void
@@ -102,7 +104,6 @@ class HttpClientParallel
         }
 
         // execute the handles
-        $running = null;
         $this->errorList = [];
         do {
             $status = curl_multi_exec($multiInitHandle, $running);
@@ -153,7 +154,7 @@ class HttpClientParallel
     /**
      * @param $multiInitHandle
      * @param $handle
-     * @throws \ByJG\Util\Exception\MessageException
+     * @throws RequestException
      */
     protected function getContent($multiInitHandle, $handle): void
     {

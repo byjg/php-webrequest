@@ -1,19 +1,19 @@
 <?php
 
-namespace ByJG\Util\Psr7;
+namespace ByJG\WebRequest\Psr7;
 
-use ByJG\Util\Helper\ExtendedStreamInterface;
+use ByJG\WebRequest\Helper\ExtendedStreamInterface;
 use Psr\Http\Message\StreamInterface;
 
 class NullStream implements ExtendedStreamInterface, StreamInterface
 {
 
-    function appendStream($stream)
+    function appendStream(StreamInterface $stream): void
     {
         // TODO: Implement appendStream() method.
     }
 
-    function addFilter($filter)
+    function addFilter($filter, string $mode = "r"): void
     {
         // TODO: Implement addFilter() method.
     }
@@ -55,12 +55,12 @@ class NullStream implements ExtendedStreamInterface, StreamInterface
 
     public function seek($offset, $whence = SEEK_SET): void
     {
-        // TODO: Implement seek() method.
+        // Nothing to do
     }
 
     public function rewind(): void
     {
-        // TODO: Implement rewind() method.
+        // Nothing to do
     }
 
     public function isWritable(): bool
@@ -70,8 +70,7 @@ class NullStream implements ExtendedStreamInterface, StreamInterface
 
     public function write($string): int
     {
-        // TODO: Implement write() method.
-		return 0;
+        return 0;
     }
 
     public function isReadable(): bool

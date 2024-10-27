@@ -1,17 +1,15 @@
 <?php
 
-use ByJG\Util\Psr7\StreamBase;
+namespace Test\Psr7;
+
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\StreamInterface;
 
 abstract class StreamBaseTest extends TestCase
 {
     const TEXT1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam auctor augue justo, id condimentum tortor molestie et. Quisque at egestas dui. Vestibulum id lectus et mi interdum lobortis non sit.";
 
-    /**
-     * @param $data
-     * @return StreamBase
-     */
-    abstract public function getResource($data);
+    abstract public function getResource(?string $data): StreamInterface;
 
     abstract public function tearDownResource();
 
@@ -19,10 +17,7 @@ abstract class StreamBaseTest extends TestCase
 
     abstract public function canOverwrite();
 
-    /**
-     * @var StreamBase
-     */
-    protected $stream;
+    protected ?StreamInterface $stream;
 
     public function setUp(): void
     {
@@ -35,30 +30,30 @@ abstract class StreamBaseTest extends TestCase
         $this->stream = null;
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $this->assertEquals(self::TEXT1, (string)$this->stream);
     }
 
-    public function TestToStringEmpty()
+    public function TestToStringEmpty(): void
     {
         $this->stream = $this->getResource(null);
         $this->assertEquals("", (string)$this->stream);
     }
 
-    public function testGetSize()
+    public function testGetSize(): void
     {
         $this->assertSame(strlen(self::TEXT1), $this->stream->getSize());
     }
 
-    public function testTell()
+    public function testTell(): void
     {
         $this->assertSame(0, $this->stream->tell());
         $this->stream->seek(10);
         $this->assertSame(10, $this->stream->tell());
     }
 
-    public function testEof()
+    public function testEof(): void
     {
         $this->assertFalse($this->stream->eof());
         $this->stream->seek(0, SEEK_END);
@@ -66,12 +61,12 @@ abstract class StreamBaseTest extends TestCase
         $this->assertTrue($this->stream->eof());
     }
 
-    public function testIsSeekable()
+    public function testIsSeekable(): void
     {
         $this->assertTrue($this->stream->isSeekable());
     }
 
-    public function testSeek()
+    public function testSeek(): void
     {
         $this->assertSame(0, $this->stream->tell());
         $this->stream->seek(10);
@@ -82,7 +77,7 @@ abstract class StreamBaseTest extends TestCase
         $this->assertSame(strlen(self::TEXT1)-10, $this->stream->tell());
     }
 
-    public function testRewind()
+    public function testRewind(): void
     {
         $this->assertSame(0, $this->stream->tell());
         $this->stream->seek(0, SEEK_END);
@@ -91,7 +86,7 @@ abstract class StreamBaseTest extends TestCase
         $this->assertSame(0, $this->stream->tell());
     }
 
-    public function testIsWritable()
+    public function testIsWritable(): void
     {
         if ($this->isWriteable()) {
             $this->assertTrue($this->stream->isWritable());
@@ -101,7 +96,7 @@ abstract class StreamBaseTest extends TestCase
 
     }
 
-    public function testOverwrite()
+    public function testOverwrite(): void
     {
         if ($this->isWriteable()) {
             $this->stream->rewind();
@@ -115,7 +110,7 @@ abstract class StreamBaseTest extends TestCase
         }
     }
 
-    public function testAppend()
+    public function testAppend(): void
     {
         if ($this->isWriteable()) {
             $this->stream->seek(0, SEEK_END);
@@ -125,12 +120,12 @@ abstract class StreamBaseTest extends TestCase
         }
     }
 
-    public function testIsReadble()
+    public function testIsReadble(): void
     {
         $this->assertTrue($this->stream->isReadable());
     }
 
-    public function testRead1()
+    public function testRead1(): void
     {
         $result = $this->stream->read(6);
         $this->assertEquals("Lorem ", $result);
@@ -138,7 +133,7 @@ abstract class StreamBaseTest extends TestCase
         $this->assertEquals("ipsum ", $result);
     }
 
-    public function testGetContents1()
+    public function testGetContents1(): void
     {
         $result = $this->stream->read(6);
         $this->assertEquals("Lorem ", $result);
@@ -146,7 +141,7 @@ abstract class StreamBaseTest extends TestCase
         $this->assertEquals(substr(self::TEXT1, 6), $result);
     }
 
-    public function testGetContents2()
+    public function testGetContents2(): void
     {
         $this->stream->rewind();
         $result = $this->stream->getContents();

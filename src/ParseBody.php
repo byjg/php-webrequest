@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ByJG\Util;
+namespace ByJG\WebRequest;
 
 
 use Psr\Http\Message\MessageInterface;
@@ -12,12 +12,12 @@ class ParseBody
      * @param MessageInterface $response
      * @return mixed
      */
-    public static function parse(MessageInterface $response)
+    public static function parse(MessageInterface $response): mixed
     {
-        if (strpos("application/json", $response->getHeaderLine("content-type")) !== 0) {
-            return json_decode($response->getBody(), true);
+        if (str_contains(trim($response->getHeaderLine("content-type")),  "application/json")) {
+            return json_decode($response->getBody()->getContents(), true);
         }
 
-        return (string)$response->getBody();
+        return $response->getBody()->getContents();
     }
 }

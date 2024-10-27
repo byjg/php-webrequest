@@ -1,15 +1,18 @@
 <?php
 
+namespace Test;
 
-use ByJG\Util\MultiPartItem;
+use ByJG\WebRequest\FileNotFoundException;
+use ByJG\WebRequest\MultiPartItem;
+use ByJG\WebRequest\Psr7\MemoryStream;
 use PHPUnit\Framework\TestCase;
 
 class MultiPartItemTest extends TestCase
 {
 
-    public function testBuild1()
+    public function testBuild1(): void
     {
-        $stream = new \ByJG\Util\Psr7\MemoryStream();
+        $stream = new MemoryStream();
 
         $multiPartItem = new MultiPartItem("fieldname", "Lorem ipsum dolor sit amet");
 
@@ -27,9 +30,9 @@ class MultiPartItemTest extends TestCase
         $this->assertEquals(implode("\n", $expected), $stream->getContents());
     }
 
-    public function testBuild2()
+    public function testBuild2(): void
     {
-        $stream = new \ByJG\Util\Psr7\MemoryStream();
+        $stream = new MemoryStream();
 
         $multiPartItem = new MultiPartItem("fieldname", "Lorem ipsum dolor sit amet", "text.txt", "text/html");
 
@@ -48,9 +51,9 @@ class MultiPartItemTest extends TestCase
         $this->assertEquals(implode("\n", $expected), $stream->getContents());
     }
 
-    public function testBuild3()
+    public function testBuild3(): void
     {
-        $stream = new \ByJG\Util\Psr7\MemoryStream();
+        $stream = new MemoryStream();
 
         $multiPartItem = new MultiPartItem("fieldname");
         $multiPartItem
@@ -73,9 +76,9 @@ class MultiPartItemTest extends TestCase
         $this->assertEquals(implode("\n", $expected), $stream->getContents());
     }
 
-    public function testBuild4()
+    public function testBuild4(): void
     {
-        $stream = new \ByJG\Util\Psr7\MemoryStream();
+        $stream = new MemoryStream();
 
         $multiPartItem = new MultiPartItem("fieldname");
         $multiPartItem
@@ -101,9 +104,12 @@ class MultiPartItemTest extends TestCase
         $this->assertEquals(implode("\n", $expected), $stream->getContents());
     }
 
-    public function testBuild5()
+    /**
+     * @throws FileNotFoundException
+     */
+    public function testBuild5(): void
     {
-        $stream = new \ByJG\Util\Psr7\MemoryStream();
+        $stream = new MemoryStream();
 
         $multiPartItem = new MultiPartItem("fieldname");
         $multiPartItem

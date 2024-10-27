@@ -1,29 +1,35 @@
 <?php
 
-use ByJG\Util\Helper\RequestFormUrlEncoded;
-use ByJG\Util\Helper\RequestJson;
-use ByJG\Util\Helper\RequestMultiPart;
-use ByJG\Util\MockClient;
-use ByJG\Util\MultiPartItem;
-use ByJG\Util\Psr7\Request;
+namespace Test;
+
 use ByJG\Util\Uri;
+use ByJG\WebRequest\Exception\MessageException;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\Helper\RequestFormUrlEncoded;
+use ByJG\WebRequest\Helper\RequestJson;
+use ByJG\WebRequest\Helper\RequestMultiPart;
+use ByJG\WebRequest\MockClient;
+use ByJG\WebRequest\MultiPartItem;
+use ByJG\WebRequest\Psr7\MemoryStream;
+use ByJG\WebRequest\Psr7\Request;
+use ByJG\WebRequest\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 class MockClientTest extends TestCase
 {
 
-    protected $BASE_URL_TEST;
+    protected string $BASE_URL_TEST;
 
-    protected $SERVER_TEST;
-    protected $REDIRECT_TEST;
-    protected $SOAP_TEST;
+    protected string $SERVER_TEST;
+    protected string $REDIRECT_TEST;
+    protected string $SOAP_TEST;
 
     /**
      * @var MockClient
      */
-    protected $object;
+    protected MockClient $object;
     
-    protected $curlOptions;
+    protected array $curlOptions;
     
     public function setUp(): void
     {
@@ -54,7 +60,11 @@ class MockClientTest extends TestCase
         ];
     }
 
-    public function testGetLastStatus()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testGetLastStatus(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
         $response = $this->object->sendRequest($request);
@@ -63,7 +73,11 @@ class MockClientTest extends TestCase
         $this->assertEquals("1.1", $response->getProtocolVersion());
     }
 
-    public function testWithCredentials()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testWithCredentials(): void
     {
         $uri = Uri::getInstanceFromString($this->SERVER_TEST)
             ->withUserInfo("user", "pass");
@@ -79,7 +93,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testReferer()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testReferer(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("referer", "http://example.com/abc");
@@ -92,7 +110,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testCustomHeader()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testCustomHeader(): void
     {
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
 
@@ -107,7 +129,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testisFollowingLocation()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testisFollowingLocation(): void
     {
         unset($this->curlOptions[CURLOPT_FOLLOWLOCATION]);
 
@@ -129,7 +155,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testisVerifySSL()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testisVerifySSL(): void
     {
         unset($this->curlOptions[CURLOPT_SSL_VERIFYHOST]);
         unset($this->curlOptions[CURLOPT_SSL_VERIFYPEER]);
@@ -153,7 +183,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testGet1()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testGet1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("GET");
@@ -163,7 +197,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testPost1()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testPost1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("POST");
@@ -177,7 +215,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testPost2()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testPost2(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
@@ -195,7 +237,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testPost4()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testPost4(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2');
 
@@ -210,7 +256,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testPost5()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testPost5(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
@@ -227,7 +277,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testPostPayload()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testPostPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
             "POST",
@@ -246,7 +300,11 @@ class MockClientTest extends TestCase
     }
 
 
-    public function testPut1()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testPut1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("PUT");
@@ -260,7 +318,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testPut2()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testPut2(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
@@ -278,7 +340,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testPut4()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testPut4(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("PUT");
@@ -294,7 +360,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testPut5()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testPut5(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
@@ -311,7 +381,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testPutPayload()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testPutPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
             "PUT",
@@ -330,9 +404,11 @@ class MockClientTest extends TestCase
     }
 
 
-
-
-    public function testDelete1()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testDelete1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withMethod("DELETE");
@@ -346,7 +422,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testDelete2()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testDelete2(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
@@ -364,7 +444,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testDelete4()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testDelete4(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("DELETE");
@@ -380,7 +464,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testDelete5()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testDelete5(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
@@ -397,7 +485,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testDeletePayload()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testDeletePayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
             "DELETE",
@@ -415,8 +507,12 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    
-    public function testPostMultiPartForm()
+
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testPostMultiPartForm(): void
     {
         $uploadFile = [];
         $uploadFile[] = new MultiPartItem('field1', 'value1');
@@ -459,7 +555,11 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testWithCurlOption()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testWithCurlOption(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
 
@@ -473,10 +573,14 @@ class MockClientTest extends TestCase
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
 
-    public function testMockResponse()
+    /**
+     * @throws MessageException
+     * @throws RequestException
+     */
+    public function testMockResponse(): void
     {
-        $expectedResponse = \ByJG\Util\Psr7\Response::getInstance(404)
-            ->withBody(new \ByJG\Util\Psr7\MemoryStream("<h1>Not Found</h1>"));
+        $expectedResponse = Response::getInstance(404)
+            ->withBody(new MemoryStream("<h1>Not Found</h1>"));
 
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
 

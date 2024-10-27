@@ -1,12 +1,12 @@
 <?php
 
-namespace ByJG\Util\Helper;
+namespace ByJG\WebRequest\Helper;
 
-use ByJG\Util\Exception\MessageException;
-use ByJG\Util\MultiPartItem;
-use ByJG\Util\Psr7\MemoryStream;
-use ByJG\Util\Psr7\Request;
-use Psr\Http\Message\MessageInterface;
+use ByJG\WebRequest\Exception\MessageException;
+use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\MultiPartItem;
+use ByJG\WebRequest\Psr7\MemoryStream;
+use ByJG\WebRequest\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -16,31 +16,30 @@ class RequestMultiPart extends Request
      * @param UriInterface $uri
      * @param string $method
      * @param MultiPartItem[] $multiPartItem
-     * @param string $boundary
-     * @return Request|MessageInterface|RequestInterface
+     * @param string|null $boundary
+     * @return RequestInterface
      * @throws MessageException
+     * @throws RequestException
      */
-    public static function build(UriInterface $uri, $method, $multiPartItem, $boundary = null)
+    public static function build(UriInterface $uri, string $method, array $multiPartItem, ?string $boundary = null): RequestInterface
     {
         $request = Request::getInstance($uri)
             ->withMethod($method);
 
-        $request = self::buildMultiPart($multiPartItem, $request, $boundary);
-
-        return $request;
+        return self::buildMultiPart($multiPartItem, $request, $boundary);
     }
 
     /**
      * @param MultiPartItem[] $multiPartItems
      * @param RequestInterface $request
-     * @param string $boundary
+     * @param string|null $boundary
      * @return RequestInterface
      */
-    public static function buildMultiPart($multiPartItems, $request, $boundary = null)
+    public static function buildMultiPart(array $multiPartItems, RequestInterface $request, ?string $boundary = null): RequestInterface
     {
         $stream = new MemoryStream();
 
-        $boundary = (is_null($boundary) ? md5(time()) : $boundary);
+        $boundary = (is_null($boundary) ? md5((string)time()) : $boundary);
 
         $contentType = "multipart/form-data";
 
