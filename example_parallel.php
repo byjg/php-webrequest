@@ -16,10 +16,10 @@ $httpClientParallel = new HttpClientParallel(
 
 
 $uri1 = \ByJG\Util\Uri::getInstanceFromString('http://www.byjg.com.br/ws/cep?httpmethod=obterLogradouro&cep=21130010');
-$request1 = \ByJG\WebRequest\Psr7\Request::getInstance($uri1)->withMethod('POST');
+$request1 = \ByJG\WebRequest\Psr7\Request::getInstance($uri1)->withMethod(\ByJG\WebRequest\HttpMethod::POST);
 
 $uri2 = \ByJG\Util\Uri::getInstanceFromString('http://www.byjg.com.br/ws/cep?httpmethod=obterLogradouro&cep=30130000');
-$request2 = \ByJG\WebRequest\Psr7\Request::getInstance($uri2)->withMethod('GET');
+$request2 = \ByJG\WebRequest\Psr7\Request::getInstance($uri2)->withMethod(\ByJG\WebRequest\HttpMethod::GET);
 
 $httpClientParallel
     ->addRequest($request1)

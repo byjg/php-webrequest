@@ -4,6 +4,7 @@ namespace ByJG\WebRequest\Helper;
 
 use ByJG\WebRequest\Exception\MessageException;
 use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\HttpMethod;
 use ByJG\WebRequest\Psr7\MemoryStream;
 use ByJG\WebRequest\Psr7\Request;
 use Psr\Http\Message\UriInterface;
@@ -18,7 +19,7 @@ class RequestJson extends Request
      * @throws MessageException
      * @throws RequestException
      */
-    public static function build(UriInterface $uri, $method, $json): Request
+    public static function build(UriInterface $uri, HttpMethod|string $method, $json): Request
     {
         if (is_array($json)) {
             $json = json_encode($json);

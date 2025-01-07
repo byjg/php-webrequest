@@ -3,6 +3,7 @@
 
 namespace ByJG\WebRequest\Psr7;
 
+use ByJG\WebRequest\HttpStatus;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -126,9 +127,14 @@ class Response extends Message implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function withStatus(int $code, string $reasonPhrase = ''): ResponseInterface
+    public function withStatus(int|HttpStatus $code, string $reasonPhrase = ''): ResponseInterface
     {
         $clone = clone $this;
+
+        if ($code instanceof HttpStatus) {
+            $code = $code->value;
+        }
+
         $clone->setStatus($code, $reasonPhrase);
         return $clone;
     }

@@ -11,6 +11,7 @@ use ByJG\WebRequest\Helper\RequestJson;
 use ByJG\WebRequest\Helper\RequestMultiPart;
 use ByJG\WebRequest\HttpClient;
 use ByJG\WebRequest\HttpMethod;
+use ByJG\WebRequest\HttpStatus;
 use ByJG\WebRequest\MultiPartItem;
 use ByJG\WebRequest\ParseBody;
 use ByJG\WebRequest\Psr7\MemoryStream;
@@ -72,7 +73,7 @@ class HttpClientTest extends TestCase
         $response = $this->object->sendRequest($request);
         $body = ParseBody::parse($response);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $this->assertEquals("1.1", $response->getProtocolVersion());
         $this->assertFalse(isset($body["authinfo"]));
     }
@@ -140,12 +141,12 @@ class HttpClientTest extends TestCase
         $this->object = HttpClient::getInstance()
             ->withNoFollowRedirect();
         $response = $this->object->sendRequest($request);
-        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::FOUND->value, $response->getStatusCode());
         $this->assertEquals("rest.php", $response->getHeaderLine("Location"));
 
         $this->object = HttpClient::getInstance();
         $response = $this->object->sendRequest($request);
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
     }
 
     /**
@@ -173,10 +174,10 @@ class HttpClientTest extends TestCase
     public function testGet1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
-            ->withMethod("GET");
+            ->withMethod(HttpMethod::GET);
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => null,
@@ -203,7 +204,7 @@ class HttpClientTest extends TestCase
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => null,
@@ -230,7 +231,7 @@ class HttpClientTest extends TestCase
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => null,
@@ -257,7 +258,7 @@ class HttpClientTest extends TestCase
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => null,
@@ -278,16 +279,16 @@ class HttpClientTest extends TestCase
     public function testPost1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
-            ->withMethod("POST");
+            ->withMethod(HttpMethod::POST);
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'POST',
+            'method' => HttpMethod::POST->value,
             'query_string' => [],
             'post_string' => [],
             'payload' => ''
@@ -307,15 +308,15 @@ class HttpClientTest extends TestCase
             'param1' => 'value1',
             'param2' => 'value2'
         ]);
-        
+
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'POST',
+            'method' => HttpMethod::POST->value,
             'query_string' => [],
             'post_string' => ['param1' => 'value1', 'param2' => 'value2'],
             'payload' => 'param1=value1&param2=value2'
@@ -336,11 +337,11 @@ class HttpClientTest extends TestCase
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'POST',
+            'method' => HttpMethod::POST->value,
             'query_string' => [],
             'post_string' => [
                 'just_string' => ''
@@ -363,11 +364,11 @@ class HttpClientTest extends TestCase
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'POST',
+            'method' => HttpMethod::POST->value,
             'query_string' => [],
             'post_string' => ['just_string' => 'value1', 'just_string2' => 'value2'],
             'payload' => 'just_string=value1&just_string2=value2'
@@ -390,11 +391,11 @@ class HttpClientTest extends TestCase
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'POST',
+            'method' => HttpMethod::POST->value,
             'query_string' => ['extra' => 'ok'],
             'post_string' => ['param' => 'value'],
             'payload' => 'param=value'
@@ -411,18 +412,18 @@ class HttpClientTest extends TestCase
     public function testPostPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
-            "POST",
+            HttpMethod::POST->value,
             '{teste: "ok"}'
         );
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/json',
-            'method' => 'POST',
+            'method' => HttpMethod::POST->value,
             'query_string' => ['extra' => 'ok'],
             'post_string' => [],
             'payload' => '{teste: "ok"}'
@@ -440,16 +441,16 @@ class HttpClientTest extends TestCase
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("content-type",  'application/x-www-form-urlencoded')
-            ->withMethod("PUT");
+            ->withMethod(HttpMethod::PUT);
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'PUT',
+            'method' => HttpMethod::PUT->value,
             'query_string' => [],
             'post_string' => [],
             'payload' => ''
@@ -468,16 +469,16 @@ class HttpClientTest extends TestCase
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
-        ])->withMethod("PUT");
+        ])->withMethod(HttpMethod::PUT);
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'PUT',
+            'method' => HttpMethod::PUT->value,
             'query_string' => [],
             'post_string' => [],
             'payload' => 'param1=value1&param2=value2'
@@ -494,16 +495,16 @@ class HttpClientTest extends TestCase
     public function testPut3(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string')
-            ->withMethod("PUT");
+            ->withMethod(HttpMethod::PUT);
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'PUT',
+            'method' => HttpMethod::PUT->value,
             'query_string' => [],
             'post_string' => [],
             'payload' => 'just_string'
@@ -520,16 +521,16 @@ class HttpClientTest extends TestCase
     public function testPut4(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
-            ->withMethod("PUT");
+            ->withMethod(HttpMethod::PUT);
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'PUT',
+            'method' => HttpMethod::PUT->value,
             'query_string' => [],
             'post_string' => [],
             'payload' => 'just_string=value1&just_string2=value2'
@@ -547,16 +548,16 @@ class HttpClientTest extends TestCase
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
-        ])->withMethod("PUT");
+        ])->withMethod(HttpMethod::PUT);
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'PUT',
+            'method' => HttpMethod::PUT->value,
             'query_string' => ['extra' => 'ok'],
             'post_string' => [],
             'payload' => 'param=value'
@@ -573,18 +574,18 @@ class HttpClientTest extends TestCase
     public function testPutPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
-            "PUT",
+            HttpMethod::PUT,
             '{teste: "ok"}'
         );
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/json',
-            'method' => 'PUT',
+            'method' => HttpMethod::PUT->value,
             'query_string' => ['extra' => 'ok'],
             'post_string' => [],
             'payload' => '{teste: "ok"}'
@@ -603,16 +604,16 @@ class HttpClientTest extends TestCase
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader("content-type",  'application/x-www-form-urlencoded')
-            ->withMethod("DELETE");
+            ->withMethod(HttpMethod::DELETE);
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'DELETE',
+            'method' => HttpMethod::DELETE->value,
             'query_string' => [],
             'post_string' => [],
             'payload' => ''
@@ -631,16 +632,16 @@ class HttpClientTest extends TestCase
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
-        ])->withMethod("DELETE");
+        ])->withMethod(HttpMethod::DELETE);
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'DELETE',
+            'method' => HttpMethod::DELETE->value,
             'query_string' => [],
             'post_string' => [],
             'payload' => 'param1=value1&param2=value2'
@@ -657,16 +658,16 @@ class HttpClientTest extends TestCase
     public function testDelete3(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string')
-            ->withMethod("DELETE");
+            ->withMethod(HttpMethod::DELETE);
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'DELETE',
+            'method' => HttpMethod::DELETE->value,
             'query_string' => [],
             'post_string' => [],
             'payload' => 'just_string'
@@ -683,16 +684,16 @@ class HttpClientTest extends TestCase
     public function testDelete4(): void
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
-            ->withMethod("DELETE");
+            ->withMethod(HttpMethod::DELETE);
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'DELETE',
+            'method' => HttpMethod::DELETE->value,
             'query_string' => [],
             'post_string' => [],
             'payload' => 'just_string=value1&just_string2=value2'
@@ -710,16 +711,16 @@ class HttpClientTest extends TestCase
     {
         $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
-        ])->withMethod("DELETE");
+        ])->withMethod(HttpMethod::DELETE);
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/x-www-form-urlencoded',
-            'method' => 'DELETE',
+            'method' => HttpMethod::DELETE->value,
             'query_string' => ['extra' => 'ok'],
             'post_string' => [],
             'payload' => 'param=value'
@@ -736,18 +737,18 @@ class HttpClientTest extends TestCase
     public function testDeletePayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
-            "DELETE",
+            HttpMethod::DELETE,
             '{teste: "ok"}'
         );
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => 'application/json',
-            'method' => 'DELETE',
+            'method' => HttpMethod::DELETE->value,
             'query_string' => ['extra' => 'ok'],
             'post_string' => [],
             'payload' => '{teste: "ok"}'
@@ -774,18 +775,18 @@ class HttpClientTest extends TestCase
         $uploadFile[] = new MultiPartItem('field3', 'value3');
 
         $request = RequestMultiPart::build(Uri::getInstanceFromString($this->SERVER_TEST),
-            "POST",
+            HttpMethod::POST,
             $uploadFile
         );
         
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
 
         $this->assertStringContainsString('multipart/form-data; boundary=', $result['content-type']);
-        $this->assertEquals('POST', $result['method']);
+        $this->assertEquals(HttpMethod::POST->value, $result['method']);
         $this->assertEquals([], $result['query_string']);
         $this->assertEquals(['field1' => 'value1', 'field3' => 'value3'], $result['post_string']);
         $this->assertEquals('', $result['payload']);
@@ -812,7 +813,7 @@ class HttpClientTest extends TestCase
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $expected = null;
         $this->assertEquals($expected, $result);
@@ -828,11 +829,11 @@ class HttpClientTest extends TestCase
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
             ->withHeader( "Connection", "Keep-Alive")
-            ->withMethod("HEAD");
+            ->withMethod(HttpMethod::HEAD);
 
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $result = ParseBody::parse($response);
         $this->assertEquals(null, $result);
 
@@ -851,6 +852,17 @@ class HttpClientTest extends TestCase
         $this->expectExceptionMessage("CURL - Could not resolve host: abc.def");
 
         $request = Request::getInstance(Uri::getInstanceFromString("http://abc.def"));
+        $this->object->sendRequest($request);
+    }
+
+    public function testInvalidMethod(): void
+    {
+        $this->expectException(RequestException::class);
+        $this->expectExceptionMessage("Invalid Method TEST");
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
+            ->withHeader( "Accept", "application/json")
+            ->withMethod("TEST");
+
         $this->object->sendRequest($request);
     }
 
