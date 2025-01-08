@@ -390,9 +390,9 @@ class MockClientTest extends TestCase
     public function testPutPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
-            "PUT",
+            HttpMethod::PUT,
             '{teste: "ok"}'
-        )->withMethod("PUT");
+        )->withMethod(HttpMethod::PUT);
 
         $response = $this->object->sendRequest($request);
 
