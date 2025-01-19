@@ -1,6 +1,9 @@
 <?php
 
+use ByJG\Util\Uri;
 use ByJG\WebRequest\HttpClientParallel;
+use ByJG\WebRequest\HttpMethod;
+use ByJG\WebRequest\Psr7\Request;
 
 require "vendor/autoload.php";
 
@@ -15,11 +18,11 @@ $httpClientParallel = new HttpClientParallel(
 );
 
 
-$uri1 = \ByJG\Util\Uri::getInstanceFromString('http://www.byjg.com.br/ws/cep?httpmethod=obterLogradouro&cep=21130010');
-$request1 = \ByJG\WebRequest\Psr7\Request::getInstance($uri1)->withMethod(\ByJG\WebRequest\HttpMethod::POST);
+$uri1 = Uri::getInstanceFromString('http://www.byjg.com.br/ws/cep?httpmethod=obterLogradouro&cep=21130010');
+$request1 = Request::getInstance($uri1)->withMethod(HttpMethod::POST);
 
-$uri2 = \ByJG\Util\Uri::getInstanceFromString('http://www.byjg.com.br/ws/cep?httpmethod=obterLogradouro&cep=30130000');
-$request2 = \ByJG\WebRequest\Psr7\Request::getInstance($uri2)->withMethod(\ByJG\WebRequest\HttpMethod::GET);
+$uri2 = Uri::getInstanceFromString('http://www.byjg.com.br/ws/cep?httpmethod=obterLogradouro&cep=30130000');
+$request2 = Request::getInstance($uri2)->withMethod(HttpMethod::GET);
 
 $httpClientParallel
     ->addRequest($request1)
