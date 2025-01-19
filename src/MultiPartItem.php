@@ -2,22 +2,15 @@
 
 namespace ByJG\WebRequest;
 
-use InvalidArgumentException;
+use ByJG\WebRequest\Psr7\MemoryStream;
+use ByJG\WebRequest\Psr7\UploadedFile;
 use Psr\Http\Message\StreamInterface;
 
-class MultiPartItem
+class MultiPartItem extends UploadedFile
 {
-    protected string $field;
-
-    protected string $content;
-
-    protected string $filename;
-
-    protected string $contentType;
-
     protected bool $base64 = false;
 
-    protected string $contentDisposition = "form-data";
+    protected ContentDisposition $contentDisposition = ContentDisposition::formData;
 
     /**
      * MultiPartItem constructor.
@@ -27,12 +20,9 @@ class MultiPartItem
      * @param string $filename
      * @param string $contentType
      */
-    public function __construct(string $field, string $content = "", string $filename = "", string $contentType = "")
+    public function __construct(protected string $field, string $content = "", string $filename = "", string $contentType = "")
     {
-        $this->field = $field;
-        $this->content = $content;
-        $this->filename = $filename;
-        $this->contentType = $contentType;
+        parent::__construct($content, strlen($content), clientFilename: $filename, clientMediaType: $contentType);
     }
 
     /**
@@ -47,9 +37,10 @@ class MultiPartItem
             throw new FileNotFoundException("File '$filename' does not found!");
         }
 
-        $this->content = file_get_contents($filename);
-        $this->filename = basename($filename);
-        $this->contentType = $contentType;
+        $this->stream = new MemoryStream(file_get_contents($filename));
+        $this->size = $this->stream->getSize();
+        $this->clientFilename = basename($filename);
+        $this->clientMediaType = $contentType;
 
         return $this;
     }
@@ -61,15 +52,11 @@ class MultiPartItem
     }
 
     /**
-     * @param $type
+     * @param ContentDisposition $type
      * @return $this
      */
-    public function withContentDisposition($type): MultiPartItem
+    public function withContentDisposition(ContentDisposition $type): MultiPartItem
     {
-        $validTypes = ["form-data", "inline", "attachment"];
-        if (!in_array($type, $validTypes)) {
-            throw new InvalidArgumentException("Only '" . implode("', '", $validTypes) . "' are accepted.");
-        }
         $this->contentDisposition = $type;
         return $this;
     }
@@ -81,15 +68,11 @@ class MultiPartItem
 
     public function getContent(): string
     {
+        $this->stream->rewind();
         if ($this->isBase64()) {
-            return base64_encode($this->content);
+            return base64_encode($this->stream->getContents());
         }
-        return $this->content;
-    }
-
-    public function getFilename(): string
-    {
-        return $this->filename;
+        return $this->stream->getContents();
     }
 
     public function withField($field): MultiPartItem
@@ -100,24 +83,19 @@ class MultiPartItem
 
     public function withContent($content): MultiPartItem
     {
-        $this->content = $content;
+        $this->stream = new MemoryStream($content);
         return $this;
     }
 
     public function withFilename($filename): MultiPartItem
     {
-        $this->filename = $filename;
+        $this->clientFilename = $filename;
         return $this;
-    }
-
-    public function getContentType(): string
-    {
-        return $this->contentType;
     }
 
     public function withContentType($contentType): MultiPartItem
     {
-        $this->contentType = $contentType;
+        $this->clientMediaType = $contentType;
         return $this;
     }
 
@@ -130,23 +108,23 @@ class MultiPartItem
     }
 
     /**
-     * @return string
+     * @return ContentDisposition
      */
-    public function getContentDisposition(): string
+    public function getContentDisposition(): ContentDisposition
     {
         return $this->contentDisposition;
     }
     
     public function build(StreamInterface $stream, $boundary): void
     {
-        $stream->write("--$boundary\nContent-Disposition: {$this->getContentDisposition()}; name=\"{$this->getField()}\";");
-        $fileName = $this->getFileName();
+        $stream->write("--$boundary\nContent-Disposition: {$this->getContentDisposition()->value}; name=\"{$this->getField()}\";");
+        $fileName = $this->getClientFilename();
         if (!empty($fileName)) {
-            $stream->write(" filename=\"{$this->getFileName()}\";");
+            $stream->write(" filename=\"{$this->getClientFilename()}\";");
         }
-        $contentType = $this->getContentType();
+        $contentType = $this->getClientMediaType();
         if (!empty($contentType)) {
-            $stream->write("\nContent-Type: {$this->getContentType()}");
+            $stream->write("\nContent-Type: {$this->getClientMediaType()}");
         }
         if ($this->isBase64()) {
             $stream->write("\nContent-Transfer-Encoding: base64");

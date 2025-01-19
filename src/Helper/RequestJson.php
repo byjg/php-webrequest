@@ -13,13 +13,13 @@ class RequestJson extends Request
 {
     /**
      * @param UriInterface $uri
-     * @param $method
-     * @param $json
+     * @param string $method
+     * @param array|string $json
      * @return Request
      * @throws MessageException
      * @throws RequestException
      */
-    public static function build(UriInterface $uri, HttpMethod|string $method, $json): Request
+    public static function build(UriInterface $uri, HttpMethod|string $method, array|string $json): Request
     {
         if (is_array($json)) {
             $json = json_encode($json);

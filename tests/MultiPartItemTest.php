@@ -2,6 +2,7 @@
 
 namespace Test;
 
+use ByJG\WebRequest\ContentDisposition;
 use ByJG\WebRequest\FileNotFoundException;
 use ByJG\WebRequest\MultiPartItem;
 use ByJG\WebRequest\Psr7\MemoryStream;
@@ -85,7 +86,7 @@ class MultiPartItemTest extends TestCase
             ->withContent("Lorem ipsum dolor sit amet")
             ->withContentType("text/html")
             ->withFilename("text.txt")
-            ->withContentDisposition("form-data")
+            ->withContentDisposition(ContentDisposition::formData)
             ->withEncodedBase64();
 
         $expected = [

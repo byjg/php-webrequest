@@ -2,6 +2,7 @@
 
 namespace ByJG\WebRequest\Helper;
 
+use ByJG\WebRequest\ContentDisposition;
 use ByJG\WebRequest\Exception\MessageException;
 use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\HttpMethod;
@@ -46,7 +47,7 @@ class RequestMultiPart extends Request
 
         foreach ($multiPartItems as $item) {
             $item->build($stream, $boundary);
-            if ($item->getContentDisposition() != "form-data") {
+            if ($item->getContentDisposition() != ContentDisposition::formData) {
                 $contentType = "multipart/related";
             }
         }

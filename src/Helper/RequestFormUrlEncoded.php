@@ -14,12 +14,12 @@ class RequestFormUrlEncoded extends Request
 {
     /**
      * @param UriInterface $uri
-     * @param $params
+     * @param array|string $params
      * @return RequestInterface
      * @throws MessageException
      * @throws RequestException
      */
-    public static function build(UriInterface $uri, $params): RequestInterface
+    public static function build(UriInterface $uri, array|string $params): RequestInterface
     {
         if (is_array($params)) {
             $params = http_build_query($params);
