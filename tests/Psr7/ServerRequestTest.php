@@ -21,8 +21,8 @@ class ServerRequestTest extends TestCase
             $this->assertEquals(['test' => 'value'], $request->getCookieParams());
             $this->assertEquals(['REQUEST_METHOD' => 'GET'], $request->getServerParams());
         } finally {
-            unset($_SERVER);
-            unset($_COOKIE);
+            $_SERVER = [];
+            $_COOKIE = [];
         }
     }
 
@@ -179,12 +179,12 @@ class ServerRequestTest extends TestCase
             $this->assertEquals(['attr' => 'valueattr'], $request->getAttributes());
             $this->assertEquals('key=value', $request->getBody()->getContents());
         } finally {
-            unset($_SERVER);
-            unset($_COOKIE);
-            unset($_GET);
-            unset($_FILES);
-            unset($_REQUEST);
-            unset($_POST);
+            $_SERVER = [];
+            $_COOKIE = [];
+            $_GET = [];
+            $_FILES = [];
+            $_REQUEST = [];
+            $_POST = [];
 
             if (file_exists('/tmp/xyz')) {
                 unlink('/tmp/xyz');
