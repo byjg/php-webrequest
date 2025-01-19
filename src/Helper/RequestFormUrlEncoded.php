@@ -7,7 +7,6 @@ use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\HttpMethod;
 use ByJG\WebRequest\Psr7\MemoryStream;
 use ByJG\WebRequest\Psr7\Request;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
 class RequestFormUrlEncoded extends Request
@@ -15,11 +14,11 @@ class RequestFormUrlEncoded extends Request
     /**
      * @param UriInterface $uri
      * @param array|string $params
-     * @return RequestInterface
+     * @return Request
      * @throws MessageException
      * @throws RequestException
      */
-    public static function build(UriInterface $uri, array|string $params): RequestInterface
+    public static function build(UriInterface $uri, array|string $params): Request
     {
         if (is_array($params)) {
             $params = http_build_query($params);

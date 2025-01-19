@@ -5,8 +5,8 @@ namespace Test\Psr7;
 use ByJG\Util\Uri;
 use ByJG\WebRequest\Exception\MessageException;
 use ByJG\WebRequest\Exception\RequestException;
-use ByJG\WebRequest\HttpMethod;
 use ByJG\WebRequest\Factory\RequestFactory;
+use ByJG\WebRequest\HttpMethod;
 use ByJG\WebRequest\Psr7\Request;
 use PHPUnit\Framework\TestCase;
 
@@ -107,7 +107,7 @@ class RequestTest extends TestCase
         foreach ($methods as $method) {
             $request = RequestFactory::instance()->createRequest($method, new Uri('http://localhost'));
 
-            $this->assertEquals($method, $request->getMethod());
+            $this->assertEquals($method->value, $request->getMethod());
             $this->assertEquals(new Uri('http://localhost'),$request->getUri());
         }
 

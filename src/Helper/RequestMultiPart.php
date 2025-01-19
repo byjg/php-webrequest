@@ -16,14 +16,14 @@ class RequestMultiPart extends Request
 {
     /**
      * @param UriInterface $uri
-     * @param string $method
+     * @param HttpMethod|string $method
      * @param MultiPartItem[] $multiPartItem
      * @param string|null $boundary
-     * @return RequestInterface
+     * @return Request
      * @throws MessageException
      * @throws RequestException
      */
-    public static function build(UriInterface $uri, HttpMethod|string $method, array $multiPartItem, ?string $boundary = null): RequestInterface
+    public static function build(UriInterface $uri, HttpMethod|string $method, array $multiPartItem, ?string $boundary = null): Request
     {
         $request = Request::getInstance($uri)
             ->withMethod($method);
@@ -35,9 +35,9 @@ class RequestMultiPart extends Request
      * @param MultiPartItem[] $multiPartItems
      * @param RequestInterface $request
      * @param string|null $boundary
-     * @return RequestInterface
+     * @return Request|RequestInterface
      */
-    public static function buildMultiPart(array $multiPartItems, RequestInterface $request, ?string $boundary = null): RequestInterface
+    public static function buildMultiPart(array $multiPartItems, RequestInterface $request, ?string $boundary = null): Request|RequestInterface
     {
         $stream = new MemoryStream();
 

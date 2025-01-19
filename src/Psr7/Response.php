@@ -111,7 +111,7 @@ class Response extends Message implements ResponseInterface
         $this->setStatus($code);
     }
 
-    public static function getInstance(int $code = 200): Response
+    public static function getInstance(int $code = 200): static
     {
         return new Response($code);
     }
@@ -126,8 +126,10 @@ class Response extends Message implements ResponseInterface
 
     /**
      * @inheritDoc
+     * @param int|HttpStatus $code
+     * @param string $reasonPhrase
      */
-    public function withStatus(int|HttpStatus $code, string $reasonPhrase = ''): ResponseInterface
+    public function withStatus(int|HttpStatus $code, string $reasonPhrase = ''): static
     {
         $clone = clone $this;
 

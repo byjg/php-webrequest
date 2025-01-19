@@ -13,7 +13,7 @@ class RequestJson extends Request
 {
     /**
      * @param UriInterface $uri
-     * @param string $method
+     * @param HttpMethod|string $method
      * @param array|string $json
      * @return Request
      * @throws MessageException
