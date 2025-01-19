@@ -3,6 +3,7 @@
 
 namespace ByJG\WebRequest\Psr7;
 
+use ByJG\WebRequest\HttpStatus;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -110,7 +111,7 @@ class Response extends Message implements ResponseInterface
         $this->setStatus($code);
     }
 
-    public static function getInstance(int $code = 200): Response
+    public static function getInstance(int $code = 200): static
     {
         return new Response($code);
     }
@@ -125,10 +126,17 @@ class Response extends Message implements ResponseInterface
 
     /**
      * @inheritDoc
+     * @param int|HttpStatus $code
+     * @param string $reasonPhrase
      */
-    public function withStatus(int $code, string $reasonPhrase = ''): ResponseInterface
+    public function withStatus(int|HttpStatus $code, string $reasonPhrase = ''): static
     {
         $clone = clone $this;
+
+        if ($code instanceof HttpStatus) {
+            $code = $code->value;
+        }
+
         $clone->setStatus($code, $reasonPhrase);
         return $clone;
     }

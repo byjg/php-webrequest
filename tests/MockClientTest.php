@@ -8,6 +8,8 @@ use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\Helper\RequestFormUrlEncoded;
 use ByJG\WebRequest\Helper\RequestJson;
 use ByJG\WebRequest\Helper\RequestMultiPart;
+use ByJG\WebRequest\HttpMethod;
+use ByJG\WebRequest\HttpStatus;
 use ByJG\WebRequest\MockClient;
 use ByJG\WebRequest\MultiPartItem;
 use ByJG\WebRequest\Psr7\MemoryStream;
@@ -69,7 +71,7 @@ class MockClientTest extends TestCase
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $this->assertEquals("1.1", $response->getProtocolVersion());
     }
 
@@ -148,7 +150,7 @@ class MockClientTest extends TestCase
 
         $this->object = MockClient::getInstance();
         $response = $this->object->sendRequest($request);
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
         $curlOptions = $this->curlOptions + [
             CURLOPT_FOLLOWLOCATION => true,
         ];
@@ -204,7 +206,7 @@ class MockClientTest extends TestCase
     public function testPost1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
-            ->withMethod("POST");
+            ->withMethod(HttpMethod::POST);
         
 
         $response = $this->object->sendRequest($request);
@@ -284,7 +286,7 @@ class MockClientTest extends TestCase
     public function testPostPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
-            "POST",
+            HttpMethod::POST,
             '{teste: "ok"}'
         );
 
@@ -388,9 +390,9 @@ class MockClientTest extends TestCase
     public function testPutPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
-            "PUT",
+            HttpMethod::PUT,
             '{teste: "ok"}'
-        )->withMethod("PUT");
+        )->withMethod(HttpMethod::PUT);
 
         $response = $this->object->sendRequest($request);
 
@@ -525,7 +527,7 @@ class MockClientTest extends TestCase
         $uploadFile[] = new MultiPartItem('field3', 'value3');
 
         $request = RequestMultiPart::build(Uri::getInstanceFromString($this->SERVER_TEST),
-            "POST",
+            HttpMethod::POST,
             $uploadFile,
             "12345"
         );

@@ -4,13 +4,13 @@ namespace ByJG\WebRequest\Psr7;
 
 use ByJG\WebRequest\Exception\MessageException;
 use ByJG\WebRequest\Exception\RequestException;
+use ByJG\WebRequest\HttpMethod;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
 class Request extends Message implements RequestInterface
 {
     protected string $method = "GET";
-    protected array $validMethods = [ "GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH" ];
 
     /**
      * @var UriInterface
@@ -79,11 +79,15 @@ class Request extends Message implements RequestInterface
      * @return $this
      * @throws RequestException
      */
-    public function withMethod(string $method): RequestInterface
+    public function withMethod(string|HttpMethod $method): RequestInterface
     {
+        if ($method instanceof HttpMethod) {
+            $method = $method->value;
+        }
+
         $method = strtoupper($method);
 
-        if (!in_array($method, $this->validMethods)) {
+        if (is_null(HttpMethod::tryFrom($method))) {
             throw new RequestException($this, "Invalid Method " . $method);
         }
 

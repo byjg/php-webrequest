@@ -6,6 +6,7 @@ use ByJG\Util\Uri;
 use ByJG\WebRequest\Exception\MessageException;
 use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\Factory\RequestFactory;
+use ByJG\WebRequest\HttpMethod;
 use ByJG\WebRequest\Psr7\Request;
 use PHPUnit\Framework\TestCase;
 
@@ -97,16 +98,16 @@ class RequestTest extends TestCase
     public function testWithMethod(): void
     {
         $request = new Request(new Uri());
-        $methods = [ "GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH" ];
+        $methods = HttpMethod::cases();
         foreach ($methods as $method) {
-            $expectedRequest = $request->withMethod(strtolower($method));
-            $this->assertEquals($method, $expectedRequest->getMethod());
+            $expectedRequest = $request->withMethod($method);
+            $this->assertEquals($method->value, $expectedRequest->getMethod());
         }
 
         foreach ($methods as $method) {
             $request = RequestFactory::instance()->createRequest($method, new Uri('http://localhost'));
 
-            $this->assertEquals($method, $request->getMethod());
+            $this->assertEquals($method->value, $request->getMethod());
             $this->assertEquals(new Uri('http://localhost'),$request->getUri());
         }
 
