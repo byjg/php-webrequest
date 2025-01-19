@@ -69,4 +69,21 @@ enum HttpStatus: int
     case LOOP_DETECTED = 508;
     case NOT_EXTENDED = 510;
     case NETWORK_AUTHENTICATION_REQUIRED = 511;
+
+    public function description(): string
+    {
+        if ($this == self::OK) {
+            return "OK";
+        }
+
+        if ($this == self::IM_A_TEAPOT) {
+            return "I'm a teapot";
+        }
+
+        if ($this == self::IM_USED) {
+            return "I'm used";
+        }
+
+        return ucfirst(str_replace('_', ' ', strtolower($this->name)));
+    }
 }
