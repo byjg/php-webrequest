@@ -6,13 +6,14 @@
 [![GitHub license](https://img.shields.io/github/license/byjg/webrequest.svg)](https://opensource.byjg.com/opensource/licensing.html)
 [![GitHub release](https://img.shields.io/github/release/byjg/webrequest.svg)](https://github.com/byjg/webrequest/releases/)
 
-A lightweight PSR-7 implementation and and highly customized CURL wrapper for making RESt calls.
+A lightweight PSR-7 implementation and highly customized CURL wrapper for making RESt calls.
 
 ## Main Features
 
 This class implements:
 * PSR-7 Request and Response;
-* PSR-18 Http Client
+* PSR-17 Http Factories;
+* PSR-18 Http Client;
 * Helper to create Request instances with the most common use cases;
 * Wrapper to execute several requests in parallel;
 
