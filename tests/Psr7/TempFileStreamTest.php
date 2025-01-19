@@ -2,6 +2,7 @@
 
 namespace Test\Psr7;
 
+use ByJG\WebRequest\Factory\StreamFactory;
 use ByJG\WebRequest\Psr7\TempFileStream;
 use Psr\Http\Message\StreamInterface;
 
@@ -35,5 +36,12 @@ class TempFileStreamTest extends StreamBaseTest
     public function canOverwrite()
     {
         return true;
+    }
+
+    public function testCreateStream()
+    {
+        $stream = StreamFactory::instance(TempFileStream::class)->createStream("test");
+
+        $this->assertEquals("test", (string)$stream);
     }
 }

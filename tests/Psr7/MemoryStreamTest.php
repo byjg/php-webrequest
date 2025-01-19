@@ -2,6 +2,7 @@
 
 namespace Test\Psr7;
 
+use ByJG\WebRequest\Factory\StreamFactory;
 use ByJG\WebRequest\Psr7\MemoryStream;
 use Psr\Http\Message\StreamInterface;
 
@@ -35,5 +36,21 @@ class MemoryStreamTest extends StreamBaseTest
     public function canOverwrite()
     {
         return true;
+    }
+
+    public function testCreateStream()
+    {
+        $stream = StreamFactory::instance(MemoryStream::class)->createStream("test");
+        $this->assertEquals("test", (string)$stream);
+
+        try {
+            file_put_contents('/tmp/test.txt', 'test');
+            $stream = StreamFactory::instance(MemoryStream::class)->createStreamFromFile('/tmp/test.txt');
+            $this->assertEquals("test", (string)$stream);
+        } finally {
+            if (file_exists('/tmp/test.txt')) {
+                unlink('/tmp/test.txt');
+            }
+        }
     }
 }

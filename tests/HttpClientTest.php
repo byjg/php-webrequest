@@ -10,6 +10,7 @@ use ByJG\WebRequest\Helper\RequestFormUrlEncoded;
 use ByJG\WebRequest\Helper\RequestJson;
 use ByJG\WebRequest\Helper\RequestMultiPart;
 use ByJG\WebRequest\HttpClient;
+use ByJG\WebRequest\HttpMethod;
 use ByJG\WebRequest\MultiPartItem;
 use ByJG\WebRequest\ParseBody;
 use ByJG\WebRequest\Psr7\MemoryStream;
@@ -179,7 +180,7 @@ class HttpClientTest extends TestCase
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => null,
-            'method' => 'GET',
+            'method' => HttpMethod::GET->value,
             'query_string' => [],
             'post_string' => [],
             'payload' => ''
@@ -206,7 +207,7 @@ class HttpClientTest extends TestCase
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => null,
-            'method' => 'GET',
+            'method' => HttpMethod::GET->value,
             'query_string' => ['param1' => 'value1', 'param2' => 'value2'],
             'post_string' => [],
             'payload' => ''
@@ -233,7 +234,7 @@ class HttpClientTest extends TestCase
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => null,
-            'method' => 'GET',
+            'method' => HttpMethod::GET->value,
             'query_string' => ['just_string' => ''],
             'post_string' => [],
             'payload' => ''
@@ -260,7 +261,7 @@ class HttpClientTest extends TestCase
         $result = ParseBody::parse($response);
         $expected = [
             'content-type' => null,
-            'method' => 'GET',
+            'method' => HttpMethod::GET->value,
             'query_string' => ['just_string' => 'value1', 'just_string2' => 'value2'],
             'post_string' => [],
             'payload' => ''
