@@ -20,11 +20,11 @@ class ServerRequest extends Request implements ServerRequestInterface
         parent::__construct($uri ?? new Uri());
 
         if (empty($this->serverParams)) {
-            $this->serverParams = $_SERVER ?? [];
+            $this->serverParams = $_SERVER;
         }
 
         if (empty($this->cookieParams)) {
-            $this->cookieParams = $_COOKIE ?? [];
+            $this->cookieParams = $_COOKIE;
         }
     }
 
@@ -102,6 +102,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 
     /**
      * @inheritDoc
+     * @psalm-suppress InvalidReturnStatement
      */
     public function getParsedBody()
     {

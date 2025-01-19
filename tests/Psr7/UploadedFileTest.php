@@ -183,7 +183,7 @@ class UploadedFileTest extends TestCase
         file_put_contents($files['my-form']['tmp_name']['details']['avatar'], $binJpg);
 
         try {
-            /** @var UploadedFile[][] $uploadedFiles */
+            /** @var UploadedFile[][][] $uploadedFiles */
             $uploadedFiles = UploadedFile::parseFilesGlobal($files);
 
             $this->assertCount(1, $uploadedFiles);

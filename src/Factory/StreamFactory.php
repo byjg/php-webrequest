@@ -53,7 +53,11 @@ class StreamFactory implements StreamFactoryInterface
             throw new RuntimeException("Cannot open resource");
         }
 
-        $stream = $this->createStream(file_get_contents($resource));
+        $content = '';
+        while ($buffer = fread($resource, 8192)) {
+            $content .= $buffer;
+        }
+        $stream = $this->createStream($content);
         fclose($resource);
         return $stream;
     }

@@ -2,6 +2,7 @@
 
 namespace ByJG\WebRequest\Factory;
 
+use ByJG\Util\Uri;
 use ByJG\WebRequest\Exception\MessageException;
 use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\Psr7\ServerRequest;
@@ -17,6 +18,9 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {
+        if (is_string($uri)) {
+            $uri = new Uri($uri);
+        }
         return (new ServerRequest($uri, $serverParams))->withMethod($method);
     }
 

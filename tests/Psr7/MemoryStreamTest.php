@@ -42,5 +42,15 @@ class MemoryStreamTest extends StreamBaseTest
     {
         $stream = StreamFactory::instance(MemoryStream::class)->createStream("test");
         $this->assertEquals("test", (string)$stream);
+
+        try {
+            file_put_contents('/tmp/test.txt', 'test');
+            $stream = StreamFactory::instance(MemoryStream::class)->createStreamFromFile('/tmp/test.txt');
+            $this->assertEquals("test", (string)$stream);
+        } finally {
+            if (file_exists('/tmp/test.txt')) {
+                unlink('/tmp/test.txt');
+            }
+        }
     }
 }
