@@ -6,7 +6,7 @@
 
 # Web Request
 
-A lightweight PSR-7 implementation and highly customized CURL wrapper for making RESt calls.
+A lightweight PSR-7 implementation and highly customized CURL wrapper for making REST calls.
 
 ## Main Features
 
@@ -16,10 +16,11 @@ This class implements:
 * PSR-18 Http Client;
 * Helper to create Request instances with the most common use cases;
 * Wrapper to execute several requests in parallel;
+* Promise-based interface for asynchronous requests;
 
 ## PSR-7 Implementation and basic usage
 
-Since the implementation follow the PSR7 implementation there is no much explanation about the usage.
+Since the implementation follows the PSR-7 specification, there is no much explanation about the usage.
 
 The key elements are:
 
@@ -30,7 +31,7 @@ The key elements are:
 More information about the PSR-7 [here](https://www.php-fig.org/psr/psr-7/).
 
 The implementation to send the request object is defined by the class `HttpClient`.
-This class follow partially the PSR-18 implementation.
+This class follows the PSR-18 implementation.
 So, once you have a Request instance defined just need to call `HttpClient::sendRequest($request);`
 
 ### Basic Usage
@@ -100,7 +101,7 @@ $uploadFile[] = new \ByJG\WebRequest\MultiPartItem(
 $uploadFile[] = new \ByJG\WebRequest\MultiPartItem('field3', 'value3');
 
 // Use the Wrapper to create the Request
-$request = \ByJG\WebRequest\Helper\RequestMultiPart::build(Uri::getInstanceFromString($uri),
+$request = \ByJG\WebRequest\Helper\RequestMultiPart::build(\ByJG\Util\Uri::getInstanceFromString($uri),
     "POST",
     $uploadFile
 );
@@ -127,24 +128,24 @@ $client = \ByJG\WebRequest\HttpClient::getInstance()
 
 ## HttpClientParallel
 
-You can use the HttpClient to do several differents requests in parallel.
+You can use the HttpClient to do several different requests in parallel.
 
-To use this funcionallity you need:
+To use this functionality you need:
 
-1. Create a instance of the HttpClientParallel class
+1. Create an instance of the HttpClientParallel class
 2. Add the RequestInterface instance
 3. Execute
 
-The results will be processed as soon is ready.
+The results will be processed as soon as they are ready.
 
-Below a basic example:
+Below is a basic example:
 
 ```php
 <?php
 // Create the instances of the requirements
 $httpClient = \ByJG\WebRequest\HttpClient::getInstance();
 
-$onSucess = function ($response, $id) {
+$onSuccess = function ($response, $id) {
     // Do something with Response object
 };
 
@@ -155,7 +156,7 @@ $onError = function ($error, $id) use (&$fail) {
 // Create the HttpClientParallel
 $multi = new \ByJG\WebRequest\HttpClientParallel(
     $httpClient,
-    $onSucess,
+    $onSuccess,
     $onError
 );
 
@@ -194,7 +195,7 @@ $response = $mock->sendRequest(new Request("http://example.com"));
 assertEquals($expectedResponse, $response);
 ```
 
-### Debuging the CURL options
+### Debugging the CURL options
 
 ```php
 <?php
