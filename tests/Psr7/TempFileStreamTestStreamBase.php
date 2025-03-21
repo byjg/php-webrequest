@@ -8,6 +8,7 @@ use Psr\Http\Message\StreamInterface;
 
 class TempFileStreamTestStreamBase extends TestStreamBase
 {
+    #[\Override]
     public function getResource(?string $data): StreamInterface
     {
         return new TempFileStream($data);
@@ -16,6 +17,7 @@ class TempFileStreamTestStreamBase extends TestStreamBase
     /**
      * @return void
      */
+    #[\Override]
     public function tearDownResource()
     {
         $this->stream->close();
@@ -25,6 +27,7 @@ class TempFileStreamTestStreamBase extends TestStreamBase
     /**
      * @return true
      */
+    #[\Override]
     public function isWriteable()
     {
         return true;
@@ -33,6 +36,7 @@ class TempFileStreamTestStreamBase extends TestStreamBase
     /**
      * @return true
      */
+    #[\Override]
     public function canOverwrite()
     {
         return true;

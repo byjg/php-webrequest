@@ -12,11 +12,13 @@ class MessageTest extends TestCase
 {
     private $message;
 
+    #[\Override]
     public function setUp(): void
     {
         $this->message = new Message();
     }
 
+    #[\Override]
     public function tearDown(): void
     {
         $this->message = null;

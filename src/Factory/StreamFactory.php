@@ -21,6 +21,7 @@ class StreamFactory implements StreamFactoryInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function createStream(string $content = ''): StreamInterface
     {
         /** @var StreamInterface $stream */
@@ -35,6 +36,7 @@ class StreamFactory implements StreamFactoryInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
         if (!file_exists($filename)) {
@@ -47,6 +49,7 @@ class StreamFactory implements StreamFactoryInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function createStreamFromResource($resource): StreamInterface
     {
         if (!is_resource($resource)) {

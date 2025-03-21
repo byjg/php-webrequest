@@ -9,6 +9,7 @@ class FileStreamAPlusTestStreamBase extends TestStreamBase
 {
     const FILENAME = "/tmp/filestream-test.txt";
 
+    #[\Override]
     public function getResource(?string $data): StreamInterface
     {
         if (file_exists(self::FILENAME)) {
@@ -21,6 +22,7 @@ class FileStreamAPlusTestStreamBase extends TestStreamBase
     /**
      * @return void
      */
+    #[\Override]
     public function tearDownResource()
     {
         $this->stream->close();
@@ -30,6 +32,7 @@ class FileStreamAPlusTestStreamBase extends TestStreamBase
     /**
      * @return true
      */
+    #[\Override]
     public function isWriteable()
     {
         return true;
@@ -38,6 +41,7 @@ class FileStreamAPlusTestStreamBase extends TestStreamBase
     /**
      * @return false
      */
+    #[\Override]
     public function canOverwrite()
     {
         return false;

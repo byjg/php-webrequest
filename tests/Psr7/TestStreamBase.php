@@ -19,11 +19,13 @@ abstract class TestStreamBase extends TestCase
 
     protected ?StreamInterface $stream;
 
+    #[\Override]
     public function setUp(): void
     {
         $this->stream = $this->getResource(self::TEXT1);
     }
 
+    #[\Override]
     public function tearDown(): void
     {
         $this->tearDownResource();

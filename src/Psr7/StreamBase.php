@@ -47,6 +47,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function close(): void
     {
         if (!$this->isDetached()) {
@@ -59,6 +60,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function detach()
     {
         if ($this->isDetached()) {
@@ -72,6 +74,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getSize(): ?int
     {
         if (!$this->isDetached()) {
@@ -84,6 +87,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @inheritDoc
      * @throws RuntimeException
      */
+    #[\Override]
     public function tell(): int
     {
         if ($this->isDetached()) {
@@ -102,6 +106,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @inheritDoc
      * @throws RuntimeException
      */
+    #[\Override]
     public function eof(): bool
     {
         if ($this->isDetached()) {
@@ -114,6 +119,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @inheritDoc
      * @throws RuntimeException
      */
+    #[\Override]
     public function isSeekable(): bool
     {
         if ($this->isDetached()) {
@@ -127,6 +133,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @inheritDoc
      * @throws RuntimeException
      */
+    #[\Override]
     public function seek(int $offset, int $whence = SEEK_SET): void
     {
         if (!$this->isSeekable()) {
@@ -139,6 +146,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @inheritDoc
      * @throws RuntimeException
      */
+    #[\Override]
     public function rewind(): void
     {
         if (!$this->isSeekable()) {
@@ -151,6 +159,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @inheritDoc
      * @throws RuntimeException
      */
+    #[\Override]
     public function isWritable(): bool
     {
         if ($this->isDetached()) {
@@ -168,6 +177,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @inheritDoc
      * @throws RuntimeException
      */
+    #[\Override]
     public function write(string $string): int
     {
         if (!$this->isWritable()) {
@@ -189,6 +199,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @inheritDoc
      * @throws RuntimeException
      */
+    #[\Override]
     public function isReadable(): bool
     {
         if ($this->isDetached()) {
@@ -206,6 +217,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function read(int $length): string
     {
         if ($this->isDetached()) {
@@ -225,6 +237,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @inheritDoc
      * @throws RuntimeException
      */
+    #[\Override]
     public function getContents(): string
     {
         return $this->read($this->getSize() - $this->tell());
@@ -233,6 +246,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMetadata($key = null)
     {
         if ($this->isDetached()) {
@@ -257,6 +271,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     /**
      * @param StreamInterface $stream
      */
+    #[\Override]
     public function appendStream(StreamInterface $stream): void
     {
         $this->seek(0, SEEK_END);
@@ -268,6 +283,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      * @param string $filter
      * @param string $mode (r)ead or (w)rite
      */
+    #[\Override]
     public function addFilter(string $filter, string $mode = "r"): void
     {
         stream_filter_append($this->resource, $filter, $mode == "r" ? STREAM_FILTER_READ : STREAM_FILTER_WRITE);

@@ -29,11 +29,13 @@ class UploadedFile implements UploadedFileInterface
         }
     }
 
+    #[\Override]
     public function getStream(): StreamInterface
     {
         return $this->stream;
     }
 
+    #[\Override]
     public function moveTo(string $targetPath): void
     {
         $this->stream->rewind();
@@ -45,21 +47,25 @@ class UploadedFile implements UploadedFileInterface
         file_put_contents($targetPath, $this->stream->getContents());
     }
 
+    #[\Override]
     public function getSize(): ?int
     {
         return $this->size;
     }
 
+    #[\Override]
     public function getError(): int
     {
         return $this->error;
     }
 
+    #[\Override]
     public function getClientFilename(): ?string
     {
         return $this->clientFilename;
     }
 
+    #[\Override]
     public function getClientMediaType(): ?string
     {
         return $this->clientMediaType;
