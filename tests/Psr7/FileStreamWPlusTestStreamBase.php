@@ -5,7 +5,7 @@ namespace Test\Psr7;
 use ByJG\WebRequest\Psr7\FileStream;
 use Psr\Http\Message\StreamInterface;
 
-class FileStreamAPlusTest extends StreamBaseTest
+class FileStreamWPlusTestStreamBase extends TestStreamBase
 {
     const FILENAME = "/tmp/filestream-test.txt";
 
@@ -15,7 +15,7 @@ class FileStreamAPlusTest extends StreamBaseTest
             unlink(self::FILENAME);
         }
         file_put_contents(self::FILENAME, $data);
-        return new FileStream(self::FILENAME, "a+");
+        return new FileStream(self::FILENAME, "rw+");
     }
 
     /**
@@ -36,10 +36,10 @@ class FileStreamAPlusTest extends StreamBaseTest
     }
 
     /**
-     * @return false
+     * @return true
      */
     public function canOverwrite()
     {
-        return false;
+        return true;
     }
 }

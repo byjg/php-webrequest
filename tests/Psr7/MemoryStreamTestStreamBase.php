@@ -6,7 +6,7 @@ use ByJG\WebRequest\Factory\StreamFactory;
 use ByJG\WebRequest\Psr7\MemoryStream;
 use Psr\Http\Message\StreamInterface;
 
-class MemoryStreamTest extends StreamBaseTest
+class MemoryStreamTestStreamBase extends TestStreamBase
 {
     public function getResource(?string $data): StreamInterface
     {

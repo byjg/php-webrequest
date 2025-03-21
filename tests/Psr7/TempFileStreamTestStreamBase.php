@@ -2,20 +2,15 @@
 
 namespace Test\Psr7;
 
-use ByJG\WebRequest\Psr7\FileStream;
+use ByJG\WebRequest\Factory\StreamFactory;
+use ByJG\WebRequest\Psr7\TempFileStream;
 use Psr\Http\Message\StreamInterface;
 
-class FileStreamWPlusTest extends StreamBaseTest
+class TempFileStreamTestStreamBase extends TestStreamBase
 {
-    const FILENAME = "/tmp/filestream-test.txt";
-
     public function getResource(?string $data): StreamInterface
     {
-        if (file_exists(self::FILENAME)) {
-            unlink(self::FILENAME);
-        }
-        file_put_contents(self::FILENAME, $data);
-        return new FileStream(self::FILENAME, "rw+");
+        return new TempFileStream($data);
     }
 
     /**
@@ -25,8 +20,8 @@ class FileStreamWPlusTest extends StreamBaseTest
     {
         $this->stream->close();
         $this->stream = null;
-        unlink(self::FILENAME);
     }
+
     /**
      * @return true
      */
@@ -41,5 +36,12 @@ class FileStreamWPlusTest extends StreamBaseTest
     public function canOverwrite()
     {
         return true;
+    }
+
+    public function testCreateStream()
+    {
+        $stream = StreamFactory::instance(TempFileStream::class)->createStream("test");
+
+        $this->assertEquals("test", (string)$stream);
     }
 }

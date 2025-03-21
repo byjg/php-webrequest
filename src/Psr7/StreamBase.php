@@ -214,7 +214,11 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
         if (feof($this->resource) || $length === 0) {
             return "";
         }
-        return fread($this->resource, $length);
+        $result = fread($this->resource, $length);
+        if ($result === false) {
+            throw new RuntimeException("Failed to read from stream");
+        }
+        return $result;
     }
 
     /**

@@ -85,7 +85,11 @@ class MockClient extends HttpClient
      */
     protected function curlInit(): CurlHandle
     {
-        return curl_init();
+        $curlHandle = curl_init();
+        if ($curlHandle === false) {
+            throw new \RuntimeException("Failed to initialize cURL");
+        }
+        return $curlHandle;
     }
 
     /**

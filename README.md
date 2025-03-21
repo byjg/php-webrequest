@@ -1,10 +1,10 @@
-# Web Request
-
+[![Build Status](https://github.com/byjg/php-webrequest/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/php-webrequest/actions/workflows/phpunit.yml)
 [![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](http://opensource.byjg.com)
-[![Build Status](https://github.com/byjg/webrequest/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/webrequest/actions/workflows/phpunit.yml)
-[![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/webrequest/)
-[![GitHub license](https://img.shields.io/github/license/byjg/webrequest.svg)](https://opensource.byjg.com/opensource/licensing.html)
-[![GitHub release](https://img.shields.io/github/release/byjg/webrequest.svg)](https://github.com/byjg/webrequest/releases/)
+[![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-webrequest/)
+[![GitHub license](https://img.shields.io/github/license/byjg/php-webrequest.svg)](https://opensource.byjg.com/opensource/licensing.html)
+[![GitHub release](https://img.shields.io/github/release/byjg/php-webrequest.svg)](https://github.com/byjg/php-webrequest/releases/)
+
+# Web Request
 
 A lightweight PSR-7 implementation and highly customized CURL wrapper for making RESt calls.
 

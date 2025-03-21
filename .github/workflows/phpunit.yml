@@ -12,12 +12,11 @@ on:
 jobs:
   Build:
     runs-on: 'ubuntu-latest'
-    container:
-      image: 'byjg/php:${{ matrix.php-version }}-cli'
-      options: --user root
+    container: 'byjg/php:${{ matrix.php-version }}-cli'
     strategy:
       matrix:
         php-version:
+          - "8.4"
           - "8.3"
           - "8.2"
           - "8.1"
@@ -50,8 +49,8 @@ jobs:
           docker cp "$PWD/tests/server/soap.php" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html/soap.php"
           docker cp "$PWD/tests/server/soap.wsdl" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html/soap.wsdl"
       - run: composer install
-      - run: ./vendor/bin/phpunit
       - run: ./vendor/bin/psalm
+      - run: ./vendor/bin/phpunit
 
   Documentation:
     if: github.ref == 'refs/heads/master'
