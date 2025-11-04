@@ -1,5 +1,7 @@
 ---
 sidebar_position: 5
+title: Helper Classes
+description: Helper classes for JSON, Form URL Encoded, and MultiPart requests
 ---
 
 # Helper Classes
@@ -62,19 +64,7 @@ $request = \ByJG\WebRequest\Helper\RequestFormUrlEncoded::build(
 $response = \ByJG\WebRequest\HttpClient::getInstance()->sendRequest($request);
 ```
 
-The method uses HTTP POST by default, but you can specify a different method:
-
-```php
-<?php
-$request = \ByJG\WebRequest\Helper\RequestFormUrlEncoded::build(
-    $uri,
-    [
-        'username' => 'johndoe',
-        'password' => 'secret123'
-    ],
-    'PUT'  // Custom HTTP method
-);
-```
+The method uses HTTP POST by default.
 
 ## Request Multi Part
 
@@ -161,4 +151,20 @@ $method = \ByJG\WebRequest\HttpMethod::POST;
 if ($response->getStatusCode() === \ByJG\WebRequest\HttpStatus::NOT_FOUND) {
     echo "Resource not found!";
 }
-``` 
+```
+
+### Available HTTP Methods
+
+The `HttpMethod` enum provides constants for all standard HTTP methods:
+
+- `GET`, `POST`, `PUT`, `PATCH`, `DELETE`
+- `HEAD`, `OPTIONS`, `CONNECT`, `TRACE`
+
+### Common HTTP Status Codes
+
+The `HttpStatus` class provides constants for all standard HTTP status codes, including:
+
+- **2xx Success**: `OK` (200), `CREATED` (201), `NO_CONTENT` (204)
+- **3xx Redirection**: `MOVED_PERMANENTLY` (301), `FOUND` (302)
+- **4xx Client Errors**: `BAD_REQUEST` (400), `UNAUTHORIZED` (401), `FORBIDDEN` (403), `NOT_FOUND` (404)
+- **5xx Server Errors**: `INTERNAL_SERVER_ERROR` (500), `BAD_GATEWAY` (502), `SERVICE_UNAVAILABLE` (503) 

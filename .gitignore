@@ -6,3 +6,4 @@ composer.lock
 vendor
 .phpunit.result.cache
 *.bak
+/.claude/settings.local.json

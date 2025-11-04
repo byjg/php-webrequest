@@ -1,8 +1,14 @@
 ---
 sidebar_position: 2
+title: HTTP Client (PSR-18)
+description: PSR-18 compliant HTTP client implementation
 ---
 
-# HTTP Client
+# HTTP Client (PSR-18)
+
+:::info PSR-18 Compliance
+The `HttpClient` class fully implements **[PSR-18: HTTP Client Interface](https://www.php-fig.org/psr/psr-18/)**, providing a standardized way to send PSR-7 requests and receive PSR-7 responses.
+:::
 
 The `HttpClient` class is the core component for sending HTTP requests. It implements the [PSR-18 HTTP Client Interface](https://www.php-fig.org/psr/psr-18/), providing a standardized way to send PSR-7 requests and receive PSR-7 responses.
 
@@ -48,7 +54,9 @@ $client = \ByJG\WebRequest\HttpClient::getInstance()
 
 ### Disabling SSL Verification
 
-For development purposes or when working with self-signed certificates, you can disable SSL verification:
+:::warning Security Warning
+Only disable SSL verification for development purposes or when working with self-signed certificates. Never use this in production environments.
+:::
 
 ```php
 <?php

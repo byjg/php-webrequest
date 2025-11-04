@@ -1,5 +1,7 @@
 ---
 sidebar_position: 4
+title: Mock Client
+description: Mock HTTP client for testing without network calls
 ---
 
 # Mock Client
@@ -15,6 +17,10 @@ The `MockClient` class extends `HttpClient` to provide testing capabilities. It 
 - Useful for unit testing HTTP-dependent code
 
 ## Basic Usage
+
+:::tip Testing Without Network
+The MockClient allows you to test HTTP-dependent code without making actual network calls, making tests faster and more reliable.
+:::
 
 ```php
 <?php

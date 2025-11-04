@@ -10,21 +10,26 @@ A lightweight PSR-7 implementation and highly customized CURL wrapper for making
 
 ## Overview
 
-PHP WebRequest is a package that provides:
-- Complete PSR-7 implementation for HTTP messages
-- PSR-17 HTTP Factories implementation
-- PSR-18 HTTP Client implementation
+PHP WebRequest is a **fully PSR-compliant** HTTP client package that provides:
+
+### PSR Implementations
+- ✅ **[PSR-7](https://www.php-fig.org/psr/psr-7/)** - HTTP Message Interface (Request, Response, Stream)
+- ✅ **[PSR-17](https://www.php-fig.org/psr/psr-17/)** - HTTP Factories (Request, Response, Stream, etc.)
+- ✅ **[PSR-18](https://www.php-fig.org/psr/psr-18/)** - HTTP Client Interface
+
+### Additional Features
 - Helper classes for common request types (JSON, Form URL Encoded, MultiPart)
 - Support for parallel HTTP requests
 - Mock client for testing
 
 ## Documentation
 
-- [PSR-7 and PSR-17 Implementation](docs/psr7-implementation.md)
-- [HTTP Client PSR-18 Implementation](docs/http-client.md)
-- [HTTP Client Parallel](docs/http-client-parallel.md)
-- [Mock Client](docs/mock-client.md)
-- [Helpers](docs/helpers.md)
+- [HTTP Messages and Factories (PSR-7/PSR-17)](docs/psr7-implementation.md) - Create and manipulate HTTP requests, responses, and streams
+- [Sending HTTP Requests (PSR-18)](docs/http-client.md) - Send HTTP requests with customizable options (proxy, SSL, timeouts)
+- [Parallel Requests](docs/http-client-parallel.md) - Execute multiple HTTP requests concurrently for better performance
+- [Testing with Mock Client](docs/mock-client.md) - Test HTTP code without real network calls
+- [Request Helpers](docs/helpers.md) - Quickly build JSON, Form, and MultiPart requests
+- [Comparison with Guzzle](docs/comparison-with-guzzle.md) - How WebRequest compares to Guzzle HTTP client
 
 ## Basic Example
 

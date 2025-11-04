@@ -38,5 +38,9 @@
     "psr/http-message-implementation": "1.0",
     "psr/http-factory-implementation": "1.0"
   },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "psalm": "vendor/bin/psalm"
+  },
   "license": "MIT"
 }

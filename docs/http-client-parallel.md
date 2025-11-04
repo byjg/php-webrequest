@@ -1,5 +1,7 @@
 ---
 sidebar_position: 3
+title: HTTP Client Parallel
+description: Execute multiple HTTP requests concurrently for better performance
 ---
 
 # HTTP Client Parallel
@@ -104,6 +106,8 @@ foreach ($errors as $requestId => $error) {
 
 ## Performance Considerations
 
+:::info Best Practices
 - The parallel client is most effective when making multiple independent requests
 - Each request should be able to run independently without dependencies on other requests
-- There is some overhead in setting up the parallel execution mechanism, so for small numbers of requests (1-2), it may not be significantly faster than sequential requests 
+- There is some overhead in setting up the parallel execution mechanism, so for small numbers of requests (1-2), it may not be significantly faster than sequential requests
+::: 
