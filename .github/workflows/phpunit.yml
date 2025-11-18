@@ -12,7 +12,9 @@ on:
 jobs:
   Build:
     runs-on: 'ubuntu-latest'
-    container: 'byjg/php:${{ matrix.php-version }}-cli'
+    container:
+      image: 'byjg/php:${{ matrix.php-version }}-cli'
+      options: --user root --privileged
     strategy:
       matrix:
         php-version:
@@ -39,7 +41,7 @@ jobs:
       HTTP_TEST_PORT: "80"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Prepare Test Server
         run: |
           apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community docker
