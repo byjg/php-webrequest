@@ -6,8 +6,9 @@ use ByJG\WebRequest\Factory\StreamFactory;
 use ByJG\WebRequest\Psr7\TempFileStream;
 use Psr\Http\Message\StreamInterface;
 
-class TempFileStreamTest extends StreamBaseTest
+class TempFileStreamTestStreamBase extends TestStreamBase
 {
+    #[\Override]
     public function getResource(?string $data): StreamInterface
     {
         return new TempFileStream($data);
@@ -16,6 +17,7 @@ class TempFileStreamTest extends StreamBaseTest
     /**
      * @return void
      */
+    #[\Override]
     public function tearDownResource()
     {
         $this->stream->close();
@@ -25,6 +27,7 @@ class TempFileStreamTest extends StreamBaseTest
     /**
      * @return true
      */
+    #[\Override]
     public function isWriteable()
     {
         return true;
@@ -33,6 +36,7 @@ class TempFileStreamTest extends StreamBaseTest
     /**
      * @return true
      */
+    #[\Override]
     public function canOverwrite()
     {
         return true;

@@ -38,7 +38,7 @@ class HttpClientParallel
      */
     protected array $errorList = [];
 
-    public function __construct(HttpClient $httpClient, Closure $defaultOnSuccess = null, Closure $defaultOnError = null)
+    public function __construct(HttpClient $httpClient, ?Closure $defaultOnSuccess = null, ?Closure $defaultOnError = null)
     {
         $this->httpClient = $httpClient;
 
@@ -61,8 +61,8 @@ class HttpClientParallel
      */
     public function addRequest(
         RequestInterface $request,
-        Closure $onSuccess = null,
-        Closure $onError = null
+        ?Closure $onSuccess = null,
+        ?Closure $onError = null
     ): HttpClientParallel
     {
         if (is_null($onSuccess)) {

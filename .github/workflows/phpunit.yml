@@ -14,10 +14,11 @@ jobs:
     runs-on: 'ubuntu-latest'
     container:
       image: 'byjg/php:${{ matrix.php-version }}-cli'
-      options: --user root
+      options: --user root --privileged
     strategy:
       matrix:
         php-version:
+          - "8.4"
           - "8.3"
           - "8.2"
           - "8.1"
@@ -40,7 +41,7 @@ jobs:
       HTTP_TEST_PORT: "80"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Prepare Test Server
         run: |
           apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community docker
@@ -50,8 +51,8 @@ jobs:
           docker cp "$PWD/tests/server/soap.php" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html/soap.php"
           docker cp "$PWD/tests/server/soap.wsdl" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html/soap.wsdl"
       - run: composer install
-      - run: ./vendor/bin/phpunit
       - run: ./vendor/bin/psalm
+      - run: ./vendor/bin/phpunit
 
   Documentation:
     if: github.ref == 'refs/heads/master'
@@ -60,5 +61,6 @@ jobs:
     with:
       folder: php
       project: ${{ github.event.repository.name }}
-    secrets: inherit
+    secrets:
+      DOC_TOKEN: ${{ secrets.DOC_TOKEN }}
 
