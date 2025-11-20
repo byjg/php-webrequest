@@ -119,6 +119,7 @@ class Response extends Message implements ResponseInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getStatusCode(): int
     {
         return $this->statusCode;
@@ -129,6 +130,7 @@ class Response extends Message implements ResponseInterface
      * @param int|HttpStatus $code
      * @param string $reasonPhrase
      */
+    #[\Override]
     public function withStatus(int|HttpStatus $code, string $reasonPhrase = ''): static
     {
         $clone = clone $this;
@@ -154,6 +156,7 @@ class Response extends Message implements ResponseInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getReasonPhrase(): string
     {
         return $this->reasonPhrase;

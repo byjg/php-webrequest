@@ -8,6 +8,7 @@ use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\Factory\RequestFactory;
 use ByJG\WebRequest\HttpMethod;
 use ByJG\WebRequest\Psr7\Request;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase
@@ -17,7 +18,7 @@ class RequestTest extends TestCase
      *
      * @return (Request|string[])[][]
      */
-    public function uriProvider(): array
+    public static function uriProvider(): array
     {
         return [
             [
@@ -53,25 +54,13 @@ class RequestTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider uriProvider
-     *
-     * @param Request $request
-     * @param string[] $expected
-     */
+    #[DataProvider('uriProvider')]
     public function testGetRequestTarget($request, $expected): void
     {
         $this->assertEquals($request->getRequestTarget(), $expected[1]);
     }
 
-    /**
-     * @dataProvider uriProvider
-     *
-     * @param Request $request
-     * @param string[] $expected
-     *
-     * @throws MessageException
-     */
+    #[DataProvider('uriProvider')]
     public function testWithRequestTarget($request, $expected): void
     {
         $path = "/another" . rand(1000, 9000);

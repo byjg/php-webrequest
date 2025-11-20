@@ -15,6 +15,7 @@ class RequestException extends Exception implements RequestExceptionInterface
         parent::__construct($message, $code, $previous);
     }
 
+    #[\Override]
     public function getRequest(): RequestInterface
     {
         return $this->request;

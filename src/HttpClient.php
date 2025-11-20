@@ -7,6 +7,7 @@ use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\Psr7\NullStream;
 use CurlHandle;
 use InvalidArgumentException;
+use Override;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -99,6 +100,7 @@ class HttpClient implements ClientInterface
      * @throws RequestException
      * @throws NetworkException
      */
+    #[Override]
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $curlHandle = $this->createCurlHandle($request);
@@ -106,7 +108,6 @@ class HttpClient implements ClientInterface
         $result = curl_exec($curlHandle);
         $error = curl_error($curlHandle);
         if ($result === false) {
-            curl_close($curlHandle);
             throw new NetworkException($this->request, "CURL - " . $error);
         }
 
@@ -143,7 +144,10 @@ class HttpClient implements ClientInterface
     protected function curlInit(): CurlHandle
     {
         $curlHandle = curl_init();
-
+        if ($curlHandle === false) {
+            throw new \RuntimeException("Failed to initialize cURL");
+        }
+        
         curl_setopt($curlHandle, CURLOPT_URL, $this->request->getUri());
 
         // Set Curl Options

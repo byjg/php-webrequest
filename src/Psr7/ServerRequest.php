@@ -31,6 +31,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getServerParams(): array
     {
         return $this->serverParams;
@@ -39,6 +40,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getCookieParams(): array
     {
         return $this->cookieParams;
@@ -47,6 +49,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withCookieParams(array $cookies): static
     {
         $clone = clone $this;
@@ -57,6 +60,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getQueryParams(): array
     {
         $clone = clone $this;
@@ -72,6 +76,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withQueryParams(array $query): static
     {
         $clone = clone $this;
@@ -82,6 +87,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getUploadedFiles(): array
     {
         if (is_null($this->files)) {
@@ -93,6 +99,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withUploadedFiles(array $uploadedFiles): static
     {
         $clone = clone $this;
@@ -104,6 +111,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @inheritDoc
      * @psalm-suppress InvalidReturnStatement
      */
+    #[\Override]
     public function getParsedBody()
     {
         if ($this->parsedBody !== null) {
@@ -127,6 +135,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withParsedBody($data): static
     {
         $contentType = $this->getHeader('Content-Type')[0] ?? '';
@@ -145,6 +154,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getAttributes(): array
     {
         return $this->attributes;
@@ -153,6 +163,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getAttribute(string $name, $default = null)
     {
         return $this->attributes[$name] ?? $default;
@@ -161,6 +172,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withAttribute(string $name, $value): static
     {
         $clone = clone $this;
@@ -171,6 +183,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withoutAttribute(string $name): static
     {
         $clone = clone $this;

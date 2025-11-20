@@ -33,6 +33,7 @@ class MockClientTest extends TestCase
     
     protected array $curlOptions;
     
+    #[\Override]
     public function setUp(): void
     {
         $host = empty(getenv('HTTP_TEST_HOST')) ?  "localhost" : getenv('HTTP_TEST_HOST');

@@ -5,7 +5,7 @@ namespace Test\Psr7;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
 
-abstract class StreamBaseTest extends TestCase
+abstract class TestStreamBase extends TestCase
 {
     const TEXT1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam auctor augue justo, id condimentum tortor molestie et. Quisque at egestas dui. Vestibulum id lectus et mi interdum lobortis non sit.";
 
@@ -19,11 +19,13 @@ abstract class StreamBaseTest extends TestCase
 
     protected ?StreamInterface $stream;
 
+    #[\Override]
     public function setUp(): void
     {
         $this->stream = $this->getResource(self::TEXT1);
     }
 
+    #[\Override]
     public function tearDown(): void
     {
         $this->tearDownResource();

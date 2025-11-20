@@ -33,6 +33,7 @@ class MockClient extends HttpClient
     /**
      * @return MockClient
      */
+    #[\Override]
     public static function getInstance(): MockClient
     {
         return new MockClient(new Response(200));
@@ -43,14 +44,15 @@ class MockClient extends HttpClient
      * @return Response
      * @throws RequestException
      */
+    #[\Override]
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $curlHandle = $this->createCurlHandle($request);
-        curl_close($curlHandle);
 
         return $this->parseCurl("", $curlHandle);
     }
 
+    #[\Override]
     public function parseCurl(string $body, $curlHandle, $close = true): Response
     {
         return $this->expectedResponse;
@@ -61,6 +63,7 @@ class MockClient extends HttpClient
      * @throws RequestException
      * @return CurlHandle
      */
+    #[\Override]
     public function createCurlHandle(RequestInterface $request): CurlHandle
     {
         $this->request = clone $request;
@@ -83,9 +86,14 @@ class MockClient extends HttpClient
      *
      * @return CurlHandle
      */
+    #[\Override]
     protected function curlInit(): CurlHandle
     {
-        return curl_init();
+        $curlHandle = curl_init();
+        if ($curlHandle === false) {
+            throw new \RuntimeException("Failed to initialize cURL");
+        }
+        return $curlHandle;
     }
 
     /**

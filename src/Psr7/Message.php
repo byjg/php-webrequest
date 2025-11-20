@@ -20,6 +20,7 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getProtocolVersion(): string
     {
         return $this->protocolVersion;
@@ -29,6 +30,7 @@ class Message implements MessageInterface
      * @inheritDoc
      * @throws MessageException
      */
+    #[\Override]
     public function withProtocolVersion($version): MessageInterface
     {
         if ($version != "1.0" && $version != "1.1") {
@@ -42,6 +44,7 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getHeaders(): array
     {
         return $this->headers;
@@ -50,6 +53,7 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function hasHeader(string $name): bool
     {
         return (isset($this->headers[$this->normalize($name)]));
@@ -58,6 +62,7 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getHeader(string $name): array
     {
         if ($this->hasHeader($name)) {
@@ -70,6 +75,7 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getHeaderLine($name): string
     {
         return implode(",", $this->getHeader($name));
@@ -80,6 +86,7 @@ class Message implements MessageInterface
      * @return $this
      * @throws MessageException
      */
+    #[\Override]
     public function withHeader(string $name, $value): MessageInterface
     {
         $clone = clone $this;
@@ -91,6 +98,7 @@ class Message implements MessageInterface
      * @inheritDoc
      * @throws MessageException
      */
+    #[\Override]
     public function withAddedHeader(string $name, $value): MessageInterface
     {
         $clone = clone $this;
@@ -122,6 +130,7 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withoutHeader(string $name): MessageInterface
     {
         $clone = clone $this;
@@ -134,6 +143,7 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getBody(): StreamInterface
     {
         if (is_null($this->body)) {
@@ -147,6 +157,7 @@ class Message implements MessageInterface
      * @inheritDoc
      * @return $this
      */
+    #[\Override]
     public function withBody(StreamInterface $body): MessageInterface
     {
         $clone = clone $this;

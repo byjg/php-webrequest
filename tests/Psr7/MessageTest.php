@@ -5,17 +5,20 @@ namespace Test\Psr7;
 use ByJG\WebRequest\Exception\MessageException;
 use ByJG\WebRequest\Psr7\MemoryStream;
 use ByJG\WebRequest\Psr7\Message;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class MessageTest extends TestCase
 {
     private $message;
 
+    #[\Override]
     public function setUp(): void
     {
         $this->message = new Message();
     }
 
+    #[\Override]
     public function tearDown(): void
     {
         $this->message = null;
@@ -24,7 +27,7 @@ class MessageTest extends TestCase
     /**
      * @return (string|string[])[][][]
      */
-    public function headerDataProvider(): array
+    public static function headerDataProvider(): array
     {
         return [
             [
@@ -42,28 +45,14 @@ class MessageTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider headerDataProvider
-     *
-     * @param $header
-     * @param $expected
-     *
-     * @throws MessageException
-     */
+    #[DataProvider('headerDataProvider')]
     public function testWithHeader($header, $expected): void
     {
         $message = $this->message->withHeader($header[0], $header[1]);
         $this->assertEquals($expected, $message->getHeaders());
     }
 
-    /**
-     * @dataProvider headerDataProvider
-     *
-     * @param $header
-     * @param $expected
-     *
-     * @throws MessageException
-     */
+    #[DataProvider('headerDataProvider')]
     public function testHasHeader($header, $expected): void
     {
         $message = $this->message->withHeader($header[0], $header[1]);
@@ -71,14 +60,7 @@ class MessageTest extends TestCase
         $this->assertFalse($message->hasHeader($header[0] . "no"));
     }
 
-    /**
-     * @dataProvider headerDataProvider
-     *
-     * @param $header
-     * @param $expected
-     *
-     * @throws MessageException
-     */
+    #[DataProvider('headerDataProvider')]
     public function testGetHeader($header, $expected): void
     {
         $message = $this->message->withHeader($header[0], $header[1]);
@@ -91,14 +73,7 @@ class MessageTest extends TestCase
         $this->assertEquals("1.1", $this->message->getProtocolVersion());
     }
 
-    /**
-     * @dataProvider headerDataProvider
-     *
-     * @param $header
-     * @param $expected
-     *
-     * @throws MessageException
-     */
+    #[DataProvider('headerDataProvider')]
     public function testGetHeaderLine($header, $expected): void
     {
         $message = $this->message->withHeader($header[0], $header[1]);
@@ -106,14 +81,7 @@ class MessageTest extends TestCase
         $this->assertEquals(implode(",", $expected[0]), $message->getHeaderLine($header[0]));
     }
 
-    /**
-     * @dataProvider headerDataProvider
-     *
-     * @param $header
-     * @param $expected
-     *
-     * @throws MessageException
-     */
+    #[DataProvider('headerDataProvider')]
     public function testWithoutHeader($header, $expected): void
     {
         $message = $this->message
@@ -127,14 +95,7 @@ class MessageTest extends TestCase
         $this->assertEquals($expected, $message->getHeaders());
     }
 
-    /**
-     * @dataProvider headerDataProvider
-     *
-     * @param $header
-     * @param $expected
-     *
-     * @throws MessageException
-     */
+    #[DataProvider('headerDataProvider')]
     public function testWithAddedHeader($header, $expected): void
     {
         $message = $this->message->withHeader($header[0], $header[1])

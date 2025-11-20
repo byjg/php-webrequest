@@ -23,9 +23,6 @@ trait ParseCurlTrait
         $headerSize = curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE);
         $status = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
         $effectiveUrl = curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL);
-        if ($close) {
-            curl_close($curlHandle);
-        }
 
         $response = Response::getInstance($status)
             ->withBody(new MemoryStream(substr($body, $headerSize)))

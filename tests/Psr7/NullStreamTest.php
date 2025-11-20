@@ -20,11 +20,13 @@ class NullStreamTest extends TestCase
         $this->stream = null;
     }
 
+    #[\Override]
     public function setUp(): void
     {
         $this->stream = $this->getResource('');
     }
 
+    #[\Override]
     public function tearDown(): void
     {
         $this->tearDownResource();
