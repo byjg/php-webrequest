@@ -18,10 +18,9 @@ jobs:
     strategy:
       matrix:
         php-version:
+          - "8.5"
           - "8.4"
           - "8.3"
-          - "8.2"
-          - "8.1"
 
     services:
       http_test_server:
@@ -51,8 +50,8 @@ jobs:
           docker cp "$PWD/tests/server/soap.php" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html/soap.php"
           docker cp "$PWD/tests/server/soap.wsdl" "$(docker ps | grep nginx | cut -d' ' -f1):/var/www/html/soap.wsdl"
       - run: composer install
-      - run: ./vendor/bin/psalm
-      - run: ./vendor/bin/phpunit
+      - run: composer psalm
+      - run: composer test
 
   Documentation:
     if: github.ref == 'refs/heads/master'

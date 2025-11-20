@@ -1,6 +1,6 @@
 {
   "name": "byjg/webrequest",
-  "description": "A lightweight and highly customized CURL wrapper for making RESt calls using PSR7 implementation and a wrapper for call dynamically SOAP requests.",
+  "description": "A lightweight PSR-7 implementation and highly customized CURL wrapper for making REST calls.",
   "authors": [
     {
       "name": "João Gilberto Magalhães",
@@ -20,7 +20,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": ">=8.1 <8.5",
+    "php": ">=8.3 <8.6",
     "ext-curl": "*",
     "ext-json": "*",
     "byjg/uri": "^6.0",
@@ -29,8 +29,8 @@
     "psr/http-factory": "^1.0|^1.1"
   },
   "require-dev": {
-    "phpunit/phpunit": "^10.5|^11.5",
-    "vimeo/psalm": "^5.9|^6.2",
+    "phpunit/phpunit": "^9.6|^11.5",
+    "vimeo/psalm": "^5.9|^6.13",
     "ext-soap": "*"
   },
   "provide": {
@@ -40,7 +40,7 @@
   },
   "scripts": {
     "test": "vendor/bin/phpunit",
-    "psalm": "vendor/bin/psalm"
+    "psalm": "vendor/bin/psalm --threads=1"
   },
   "license": "MIT"
 }

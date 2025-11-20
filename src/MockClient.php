@@ -48,7 +48,6 @@ class MockClient extends HttpClient
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $curlHandle = $this->createCurlHandle($request);
-        curl_close($curlHandle);
 
         return $this->parseCurl("", $curlHandle);
     }
