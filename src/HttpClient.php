@@ -108,7 +108,6 @@ class HttpClient implements ClientInterface
         $result = curl_exec($curlHandle);
         $error = curl_error($curlHandle);
         if ($result === false) {
-            curl_close($curlHandle);
             throw new NetworkException($this->request, "CURL - " . $error);
         }
 
