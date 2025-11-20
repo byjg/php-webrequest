@@ -19,6 +19,7 @@ class RequestFactory implements RequestFactoryInterface
      * @throws RequestException
      * @throws MessageException
      */
+    #[\Override]
     public function createRequest(HttpMethod|string $method, $uri): RequestInterface
     {
         if (is_string($uri)) {

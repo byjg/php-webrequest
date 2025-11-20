@@ -40,6 +40,7 @@ class Request extends Message implements RequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getRequestTarget(): string
     {
         $target = $this->uri->getQuery();
@@ -53,6 +54,7 @@ class Request extends Message implements RequestInterface
      * @inheritDoc
      * @throws MessageException
      */
+    #[\Override]
     public function withRequestTarget(string $requestTarget): RequestInterface
     {
         $clone = clone $this;
@@ -69,6 +71,7 @@ class Request extends Message implements RequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMethod(): string
     {
         return $this->method;
@@ -79,6 +82,7 @@ class Request extends Message implements RequestInterface
      * @return $this
      * @throws RequestException
      */
+    #[\Override]
     public function withMethod(string|HttpMethod $method): RequestInterface
     {
         if ($method instanceof HttpMethod) {
@@ -99,6 +103,7 @@ class Request extends Message implements RequestInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getUri(): UriInterface
     {
         return $this->uri;
@@ -108,6 +113,7 @@ class Request extends Message implements RequestInterface
      * @inheritDoc
      * @throws MessageException
      */
+    #[\Override]
     public function withUri(UriInterface $uri, bool $preserveHost = false): RequestInterface
     {
         $clone = clone $this;

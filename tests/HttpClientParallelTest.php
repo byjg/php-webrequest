@@ -15,6 +15,7 @@ class HttpClientParallelTest extends TestCase
 
     protected string $SERVER_TEST;
 
+    #[\Override]
     public function setUp(): void
     {
         $host = empty(getenv('HTTP_TEST_HOST')) ?  "localhost" : getenv('HTTP_TEST_HOST');

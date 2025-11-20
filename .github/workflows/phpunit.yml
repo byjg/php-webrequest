@@ -14,10 +14,11 @@ jobs:
     runs-on: 'ubuntu-latest'
     container:
       image: 'byjg/php:${{ matrix.php-version }}-cli'
-      options: --user root
+      options: --user root --privileged
     strategy:
       matrix:
         php-version:
+          - "8.4"
           - "8.3"
           - "8.2"
           - "8.1"
@@ -40,7 +41,7 @@ jobs:
       HTTP_TEST_PORT: "80"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Prepare Test Server
         run: |
           apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community docker
@@ -52,7 +53,6 @@ jobs:
       - run: composer install
       - run: ./vendor/bin/phpunit
 
-
   Psalm:
     name: Psalm Static Analyzer
     runs-on: ubuntu-latest
@@ -60,7 +60,7 @@ jobs:
       # for github/codeql-action/upload-sarif to upload SARIF results
       security-events: write
     container:
-      image: 'byjg/php:8.3-cli'
+      image: 'byjg/php:8.4-cli'
 
     steps:
       - name: Git checkout
@@ -81,7 +81,6 @@ jobs:
         with:
           sarif_file: psalm-results.sarif
 
-
   Documentation:
     if: github.ref == 'refs/heads/master'
     needs: Build
@@ -89,5 +88,6 @@ jobs:
     with:
       folder: php
       project: ${{ github.event.repository.name }}
-    secrets: inherit
+    secrets:
+      DOC_TOKEN: ${{ secrets.DOC_TOKEN }}
 
