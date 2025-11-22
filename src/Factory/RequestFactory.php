@@ -33,6 +33,6 @@ class RequestFactory implements RequestFactoryInterface
 
     public static function instance(): static
     {
-        return new RequestFactory();
+        return new static();
     }
 }

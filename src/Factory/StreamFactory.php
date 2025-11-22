@@ -43,7 +43,12 @@ class StreamFactory implements StreamFactoryInterface
             throw new RuntimeException("File not found: $filename");
         }
 
-        return $this->createStreamFromResource(fopen($filename, $mode));
+        $resource = fopen($filename, $mode);
+        if ($resource === false) {
+            throw new RuntimeException("Failed to open file: $filename");
+        }
+
+        return $this->createStreamFromResource($resource);
     }
 
     /**

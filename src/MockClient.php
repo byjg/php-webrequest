@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 class MockClient extends HttpClient
 {
     /**
-     * @var Response
+     * @var ResponseInterface
      */
     protected ResponseInterface $expectedResponse;
 
@@ -41,7 +41,7 @@ class MockClient extends HttpClient
 
     /**
      * @param RequestInterface $request
-     * @return Response
+     * @return ResponseInterface
      * @throws RequestException
      */
     #[\Override]
@@ -53,7 +53,7 @@ class MockClient extends HttpClient
     }
 
     #[\Override]
-    public function parseCurl(string $body, $curlHandle, $close = true): Response
+    public function parseCurl(string $body, $curlHandle, $close = true): ResponseInterface
     {
         return $this->expectedResponse;
     }
@@ -113,7 +113,7 @@ class MockClient extends HttpClient
     }
 
     /**
-     * @return Response
+     * @return ResponseInterface
      */
     public function getExpectedResponse(): ResponseInterface
     {

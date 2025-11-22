@@ -21,6 +21,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     {
         if (is_string($uri)) {
             $uri = new Uri($uri);
+        } elseif (!$uri instanceof Uri) {
+            $uri = new Uri($uri->__toString());
         }
         return (new ServerRequest($uri, $serverParams))->withMethod($method);
     }

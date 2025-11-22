@@ -78,7 +78,8 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     public function getSize(): ?int
     {
         if (!$this->isDetached()) {
-            return fstat($this->resource)['size'];
+            $stat = fstat($this->resource);
+            return $stat !== false ? $stat['size'] : null;
         }
         return null;
     }
@@ -166,7 +167,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
             throw new RuntimeException("Stream is detached");
         }
         $mode = $this->getMetadata('mode');
-        if (is_null($mode)) {
+        if (!is_string($mode)) {
             return false;
         }
         return stristr($mode, 'w') !== false
@@ -206,7 +207,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
             throw new RuntimeException("Stream is detached");
         }
         $mode = $this->getMetadata('mode');
-        if (is_null($mode)) {
+        if (!is_string($mode)) {
             return false;
         }
         return stristr($mode, 'w+') !== false

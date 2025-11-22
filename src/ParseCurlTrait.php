@@ -34,11 +34,16 @@ trait ParseCurlTrait
     /**
      * @param ResponseInterface $response
      * @param string $rawHeaders
-     * @return Response
+     * @return ResponseInterface
      */
     protected function parseHeader(ResponseInterface $response, string $rawHeaders): ResponseInterface
     {
-        foreach (preg_split("/\r?\n/", $rawHeaders) as $headerLine) {
+        $lines = preg_split("/\r?\n/", $rawHeaders);
+        if ($lines === false) {
+            return $response;
+        }
+
+        foreach ($lines as $headerLine) {
             $headerLine = explode(':', $headerLine, 2);
 
             if (isset($headerLine[1])) {

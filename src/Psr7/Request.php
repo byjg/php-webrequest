@@ -129,11 +129,12 @@ class Request extends Message implements RequestInterface
         $this->uri = $uri;
 
         if (!$preserveHost || (!$this->hasHeader("host") && $this->uri->getHost() !== "")) {
-            $host = $this->uri->getPort();
-            if (!empty($host)) {
-                $host = ":$host";
+            $port = $this->uri->getPort();
+            $host = $this->uri->getHost();
+            if (!empty($port)) {
+                $host .= ":$port";
             }
-            $this->setHeader("host", $this->uri->getHost() . $host, true);
+            $this->setHeader("host", $host, true);
         }
     }
 }

@@ -113,7 +113,7 @@ class Response extends Message implements ResponseInterface
 
     public static function getInstance(int $code = 200): static
     {
-        return new Response($code);
+        return new static($code);
     }
 
     /**

@@ -115,8 +115,14 @@ class UploadedFile implements UploadedFileInterface
 
     private static function createUploadedFile(array $file): UploadedFile
     {
+        $content = '';
+        if ($file['error'] == UPLOAD_ERR_OK) {
+            $fileContent = file_get_contents($file['tmp_name']);
+            $content = $fileContent !== false ? $fileContent : '';
+        }
+
         return new UploadedFile(
-            $file['error'] == UPLOAD_ERR_OK ? file_get_contents($file['tmp_name']) : '',
+            $content,
             $file['size'],
             $file['error'],
             $file['name'],

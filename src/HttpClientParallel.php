@@ -19,9 +19,9 @@ class HttpClientParallel
     protected array $curlClients = [];
 
     /**
-     * @var ?HttpClient
+     * @var HttpClient
      */
-    protected ?HttpClient $httpClient = null;
+    protected HttpClient $httpClient;
 
     /**
      * @var ?Closure
@@ -170,6 +170,11 @@ class HttpClientParallel
             } catch (Exception $ex) {
                 $this->errorList[] = $ex;
             }
+            return;
+        }
+
+        if ($body === null) {
+            return;
         }
 
         $response = $this->parseCurl($body, $object->handle, false);
