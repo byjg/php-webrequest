@@ -143,7 +143,7 @@ class ServerRequest extends Request implements ServerRequestInterface
         if (stripos($contentType, 'application/json') !== false) {
             $clone = $this->withBody(new MemoryStream(json_encode($data)));
         } elseif (stripos($contentType, 'application/x-www-form-urlencoded') !== false) {
-            $clone = $this->withBody(new MemoryStream(http_build_query($data)));
+            $clone = $this->withBody(new MemoryStream(http_build_query($data ?? [])));
         } else {
             $clone = $this->withBody(new MemoryStream($data));
         }
