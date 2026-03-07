@@ -1,10 +1,4 @@
----
-tags: [php, http]
----
-
 # Web Request
-
-A lightweight PSR-7 implementation and highly customized CURL wrapper for making REST calls.
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-%23ea4aaa?logo=githubsponsors&logoColor=white&labelColor=0d1117)](https://github.com/sponsors/byjg)
 [![Build Status](https://github.com/byjg/php-webrequest/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/php-webrequest/actions/workflows/phpunit.yml)
@@ -12,6 +6,8 @@ A lightweight PSR-7 implementation and highly customized CURL wrapper for making
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-webrequest/)
 [![GitHub license](https://img.shields.io/github/license/byjg/php-webrequest.svg)](https://opensource.byjg.com/opensource/licensing.html)
 [![GitHub release](https://img.shields.io/github/release/byjg/php-webrequest.svg)](https://github.com/byjg/php-webrequest/releases/)
+
+A lightweight PSR-7 implementation and highly customized CURL wrapper for making REST calls.
 
 ## Overview
 
@@ -29,12 +25,12 @@ PHP WebRequest is a **fully PSR-compliant** HTTP client package that provides:
 
 ## Documentation
 
-- [HTTP Messages and Factories (PSR-7/PSR-17)](psr7-implementation) - Create and manipulate HTTP requests, responses, and streams
-- [Sending HTTP Requests (PSR-18)](http-client) - Send HTTP requests with customizable options (proxy, SSL, timeouts)
-- [Parallel Requests](http-client-parallel) - Execute multiple HTTP requests concurrently for better performance
-- [Testing with Mock Client](mock-client) - Test HTTP code without real network calls
-- [Request Helpers](helpers) - Quickly build JSON, Form, and MultiPart requests
-- [Comparison with Guzzle](comparison-with-guzzle) - How WebRequest compares to Guzzle HTTP client
+- [HTTP Messages and Factories (PSR-7/PSR-17)](docs/psr7-implementation.md) - Create and manipulate HTTP requests, responses, and streams
+- [Sending HTTP Requests (PSR-18)](docs/http-client.md) - Send HTTP requests with customizable options (proxy, SSL, timeouts)
+- [Parallel Requests](docs/http-client-parallel.md) - Execute multiple HTTP requests concurrently for better performance
+- [Testing with Mock Client](docs/mock-client.md) - Test HTTP code without real network calls
+- [Request Helpers](docs/helpers.md) - Quickly build JSON, Form, and MultiPart requests
+- [Comparison with Guzzle](docs/comparison-with-guzzle.md) - How WebRequest compares to Guzzle HTTP client
 
 ## Basic Example
 
