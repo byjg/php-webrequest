@@ -52,10 +52,11 @@ class Request extends Message implements RequestInterface
 
     /**
      * @inheritDoc
+     * @return $this
      * @throws MessageException
      */
     #[\Override]
-    public function withRequestTarget(string $requestTarget): RequestInterface
+    public function withRequestTarget(string $requestTarget): static
     {
         $clone = clone $this;
         $parts = explode("?", $requestTarget);
@@ -83,7 +84,7 @@ class Request extends Message implements RequestInterface
      * @throws RequestException
      */
     #[\Override]
-    public function withMethod(string|HttpMethod $method): RequestInterface
+    public function withMethod(string|HttpMethod $method): static
     {
         if ($method instanceof HttpMethod) {
             $method = $method->value;
@@ -111,10 +112,11 @@ class Request extends Message implements RequestInterface
 
     /**
      * @inheritDoc
+     * @return $this
      * @throws MessageException
      */
     #[\Override]
-    public function withUri(UriInterface $uri, bool $preserveHost = false): RequestInterface
+    public function withUri(UriInterface $uri, bool $preserveHost = false): static
     {
         $clone = clone $this;
         $clone->setUri($uri, $preserveHost);

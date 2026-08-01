@@ -28,10 +28,11 @@ class Message implements MessageInterface
 
     /**
      * @inheritDoc
+     * @return $this
      * @throws MessageException
      */
     #[\Override]
-    public function withProtocolVersion($version): MessageInterface
+    public function withProtocolVersion($version): static
     {
         if ($version != "1.0" && $version != "1.1") {
             throw new MessageException("Invalid Protocol Version");
@@ -87,7 +88,7 @@ class Message implements MessageInterface
      * @throws MessageException
      */
     #[\Override]
-    public function withHeader(string $name, $value): MessageInterface
+    public function withHeader(string $name, $value): static
     {
         $clone = clone $this;
         $clone->setHeader($name, $value, true);
@@ -96,10 +97,11 @@ class Message implements MessageInterface
 
     /**
      * @inheritDoc
+     * @return $this
      * @throws MessageException
      */
     #[\Override]
-    public function withAddedHeader(string $name, $value): MessageInterface
+    public function withAddedHeader(string $name, $value): static
     {
         $clone = clone $this;
         $clone->setHeader($name, $value, false);
@@ -129,9 +131,10 @@ class Message implements MessageInterface
 
     /**
      * @inheritDoc
+     * @return $this
      */
     #[\Override]
-    public function withoutHeader(string $name): MessageInterface
+    public function withoutHeader(string $name): static
     {
         $clone = clone $this;
         if ($clone->hasHeader($name)) {
@@ -158,7 +161,7 @@ class Message implements MessageInterface
      * @return $this
      */
     #[\Override]
-    public function withBody(StreamInterface $body): MessageInterface
+    public function withBody(StreamInterface $body): static
     {
         $clone = clone $this;
         $clone->body = $body;
