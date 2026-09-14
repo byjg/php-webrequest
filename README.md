@@ -11,7 +11,7 @@ A lightweight PSR-7 implementation and highly customized CURL wrapper for making
 [![Build Status](https://github.com/byjg/php-webrequest/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/php-webrequest/actions/workflows/phpunit.yml)
 [![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](http://opensource.byjg.com)
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-webrequest/)
-[![GitHub license](https://img.shields.io/github/license/byjg/php-webrequest.svg)](https://opensource.byjg.com/opensource/licensing.html)
+[![GitHub license](https://img.shields.io/github/license/byjg/php-webrequest.svg)](https://opensource.byjg.com/license/)
 [![GitHub release](https://img.shields.io/github/release/byjg/php-webrequest.svg)](https://github.com/byjg/php-webrequest/releases/)
 
 ## Overview
@@ -70,16 +70,6 @@ vendor/bin/phpunit
 
 # Stop the server
 docker-compose down
-```
-
-## Dependencies
-
-```mermaid
-flowchart TD
-    byjg/webrequest --> psr/http-message
-    byjg/webrequest --> psr/http-client
-    byjg/webrequest --> ext-json
-    byjg/webrequest --> byjg/uri
 ```
 
 ----
