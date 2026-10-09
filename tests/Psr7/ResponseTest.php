@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Psr7;
+namespace Tests\Psr7;
 
 use ByJG\WebRequest\Factory\ResponseFactory;
 use ByJG\WebRequest\HttpStatus;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Psr7;
+namespace Tests\Psr7;
 
 use ByJG\Util\Uri;
 use ByJG\WebRequest\Factory\ServerRequestFactory;

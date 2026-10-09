@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Tests;
 
 use ByJG\WebRequest\HttpStatus;
 use PHPUnit\Framework\TestCase;

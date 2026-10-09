@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Tests;
 
 use ByJG\Util\Uri;
 use ByJG\WebRequest\Exception\CurlException;

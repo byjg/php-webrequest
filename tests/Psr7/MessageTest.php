@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Psr7;
+namespace Tests\Psr7;
 
 use ByJG\WebRequest\Exception\MessageException;
 use ByJG\WebRequest\Psr7\MemoryStream;
