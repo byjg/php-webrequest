@@ -10,7 +10,7 @@ class MultiPartItem extends UploadedFile
 {
     protected bool $base64 = false;
 
-    protected ContentDisposition $contentDisposition = ContentDisposition::formData;
+    protected ContentDisposition $contentDisposition = ContentDisposition::FormData;
 
     /**
      * MultiPartItem constructor.

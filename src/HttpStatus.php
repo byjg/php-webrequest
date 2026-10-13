@@ -5,85 +5,86 @@ namespace ByJG\WebRequest;
 enum HttpStatus: int
 {
     // 2xx Success
-    case OK = 200;
-    case CREATED = 201;
-    case ACCEPTED = 202;
-    case NON_AUTHORITATIVE_INFORMATION = 203;
-    case NO_CONTENT = 204;
-    case RESET_CONTENT = 205;
-    case PARTIAL_CONTENT = 206;
-    case MULTI_STATUS = 207;
-    case ALREADY_REPORTED = 208;
-    case IM_USED = 226;
+    case Ok = 200;
+    case Created = 201;
+    case Accepted = 202;
+    case NonAuthoritativeInformation = 203;
+    case NoContent = 204;
+    case ResetContent = 205;
+    case PartialContent = 206;
+    case MultiStatus = 207;
+    case AlreadyReported = 208;
+    case ImUsed = 226;
 
     // 3xx Redirection
-    case MULTIPLE_CHOICES = 300;
-    case MOVED_PERMANENTLY = 301;
-    case FOUND = 302;
-    case SEE_OTHER = 303;
-    case NOT_MODIFIED = 304;
-    case USE_PROXY = 305;
-    case TEMPORARY_REDIRECT = 307;
-    case PERMANENT_REDIRECT = 308;
+    case MultipleChoices = 300;
+    case MovedPermanently = 301;
+    case Found = 302;
+    case SeeOther = 303;
+    case NotModified = 304;
+    case UseProxy = 305;
+    case TemporaryRedirect = 307;
+    case PermanentRedirect = 308;
 
     // 4xx Client Errors
-    case BAD_REQUEST = 400;
-    case UNAUTHORIZED = 401;
-    case PAYMENT_REQUIRED = 402;
-    case FORBIDDEN = 403;
-    case NOT_FOUND = 404;
-    case METHOD_NOT_ALLOWED = 405;
-    case NOT_ACCEPTABLE = 406;
-    case PROXY_AUTHENTICATION_REQUIRED = 407;
-    case REQUEST_TIMEOUT = 408;
-    case CONFLICT = 409;
-    case GONE = 410;
-    case LENGTH_REQUIRED = 411;
-    case PRECONDITION_FAILED = 412;
-    case PAYLOAD_TOO_LARGE = 413;
-    case URI_TOO_LONG = 414;
-    case UNSUPPORTED_MEDIA_TYPE = 415;
-    case RANGE_NOT_SATISFIABLE = 416;
-    case EXPECTATION_FAILED = 417;
-    case IM_A_TEAPOT = 418;
-    case MISDIRECTED_REQUEST = 421;
-    case UNPROCESSABLE_ENTITY = 422;
-    case LOCKED = 423;
-    case FAILED_DEPENDENCY = 424;
-    case TOO_EARLY = 425;
-    case UPGRADE_REQUIRED = 426;
-    case PRECONDITION_REQUIRED = 428;
-    case TOO_MANY_REQUESTS = 429;
-    case REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
-    case UNAVAILABLE_FOR_LEGAL_REASONS = 451;
+    case BadRequest = 400;
+    case Unauthorized = 401;
+    case PaymentRequired = 402;
+    case Forbidden = 403;
+    case NotFound = 404;
+    case MethodNotAllowed = 405;
+    case NotAcceptable = 406;
+    case ProxyAuthenticationRequired = 407;
+    case RequestTimeout = 408;
+    case Conflict = 409;
+    case Gone = 410;
+    case LengthRequired = 411;
+    case PreconditionFailed = 412;
+    case PayloadTooLarge = 413;
+    case UriTooLong = 414;
+    case UnsupportedMediaType = 415;
+    case RangeNotSatisfiable = 416;
+    case ExpectationFailed = 417;
+    case ImATeapot = 418;
+    case MisdirectedRequest = 421;
+    case UnprocessableEntity = 422;
+    case Locked = 423;
+    case FailedDependency = 424;
+    case TooEarly = 425;
+    case UpgradeRequired = 426;
+    case PreconditionRequired = 428;
+    case TooManyRequests = 429;
+    case RequestHeaderFieldsTooLarge = 431;
+    case UnavailableForLegalReasons = 451;
 
     // 5xx Server Errors
-    case INTERNAL_SERVER_ERROR = 500;
-    case NOT_IMPLEMENTED = 501;
-    case BAD_GATEWAY = 502;
-    case SERVICE_UNAVAILABLE = 503;
-    case GATEWAY_TIMEOUT = 504;
-    case HTTP_VERSION_NOT_SUPPORTED = 505;
-    case VARIANT_ALSO_NEGOTIATES = 506;
-    case INSUFFICIENT_STORAGE = 507;
-    case LOOP_DETECTED = 508;
-    case NOT_EXTENDED = 510;
-    case NETWORK_AUTHENTICATION_REQUIRED = 511;
+    case InternalServerError = 500;
+    case NotImplemented = 501;
+    case BadGateway = 502;
+    case ServiceUnavailable = 503;
+    case GatewayTimeout = 504;
+    case HttpVersionNotSupported = 505;
+    case VariantAlsoNegotiates = 506;
+    case InsufficientStorage = 507;
+    case LoopDetected = 508;
+    case NotExtended = 510;
+    case NetworkAuthenticationRequired = 511;
 
     public function description(): string
     {
-        if ($this == self::OK) {
+        if ($this == self::Ok) {
             return "OK";
         }
 
-        if ($this == self::IM_A_TEAPOT) {
+        if ($this == self::ImATeapot) {
             return "I'm a teapot";
         }
 
-        if ($this == self::IM_USED) {
+        if ($this == self::ImUsed) {
             return "I'm used";
         }
 
-        return ucfirst(str_replace('_', ' ', strtolower($this->name)));
+        // "NotFound" -> "Not found"
+        return ucfirst(strtolower((string)preg_replace('/(?<!^)[A-Z]/', ' $0', $this->name)));
     }
 }

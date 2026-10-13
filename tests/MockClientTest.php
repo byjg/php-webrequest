@@ -72,7 +72,7 @@ class MockClientTest extends TestCase
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::Ok->value, $response->getStatusCode());
         $this->assertEquals("1.1", $response->getProtocolVersion());
     }
 
@@ -151,7 +151,7 @@ class MockClientTest extends TestCase
 
         $this->object = MockClient::getInstance();
         $response = $this->object->sendRequest($request);
-        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::Ok->value, $response->getStatusCode());
         $curlOptions = $this->curlOptions + [
             CURLOPT_FOLLOWLOCATION => true,
         ];
@@ -207,7 +207,7 @@ class MockClientTest extends TestCase
     public function testPost1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
-            ->withMethod(HttpMethod::POST);
+            ->withMethod(HttpMethod::Post);
         
 
         $response = $this->object->sendRequest($request);
@@ -287,7 +287,7 @@ class MockClientTest extends TestCase
     public function testPostPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
-            HttpMethod::POST,
+            HttpMethod::Post,
             '{teste: "ok"}'
         );
 
@@ -391,9 +391,9 @@ class MockClientTest extends TestCase
     public function testPutPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
-            HttpMethod::PUT,
+            HttpMethod::Put,
             '{teste: "ok"}'
-        )->withMethod(HttpMethod::PUT);
+        )->withMethod(HttpMethod::Put);
 
         $response = $this->object->sendRequest($request);
 
@@ -528,7 +528,7 @@ class MockClientTest extends TestCase
         $uploadFile[] = new MultiPartItem('field3', 'value3');
 
         $request = RequestMultiPart::build(Uri::getInstanceFromString($this->SERVER_TEST),
-            HttpMethod::POST,
+            HttpMethod::Post,
             $uploadFile,
             "12345"
         );

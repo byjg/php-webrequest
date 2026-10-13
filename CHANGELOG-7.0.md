@@ -101,6 +101,20 @@ Only the eight methods listed above are affected. `RequestJson`, `RequestFormUrl
 `RequestMultiPart` and `ServerRequest` ship with this package and needed no change, since none of
 them override a wither.
 
+### Enum cases renamed to PascalCase
+
+Enum cases follow the ByJG standard and are written in PascalCase. The backed values did not
+change, so `->value`, `from()`, `tryFrom()` and stored data are not affected; only code that
+names a case (or reads `->name`) has to be updated.
+
+| Enum | Before (6.x) | After (7.0) |
+|---|---|---|
+| `ContentDisposition` | `formData`, `inline`, `attachement` | `FormData`, `Inline`, `Attachment` |
+| `HttpMethod` | `GET`, `HEAD`, `POST`, `PUT`, `DELETE`, `CONNECT`, `OPTIONS`, `TRACE`, `PATCH` | `Get`, `Head`, `Post`, `Put`, `Delete`, `Connect`, `Options`, `Trace`, `Patch` |
+| `HttpStatus` | every case, in `UPPER_CASE`: `OK`, `LENGTH_REQUIRED`, `NETWORK_AUTHENTICATION_REQUIRED`, … | the same name in PascalCase: `Ok`, `LengthRequired`, `NetworkAuthenticationRequired`, … |
+
+Not a plain change of casing: `ContentDisposition::attachement` is now `ContentDisposition::Attachment`.
+
 ## Upgrading from 6.x
 
 For most projects the upgrade is a version bump — no code changes are required.

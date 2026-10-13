@@ -161,17 +161,17 @@ class HttpClient implements ClientInterface
     protected function setMethod(): void
     {
         switch ($this->request->getMethod()) {
-            case HttpMethod::POST->value:
+            case HttpMethod::Post->value:
                 $this->setCurl(CURLOPT_POST, true);
                 break;
-            case HttpMethod::HEAD->value:
+            case HttpMethod::Head->value:
                 $this->setCurl(CURLOPT_NOBODY, true);
                 $this->setCurl(CURLOPT_WRITEFUNCTION, null);
                 $this->setCurl(CURLOPT_READFUNCTION, null);
                 $this->setCurl(CURLOPT_FILE, null);
                 $this->setCurl(CURLOPT_INFILE, null);
                 break;
-            case HttpMethod::GET->value:
+            case HttpMethod::Get->value:
                 break;
             default:
                 $this->setCurl(CURLOPT_CUSTOMREQUEST, $this->request->getMethod());

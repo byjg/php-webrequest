@@ -135,7 +135,7 @@ You can also set a custom Content-Disposition:
 ```php
 <?php
 $item = new \ByJG\WebRequest\MultiPartItem('field', 'value');
-$item->setContentDisposition(\ByJG\WebRequest\ContentDisposition::FORM_DATA);
+$item->setContentDisposition(\ByJG\WebRequest\ContentDisposition::FormData);
 ```
 
 ## HTTP Status and Methods
@@ -145,10 +145,10 @@ The package also provides constants for HTTP status codes and methods:
 ```php
 <?php
 // Use HTTP method constants
-$method = \ByJG\WebRequest\HttpMethod::POST;
+$method = \ByJG\WebRequest\HttpMethod::Post;
 
 // Check for specific status code
-if ($response->getStatusCode() === \ByJG\WebRequest\HttpStatus::NOT_FOUND) {
+if ($response->getStatusCode() === \ByJG\WebRequest\HttpStatus::NotFound->value) {
     echo "Resource not found!";
 }
 ```
@@ -157,14 +157,14 @@ if ($response->getStatusCode() === \ByJG\WebRequest\HttpStatus::NOT_FOUND) {
 
 The `HttpMethod` enum provides constants for all standard HTTP methods:
 
-- `GET`, `POST`, `PUT`, `PATCH`, `DELETE`
-- `HEAD`, `OPTIONS`, `CONNECT`, `TRACE`
+- `Get`, `Post`, `Put`, `Patch`, `Delete`
+- `Head`, `Options`, `Connect`, `Trace`
 
 ### Common HTTP Status Codes
 
-The `HttpStatus` class provides constants for all standard HTTP status codes, including:
+The `HttpStatus` enum has a case for every standard HTTP status code, including:
 
-- **2xx Success**: `OK` (200), `CREATED` (201), `NO_CONTENT` (204)
-- **3xx Redirection**: `MOVED_PERMANENTLY` (301), `FOUND` (302)
-- **4xx Client Errors**: `BAD_REQUEST` (400), `UNAUTHORIZED` (401), `FORBIDDEN` (403), `NOT_FOUND` (404)
-- **5xx Server Errors**: `INTERNAL_SERVER_ERROR` (500), `BAD_GATEWAY` (502), `SERVICE_UNAVAILABLE` (503) 
+- **2xx Success**: `Ok` (200), `Created` (201), `NoContent` (204)
+- **3xx Redirection**: `MovedPermanently` (301), `Found` (302)
+- **4xx Client Errors**: `BadRequest` (400), `Unauthorized` (401), `Forbidden` (403), `NotFound` (404)
+- **5xx Server Errors**: `InternalServerError` (500), `BadGateway` (502), `ServiceUnavailable` (503) 

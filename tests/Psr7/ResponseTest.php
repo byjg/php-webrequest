@@ -16,11 +16,11 @@ class ResponseTest extends TestCase
         $this->assertEquals('200', $response->getStatusCode());
         $this->assertEquals('OK', $response->getReasonPhrase());
 
-        $response = $response->withStatus(HttpStatus::NOT_FOUND);
+        $response = $response->withStatus(HttpStatus::NotFound);
         $this->assertEquals('404', $response->getStatusCode());
         $this->assertEquals("Not Found", $response->getReasonPhrase());
 
-        $response = $response->withStatus(HttpStatus::NOT_FOUND, "Metodo nao permitido");
+        $response = $response->withStatus(HttpStatus::NotFound, "Metodo nao permitido");
         $this->assertEquals('404', $response->getStatusCode());
         $this->assertEquals("Metodo nao permitido", $response->getReasonPhrase());
     }
