@@ -47,7 +47,7 @@ class RequestMultiPart extends Request
 
         foreach ($multiPartItems as $item) {
             $item->build($stream, $boundary);
-            if ($item->getContentDisposition() != ContentDisposition::formData) {
+            if ($item->getContentDisposition() != ContentDisposition::FormData) {
                 $contentType = "multipart/related";
             }
         }

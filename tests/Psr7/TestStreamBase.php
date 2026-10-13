@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Psr7;
+namespace Tests\Psr7;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;

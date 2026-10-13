@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Psr7;
+namespace Tests\Psr7;
 
 use ByJG\WebRequest\Psr7\FileStream;
 use Psr\Http\Message\StreamInterface;

@@ -14,24 +14,25 @@
   },
     "autoload-dev": {
       "psr-4": {
-        "Test\\": "tests/"
+        "Tests\\": "tests/"
       }
     },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": ">=8.3 <8.6",
+    "php": ">=8.3 <8.7",
     "ext-curl": "*",
     "ext-json": "*",
-    "byjg/uri": "^6.0",
+    "byjg/uri": "^7.0",
     "psr/http-message": "^1.0|^2.0",
     "psr/http-client": "^1.0",
     "psr/http-factory": "^1.0|^1.1"
   },
   "require-dev": {
-    "phpunit/phpunit": "^10.5|^11.5",
-    "vimeo/psalm": "^5.9|^6.13",
-    "ext-soap": "*"
+    "phpunit/phpunit": "^12.5",
+
+    "ext-soap": "*",
+    "psalm/phar": "^6.16"
   },
   "provide": {
     "psr/http-client-implementation": "1.0",
@@ -40,7 +41,7 @@
   },
   "scripts": {
     "test": "vendor/bin/phpunit",
-    "psalm": "vendor/bin/psalm --threads=1"
+    "psalm": "vendor/bin/psalm.phar"
   },
   "license": "MIT"
 }
