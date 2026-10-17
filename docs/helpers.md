@@ -64,7 +64,7 @@ $request = \ByJG\WebRequest\Helper\RequestFormUrlEncoded::build(
 $response = \ByJG\WebRequest\HttpClient::getInstance()->sendRequest($request);
 ```
 
-The method uses HTTP POST by default.
+The request always uses the HTTP POST method.
 
 ## Request Multi Part
 
@@ -117,17 +117,25 @@ The `MultiPartItem` class represents a single item in a multipart request:
 /**
  * Create a MultiPartItem
  * 
- * @param string $name          The form field name
- * @param string $value         The field value or file contents
- * @param string|null $filename The filename (for file uploads)
- * @param string|null $mimeType The content type of the file
+ * @param string $field       The form field name
+ * @param string $content     The field value or file contents
+ * @param string $filename    The filename (for file uploads)
+ * @param string $contentType The content type of the item
  */
 $item = new \ByJG\WebRequest\MultiPartItem(
     'fieldName',
     'fieldValue',
     'filename.txt',  // Optional, for file uploads
-    'text/plain'     // Optional, defaults to 'application/octet-stream'
+    'text/plain'     // Optional; when empty, no Content-Type header is written for the item
 );
+```
+
+To read the contents from a file, use `loadFile()`; the filename is taken from the path:
+
+```php
+<?php
+$item = (new \ByJG\WebRequest\MultiPartItem('avatar'))
+    ->loadFile('/path/to/image.jpg', 'image/jpeg');
 ```
 
 You can also set a custom Content-Disposition:
@@ -135,7 +143,30 @@ You can also set a custom Content-Disposition:
 ```php
 <?php
 $item = new \ByJG\WebRequest\MultiPartItem('field', 'value');
-$item->setContentDisposition(\ByJG\WebRequest\ContentDisposition::FormData);
+$item->withContentDisposition(\ByJG\WebRequest\ContentDisposition::Inline);
+```
+
+The default is `ContentDisposition::FormData`. If any item uses another disposition (`Inline` or
+`Attachment`), `RequestMultiPart` sends the request as `multipart/related` instead of
+`multipart/form-data`.
+
+To send an item base64 encoded (adds `Content-Transfer-Encoding: base64`), call `withEncodedBase64()`.
+
+To add the multipart body to a request you already built, use `buildMultiPart()`:
+
+```php
+<?php
+$request = \ByJG\WebRequest\Helper\RequestMultiPart::buildMultiPart($items, $request);
+```
+
+## Parsing the Response Body
+
+`ParseBody::parse()` returns the body of a message decoded as an associative array when its
+`Content-Type` is `application/json`, and as a string otherwise:
+
+```php
+<?php
+$data = \ByJG\WebRequest\ParseBody::parse($response);
 ```
 
 ## HTTP Status and Methods

@@ -117,7 +117,9 @@ Not a plain change of casing: `ContentDisposition::attachement` is now `ContentD
 
 ## Upgrading from 6.x
 
-For most projects the upgrade is a version bump — no code changes are required.
+Rename every reference to a case of `ContentDisposition`, `HttpMethod` or `HttpStatus`
+(see [Enum cases renamed to PascalCase](#enum-cases-renamed-to-pascalcase)). Code that only uses
+`->value`, `from()` or `tryFrom()`, or passes plain strings such as `'POST'`, needs no change.
 
 If you extend `Message` or `Request` and override any of the eight methods, change the declared
 return type of your override to `static`. A static analyser or a single run of your test suite will
@@ -160,3 +162,4 @@ While 7.0 is unreleased these resolve to `7.0.x-dev` from each component's
 
 - `phpunit.xml.dist` renamed to `phpunit.xml`.
 - Removed the obsolete `.travis.yml`.
+- Removed `example.php` and `example_parallel.php`; the examples are in the README and `docs/`.

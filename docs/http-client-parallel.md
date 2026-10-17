@@ -12,7 +12,6 @@ The `HttpClientParallel` class allows you to execute multiple HTTP requests conc
 
 - Run multiple HTTP requests in parallel
 - Define success and error handlers for each request
-- Batch processing for high-volume requests
 - Based on cURL multi-handle functionality
 
 ## Basic Usage
@@ -30,9 +29,9 @@ $onSuccess = function ($response, $id) {
     echo "Request $id completed with status $statusCode\n";
 };
 
-$onError = function ($error, $id) {
-    // Handle the error
-    echo "Request $id failed: " . $error->getMessage() . "\n";
+$onError = function (string $error, $id) {
+    // Handle the error: $error is the cURL error message
+    echo "Request $id failed: $error\n";
 };
 
 // Create the HttpClientParallel instance
@@ -75,9 +74,9 @@ $customSuccessHandler = function ($response, $id) {
     echo "Special handler for request $id\n";
 };
 
-$customErrorHandler = function ($error, $id) {
+$customErrorHandler = function (string $error, $id) {
     // Special error handling for this request
-    echo "Special error handler for request $id: " . $error->getMessage() . "\n";
+    echo "Special error handler for request $id: $error\n";
 };
 
 // Add request with custom handlers
@@ -90,17 +89,24 @@ $parallel->addRequest(
 
 ## Getting Error Information
 
-After execution, you can retrieve a list of errors that occurred:
+The handlers receive the response (or the cURL error message) and the request id, which is the
+order in which the request was added, starting at 0.
+
+If a handler throws, or a response cannot be parsed, the error is collected and `execute()`
+throws a `CurlException` after all requests have finished. `getErrorList()` returns the collected
+errors: the exception thrown by a handler, or a `"ClassName: message"` string for a response that
+could not be parsed.
 
 ```php
 <?php
-$parallel->execute();
+use ByJG\WebRequest\Exception\CurlException;
 
-// Get errors that occurred during execution
-$errors = $parallel->getErrorList();
-
-foreach ($errors as $requestId => $error) {
-    echo "Error in request $requestId: " . $error->getMessage() . "\n";
+try {
+    $parallel->execute();
+} catch (CurlException $e) {
+    foreach ($parallel->getErrorList() as $error) {
+        echo ($error instanceof \Throwable ? $error->getMessage() : $error) . "\n";
+    }
 }
 ```
 
