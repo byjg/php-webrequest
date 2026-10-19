@@ -99,6 +99,20 @@ class HttpClientTest extends TestCase
         $this->assertEquals("user:pass", $body["authinfo"]);
     }
 
+    public function testWithCredentialsSpecialCharacters(): void
+    {
+        $uri = Uri::getInstanceFromString($this->SERVER_TEST)
+            ->withUserInfo("user", "p@ss:w%rd");
+
+        $request = Request::getInstance($uri);
+
+        $response = $this->object->sendRequest($request);
+        $body = ParseBody::parse($response);
+
+        // The server receives the plain values, not the percent-encoded userinfo
+        $this->assertEquals("user:p@ss:w%rd", $body["authinfo"]);
+    }
+
     /**
      * @throws ClientExceptionInterface
      * @throws MessageException

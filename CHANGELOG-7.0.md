@@ -61,6 +61,14 @@ class, and both are needed for the type to survive a chain.
 
 All methods already returned `clone $this`, so runtime behaviour is unchanged.
 
+## Bug Fixes
+
+- **Credentials with special characters**: the request and proxy credentials were passed to curl as the
+  percent-encoded PSR-7 userinfo (`CURLOPT_USERPWD`/`CURLOPT_PROXYUSERPWD`), so a password with `@`, `:` or
+  `%` was sent encoded and authentication failed. The user and password are now decoded and sent
+  separately (`CURLOPT_USERNAME`/`CURLOPT_PASSWORD`, `CURLOPT_PROXYUSERNAME`/`CURLOPT_PROXYPASSWORD`). Code
+  reading `getCurlConfiguration()` sees these options instead of `CURLOPT_USERPWD`.
+
 ## Breaking Changes
 
 | Before (6.x) | After (7.0) | Description |

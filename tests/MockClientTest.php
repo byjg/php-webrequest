@@ -80,6 +80,19 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
+    public function testWithProxyCredentials(): void
+    {
+        $this->object->withProxy(Uri::getInstanceFromString("http://us%40er:p%40ss%3Aw@proxy:3128"));
+
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
+        $this->object->sendRequest($request);
+
+        $config = $this->object->getCurlConfiguration();
+        $this->assertSame("us@er", $config[CURLOPT_PROXYUSERNAME]);
+        $this->assertSame("p@ss:w", $config[CURLOPT_PROXYPASSWORD]);
+        $this->assertArrayNotHasKey(CURLOPT_PROXYUSERPWD, $config);
+    }
+
     public function testWithCredentials(): void
     {
         $uri = Uri::getInstanceFromString($this->SERVER_TEST)
@@ -91,7 +104,8 @@ class MockClientTest extends TestCase
 
         $curlOptions = $this->curlOptions + [
             CURLOPT_HTTPAUTH => 1,
-            CURLOPT_USERPWD => "user:pass",
+            CURLOPT_USERNAME => "user",
+            CURLOPT_PASSWORD => "pass",
         ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }

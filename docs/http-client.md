@@ -75,6 +75,11 @@ $client = \ByJG\WebRequest\HttpClient::getInstance()
     ->withProxy($proxyUri);
 ```
 
+Proxy credentials go in the URI (`http://user:pass@proxy.example.com:8080`). The same applies to the request URI
+for HTTP basic authentication. Both are sent to curl as the plain user and password
+(`CURLOPT_USERNAME`/`CURLOPT_PASSWORD`, `CURLOPT_PROXYUSERNAME`/`CURLOPT_PROXYPASSWORD`), so special characters
+work: percent-encode them in a URI string, or pass them as they are to `withUserInfo()`.
+
 ### Custom cURL Options
 
 You can set any arbitrary cURL option:

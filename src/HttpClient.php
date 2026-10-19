@@ -71,7 +71,9 @@ class HttpClient implements ClientInterface
     public function withProxy(UriInterface $uri): HttpClient
     {
         if ($uri->getUserInfo() != "") {
-            $this->withCurlOption(CURLOPT_PROXYUSERPWD, $uri->getUserInfo());
+            [$user, $password] = $this->splitUserInfo($uri);
+            $this->withCurlOption(CURLOPT_PROXYUSERNAME, $user);
+            $this->withCurlOption(CURLOPT_PROXYPASSWORD, $password);
         }
         $this->withCurlOption(CURLOPT_PROXY, $uri);
         return $this;
@@ -198,10 +200,25 @@ class HttpClient implements ClientInterface
      */
     protected function setCredentials(): void
     {
-        if ($this->request->getUri()->getUserInfo() != "") {
+        $uri = $this->request->getUri();
+        if ($uri->getUserInfo() != "") {
+            [$user, $password] = $this->splitUserInfo($uri);
             $this->setCurl(CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-            $this->setCurl(CURLOPT_USERPWD, $this->request->getUri()->getUserInfo());
+            $this->setCurl(CURLOPT_USERNAME, $user);
+            $this->setCurl(CURLOPT_PASSWORD, $password);
         }
+    }
+
+    /**
+     * The user and password of a URI, decoded: curl wants the plain values, while the PSR-7 userinfo
+     * is percent-encoded "user[:password]" (the first ':' separates them, a ':' in the user is encoded).
+     *
+     * @return array{string, string}
+     */
+    protected function splitUserInfo(UriInterface $uri): array
+    {
+        $parts = explode(':', $uri->getUserInfo(), 2);
+        return [rawurldecode($parts[0]), rawurldecode($parts[1] ?? '')];
     }
 
     protected function setHeaders(): void
