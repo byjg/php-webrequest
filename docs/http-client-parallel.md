@@ -46,6 +46,7 @@ requests progress together. The callbacks run then, in the current process.
 | `HttpPromise::race(HttpPromise ...$promises)`                  | Settled as the first promise that settles                                                                                                                         |
 | `HttpPromise::resolve($value)`, `HttpPromise::reject($reason)` | An already settled promise                                                                                                                                        |
 | `HttpPromise::try(Closure $closure, mixed ...$args)`     | Calls the closure: resolved with its return value (a returned promise is followed) or rejected with what it throws, as `Promise.try()` in JavaScript |
+| `HttpPromise::map(iterable $items, Closure $callback, int $concurrency)` | Calls `$callback($item, $key)` with at most `$concurrency` promises pending: the next item starts when one settles. Fulfilled with the values in the order (and keys) of the items, or rejected with the first rejection (no other item starts) |
 
 ```php
 <?php
@@ -58,6 +59,24 @@ $name = $httpClient->sendAsync($userRequest)
 ```
 
 `MockClient::sendAsync()` returns a promise already settled with the mocked response.
+
+### Limiting the requests in progress
+
+Every `sendAsync()` starts its request at once, so `HttpPromise::all()` over a long list opens all the connections
+together. `HttpPromise::map()` starts the requests as the previous ones finish, with at most `$concurrency` in progress
+(e.g. to respect the rate limit of an API):
+
+```php
+<?php
+$users = HttpPromise::map(
+    $userIds,
+    fn(int $id) => $httpClient->sendAsync(Request::getInstance(Uri::getInstanceFromString("https://api.example.com/users/$id")))
+        ->then(fn($response) => json_decode((string)$response->getBody(), true)),
+    10   // at most 10 requests in progress
+)->await();   // in the order of $userIds
+```
+
+`$items` is read as the requests start, so it can be a generator.
 
 :::note
 A request whose promise is never awaited (directly, or through a chained or `all()` promise) only progresses while

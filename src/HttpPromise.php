@@ -3,6 +3,7 @@
 namespace ByJG\WebRequest;
 
 use Closure;
+use InvalidArgumentException;
 use LogicException;
 use Throwable;
 
@@ -204,6 +205,65 @@ class HttpPromise
         }
 
         return $all;
+    }
+
+    /**
+     * Call the callback with each item and key, with at most $concurrency promises pending at a time: the next item
+     * starts when one settles (e.g. at most 10 requests in progress). Fulfilled with the values in the order (and keys)
+     * of the items, or rejected with the first rejection, after which no other item starts.
+     *
+     * @param iterable $items Read as the callbacks are called, so it can be a generator
+     * @param Closure $callback fn($item, $key) returning an HttpPromise (or a value)
+     */
+    public static function map(iterable $items, Closure $callback, int $concurrency): HttpPromise
+    {
+        if ($concurrency < 1) {
+            throw new InvalidArgumentException('The concurrency must be at least 1');
+        }
+
+        $map = new HttpPromise();
+        $iterator = (fn() => yield from $items)();
+        $keys = [];
+        $values = [];
+        $pending = 0;
+        $starting = false;
+
+        $startNext = function () use (&$startNext, $map, $iterator, $callback, $concurrency, &$keys, &$values, &$pending, &$starting): void {
+            // A promise already settled calls back here while the loop below is starting it: the loop goes on instead.
+            // Psalm does not see $starting change through the reference when this closure is called back.
+            /** @psalm-suppress TypeDoesNotContainType */
+            if ($starting) {
+                return;
+            }
+            $starting = true;
+
+            while ($map->state === HttpPromiseState::Pending && $pending < $concurrency && $iterator->valid()) {
+                $index = count($keys);
+                $keys[] = $iterator->key();
+                $item = $iterator->current();
+                $iterator->next();
+
+                $pending++;
+                self::try($callback, $item, $keys[$index])->then(
+                    function (mixed $value) use (&$startNext, &$values, &$pending, $index) {
+                        $values[$index] = $value;
+                        $pending--;
+                        $startNext();
+                    },
+                    fn(Throwable $reason) => $map->settle(HttpPromiseState::Rejected, $reason)
+                );
+            }
+
+            $starting = false;
+
+            if ($map->state === HttpPromiseState::Pending && $pending === 0 && !$iterator->valid()) {
+                ksort($values);
+                $map->fulfill(count($keys) === 0 ? [] : array_combine($keys, $values));
+            }
+        };
+        $startNext();
+
+        return $map;
     }
 
     /**

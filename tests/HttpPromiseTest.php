@@ -201,6 +201,98 @@ class HttpPromiseTest extends TestCase
         $promise->await();
     }
 
+    public function testMapLimitsTheRequestsInProgress(): void
+    {
+        $httpClient = HttpClient::getInstance();
+        $inProgress = 0;
+        $maxInProgress = 0;
+
+        $promise = HttpPromise::map(
+            range(1, 10),
+            function (int $item) use ($httpClient, &$inProgress, &$maxInProgress) {
+                $inProgress++;
+                $maxInProgress = max($maxInProgress, $inProgress);
+                return $httpClient->sendAsync($this->request('/rest.php', "item=$item"))
+                    ->finally(function () use (&$inProgress) {
+                        $inProgress--;
+                    })
+                    ->then(fn(ResponseInterface $response) => json_decode((string)$response->getBody(), true)['query_string']['item']);
+            },
+            3
+        );
+
+        // In the order of the items, whatever the order the requests finish
+        $this->assertEquals(array_map('strval', range(1, 10)), $promise->await());
+        $this->assertEquals(3, $maxInProgress);
+        $this->assertEquals(0, $inProgress);
+    }
+
+    public function testMapRunsInParallelUpToTheConcurrency(): void
+    {
+        $httpClient = HttpClient::getInstance();
+        $start = microtime(true);
+
+        // Each request takes 2 seconds: 4 requests, 2 at a time, take two rounds
+        $bodies = HttpPromise::map(
+            ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4],
+            fn(int $item) => $httpClient->sendAsync($this->request('/multirequest.php', "param=$item"))
+                ->then(fn(ResponseInterface $response) => (string)$response->getBody()),
+            2
+        )->await();
+
+        $elapsed = microtime(true) - $start;
+        $this->assertEquals(['a' => '1', 'b' => '2', 'c' => '3', 'd' => '4'], $bodies);
+        $this->assertGreaterThanOrEqual(4, $elapsed);
+        $this->assertLessThan(6, $elapsed);
+    }
+
+    public function testMapWithSettledPromisesAndAGenerator(): void
+    {
+        $started = [];
+        $items = (function () {
+            yield 'x' => 1;
+            yield 'y' => 2;
+            yield 'z' => 3;
+        })();
+
+        $result = HttpPromise::map($items, function (int $item, string $key) use (&$started) {
+            $started[] = $key;
+            return $item * 10;
+        }, 1)->await();
+
+        $this->assertEquals(['x' => 10, 'y' => 20, 'z' => 30], $result);
+        $this->assertEquals(['x', 'y', 'z'], $started);
+    }
+
+    public function testMapStopsAtTheFirstRejection(): void
+    {
+        $started = [];
+
+        $promise = HttpPromise::map([1, 2, 3, 4], function (int $item) use (&$started) {
+            $started[] = $item;
+            if ($item === 2) {
+                throw new RuntimeException("item $item failed");
+            }
+            return HttpPromise::resolve($item);
+        }, 1);
+
+        $this->assertEquals(HttpPromiseState::Rejected, $promise->getState());
+        $this->assertEquals([1, 2], $started);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('item 2 failed');
+        $promise->await();
+    }
+
+    public function testMapEmptyAndInvalidConcurrency(): void
+    {
+        $this->assertEquals([], HttpPromise::map([], fn() => 1, 5)->await());
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The concurrency must be at least 1');
+        HttpPromise::map([1], fn() => 1, 0);
+    }
+
     public function testAllEmpty(): void
     {
         $this->assertEquals([], HttpPromise::all()->await());

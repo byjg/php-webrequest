@@ -26,6 +26,9 @@ This is a source-compatible change for every caller. It is a breaking change onl
   `await()` returns the value or throws the reason, `getState()` returns an `HttpPromiseState`, and the static
   `all()` (keeps the order and keys), `race()`, `resolve()`, `reject()` and `try()` (calls a closure:
   resolved with its return value or rejected with what it throws, as `Promise.try()`).
+- `HttpPromise::map(iterable $items, Closure $callback, int $concurrency)` limits the requests in progress: it calls
+  the callback for each item with at most `$concurrency` promises pending, starting the next item when one settles,
+  and resolves with the values in the order of the items.
 - The promise is fulfilled with the `ResponseInterface` (an HTTP error status is a response, as in
   `sendRequest()`) or rejected with a `NetworkException`.
 - `MockClient::sendAsync()` returns a promise settled with the mocked response.
