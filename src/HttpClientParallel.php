@@ -8,6 +8,7 @@ use Closure;
 use Exception;
 use Psr\Http\Message\RequestInterface;
 use stdClass;
+use Throwable;
 
 class HttpClientParallel
 {
@@ -34,7 +35,7 @@ class HttpClientParallel
     protected ?Closure $defaultOnError = null;
 
     /**
-     * @var array
+     * @var Throwable[]
      */
     protected array $errorList = [];
 
@@ -124,30 +125,23 @@ class HttpClientParallel
 
             }
 
-            $done = curl_multi_info_read($multiInitHandle);
-            if ($done) {
+            // Several requests can finish in the same call, so read every message
+            while ($done = curl_multi_info_read($multiInitHandle)) {
                 try {
                     $this->getContent($multiInitHandle, $done["handle"]);
                 } catch (Exception $ex) {
-                    $this->errorList[] = get_class($ex) . ": " . $ex->getMessage();
+                    $this->errorList[] = $ex;
                 }
             }
 
         } while ($running > 0);
 
-        foreach ($this->curlClients as $object) {
-            try {
-                $this->getContent($multiInitHandle, $object->handle);
-            } catch (Exception $ex) {
-                $this->errorList[] = get_class($ex) . ": " . $ex->getMessage();
-            }
-        }
-
         // all done
         curl_multi_close($multiInitHandle);
 
         if (count($this->errorList) > 0) {
-            throw new CurlException("Raised " . count($this->errorList) . " error(s). \n" . implode("\n", $this->errorList));
+            $messages = array_map(fn(Throwable $ex) => get_class($ex) . ": " . $ex->getMessage(), $this->errorList);
+            throw new CurlException("Raised " . count($this->errorList) . " error(s). \n" . implode("\n", $messages));
         }
     }
 
@@ -158,39 +152,44 @@ class HttpClientParallel
      */
     protected function getContent($multiInitHandle, $handle): void
     {
-        $object = $this->curlClients["ch;" . ((int)$handle)];
+        $key = "ch;" . ((int)$handle);
+        $object = $this->curlClients[$key];
 
-        $body = curl_multi_getcontent($object->handle);
-        $error = curl_error($object->handle);
-        if (!empty($error)) {
-            curl_multi_remove_handle($multiInitHandle, $object->handle);
-            $closure = $object->onError;
+        // Each request is handled once, whatever happens below
+        try {
+            $body = curl_multi_getcontent($object->handle);
+            $error = curl_error($object->handle);
+            if (!empty($error)) {
+                $closure = $object->onError;
+                try {
+                    $closure($error, $object->id);
+                } catch (Exception $ex) {
+                    $this->errorList[] = $ex;
+                }
+                return;
+            }
+
+            if ($body === null) {
+                return;
+            }
+
+            $response = $this->parseCurl($body, $object->handle, false);
+            $closure = $object->onSuccess;
+
             try {
-                $closure($error, $object->id);
+                $closure($response, $object->id);
             } catch (Exception $ex) {
                 $this->errorList[] = $ex;
             }
-            return;
+        } finally {
+            curl_multi_remove_handle($multiInitHandle, $object->handle);
+            unset($this->curlClients[$key]);
         }
-
-        if ($body === null) {
-            return;
-        }
-
-        $response = $this->parseCurl($body, $object->handle, false);
-        $closure = $object->onSuccess;
-
-        try {
-            $closure($response, $object->id);
-        } catch (Exception $ex) {
-            $this->errorList[] = $ex;
-        }
-
-        curl_multi_remove_handle($multiInitHandle, $object->handle);
-
-        unset($this->curlClients["ch;" . ((int)$handle)]);
     }
 
+    /**
+     * @return Throwable[]
+     */
     public function getErrorList(): array
     {
         return $this->errorList;

@@ -7,8 +7,10 @@ use ByJG\WebRequest\Exception\CurlException;
 use ByJG\WebRequest\Exception\MessageException;
 use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\HttpClient;
+use ByJG\WebRequest\HttpClientParallel;
 use ByJG\WebRequest\Psr7\Request;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 
 class HttpClientParallelTest extends TestCase
 {
@@ -72,5 +74,73 @@ class HttpClientParallelTest extends TestCase
 
         $this->assertEquals(3, $count);
         $this->assertEquals(["200-1", "200-2", "200-3"], $results);
+        $this->assertEquals([], $fail);
+    }
+
+    public function testFailedConnectionCallsOnErrorOnce(): void
+    {
+        $successIds = [];
+        $errorIds = [];
+
+        $multi = new HttpClientParallel(
+            HttpClient::getInstance(),
+            function ($response, $id) use (&$successIds): void {
+                $successIds[] = $id;
+            },
+            function ($error, $id) use (&$errorIds): void {
+                $errorIds[] = $id;
+            }
+        );
+
+        $multi
+            ->addRequest(Request::getInstance(Uri::getInstanceFromString("http://localhost:1/")))
+            ->addRequest(Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("param=1")));
+
+        $multi->execute();
+
+        $this->assertEquals([0], $errorIds);
+        $this->assertEquals([1], $successIds);
+        $this->assertEquals([], $multi->getErrorList());
+    }
+
+    public function testErrorListContainsOnlyThrowables(): void
+    {
+        $onSuccess = function ($response, $id): void {
+            if ($id === 1) {
+                throw new \RuntimeException("Handler failed");
+            }
+        };
+
+        // A response that cannot be parsed (param=1) and a handler that throws (id 1)
+        $multi = new class(HttpClient::getInstance(), $onSuccess) extends HttpClientParallel {
+            #[\Override]
+            public function parseCurl(string $body, $curlHandle, bool $close = true): ResponseInterface
+            {
+                if (str_contains((string)curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL), "param=1")) {
+                    throw new MessageException("Cannot parse");
+                }
+                return parent::parseCurl($body, $curlHandle, $close);
+            }
+        };
+
+        $multi
+            ->addRequest(Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("param=1")))
+            ->addRequest(Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("param=2")));
+
+        try {
+            $multi->execute();
+            $this->fail("CurlException expected");
+        } catch (CurlException $ex) {
+            $this->assertStringStartsWith("Raised 2 error(s).", $ex->getMessage());
+            $this->assertStringContainsString(MessageException::class . ": Cannot parse", $ex->getMessage());
+            $this->assertStringContainsString(\RuntimeException::class . ": Handler failed", $ex->getMessage());
+        }
+
+        $errors = $multi->getErrorList();
+        $this->assertCount(2, $errors);
+        $this->assertContainsOnlyInstancesOf(\Throwable::class, $errors);
+        $messages = array_map(fn(\Throwable $error) => get_class($error) . ": " . $error->getMessage(), $errors);
+        $this->assertContains(MessageException::class . ": Cannot parse", $messages);
+        $this->assertContains(\RuntimeException::class . ": Handler failed", $messages);
     }
 }

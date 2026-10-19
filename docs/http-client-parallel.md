@@ -169,12 +169,13 @@ $parallel->addRequest(
 ## Getting Error Information
 
 The handlers receive the response (or the cURL error message) and the request id, which is the
-order in which the request was added, starting at 0.
+order in which the request was added, starting at 0. Each request calls exactly one handler, once,
+as soon as it finishes: `onSuccess` when a response was received, `onError` when the connection failed.
 
 If a handler throws, or a response cannot be parsed, the error is collected and `execute()`
-throws a `CurlException` after all requests have finished. `getErrorList()` returns the collected
-errors: the exception thrown by a handler, or a `"ClassName: message"` string for a response that
-could not be parsed.
+throws a `CurlException` after all requests have finished; its message lists each error, once, as
+`"ClassName: message"`. `getErrorList()` returns the collected errors as `Throwable` objects: the
+exception thrown by a handler, or the exception raised while parsing the response.
 
 ```php
 <?php
@@ -184,7 +185,7 @@ try {
     $parallel->execute();
 } catch (CurlException $e) {
     foreach ($parallel->getErrorList() as $error) {
-        echo ($error instanceof \Throwable ? $error->getMessage() : $error) . "\n";
+        echo get_class($error) . ": " . $error->getMessage() . "\n";
     }
 }
 ```

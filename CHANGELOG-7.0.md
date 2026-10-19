@@ -88,6 +88,16 @@ All methods already returned `clone $this`, so runtime behaviour is unchanged.
   `%` was sent encoded and authentication failed. The user and password are now decoded and sent
   separately (`CURLOPT_USERNAME`/`CURLOPT_PASSWORD`, `CURLOPT_PROXYUSERNAME`/`CURLOPT_PROXYPASSWORD`). Code
   reading `getCurlConfiguration()` sees these options instead of `CURLOPT_USERPWD`.
+- **`HttpClientParallel::getErrorList()` mixed strings and exceptions**: a response that could not be
+  parsed was stored as a `"ClassName: message"` string, while an exception thrown by a handler was stored
+  as the object. Every entry is now the `Throwable`; the `CurlException` thrown by `execute()` still lists
+  each error as `"ClassName: message"`.
+- **`HttpClientParallel` handled a request twice**: a request whose connection failed called `onError`
+  twice, and a response that could not be parsed was recorded twice in `getErrorList()`, because the request
+  was not removed when the error happened and was processed again after the loop. Also, only one finished
+  request was read per `curl_multi_exec()` call, so requests finishing together were handled only after all
+  requests ended. Now every finished request is read as it finishes and removed whatever happens, so each
+  request calls `onSuccess` or `onError` exactly once and each error is recorded once.
 
 ## Breaking Changes
 
@@ -101,10 +111,12 @@ All methods already returned `clone $this`, so runtime behaviour is unchanged.
 | `Request::withRequestTarget(): RequestInterface` | `: static` | Return type narrowed |
 | `Request::withMethod(): RequestInterface` | `: static` | Return type narrowed |
 | `Request::withUri(): RequestInterface` | `: static` | Return type narrowed |
+| `HttpClientParallel::getErrorList()` entries: `Throwable` or `string` | always `Throwable` | A response that could not be parsed is stored as the exception, not as a `"ClassName: message"` string |
+| `HttpClientParallel`: `onError` called twice for a failed connection, a parse error recorded twice | called / recorded once | Code that compensated for the duplicates (e.g. counted `onError` calls or the `CurlException` "Raised N error(s)" count) sees the real numbers |
 
 ### Who is affected
 
-**Callers are not affected.** Narrowing a return type is covariant: anything that accepted the old
+**Callers of the withers are not affected.** Narrowing a return type is covariant: anything that accepted the old
 type accepts the new one. Code that stores the result in a `MessageInterface` or
 `RequestInterface` variable, parameter or property keeps working unchanged.
 
@@ -128,6 +140,9 @@ The fix is to match the parent:
 Only the eight methods listed above are affected. `RequestJson`, `RequestFormUrlEncoded`,
 `RequestMultiPart` and `ServerRequest` ship with this package and needed no change, since none of
 them override a wither.
+
+**Code reading `HttpClientParallel::getErrorList()`** and treating an entry as a string must read the
+exception instead, e.g. `get_class($error) . ": " . $error->getMessage()`.
 
 ### Enum cases renamed to PascalCase
 
