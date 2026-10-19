@@ -26,14 +26,14 @@ PHP WebRequest is a **fully PSR-compliant** HTTP client package that provides:
 
 ### Additional Features
 - Helper classes for common request types (JSON, Form URL Encoded, MultiPart)
-- Support for parallel HTTP requests
+- Support for parallel HTTP requests, with promises (`sendAsync()`) or callbacks
 - Mock client for testing
 
 ## Documentation
 
 - [HTTP Messages and Factories (PSR-7/PSR-17)](docs/psr7-implementation.md) - Create and manipulate HTTP requests, responses, and streams
 - [Sending HTTP Requests (PSR-18)](docs/http-client.md) - Send HTTP requests with customizable options (proxy, SSL, timeouts)
-- [Parallel Requests](docs/http-client-parallel.md) - Execute multiple HTTP requests concurrently for better performance
+- [Parallel Requests](docs/http-client-parallel.md) - Execute multiple HTTP requests concurrently, with promises (`sendAsync()`) or callbacks
 - [Testing with Mock Client](docs/mock-client.md) - Test HTTP code without real network calls
 - [Request Helpers](docs/helpers.md) - Quickly build JSON, Form, and MultiPart requests
 - [Comparison with Guzzle](docs/comparison-with-guzzle.md) - How WebRequest compares to Guzzle HTTP client

@@ -2,6 +2,7 @@
 
 namespace ByJG\WebRequest;
 
+use ByJG\WebRequest\Exception\CurlException;
 use ByJG\WebRequest\Exception\NetworkException;
 use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\Psr7\NullStream;
@@ -114,6 +115,21 @@ class HttpClient implements ClientInterface
         }
 
         return $this->parseCurl((string)$result, $curlHandle);
+    }
+
+    /**
+     * Start the request and return at once. The requests sent this way run in parallel (curl_multi)
+     * while HttpPromise::await() is called; the promise is fulfilled with the response, or rejected
+     * with a NetworkException.
+     *
+     * @param RequestInterface $request
+     * @return HttpPromise
+     * @throws RequestException
+     * @throws CurlException
+     */
+    public function sendAsync(RequestInterface $request): HttpPromise
+    {
+        return CurlMultiLoop::getInstance()->add($this->createCurlHandle($request), $request);
     }
 
     /**

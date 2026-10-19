@@ -15,9 +15,9 @@ Both WebRequest and [Guzzle](https://docs.guzzlephp.org/) are PSR-compliant HTTP
 | **PSR-7 (HTTP Messages)**   | ✅ Complete implementation          | ✅ Uses PSR-7 interfaces |
 | **PSR-17 (HTTP Factories)** | ✅ Built-in factories               | ✅ Compatible            |
 | **PSR-18 (HTTP Client)**    | ✅ Native implementation            | ✅ Native implementation |
-| **Async Requests**          | ❌ Not supported                    | ✅ Full async support    |
+| **Async Requests**          | ✅ `sendAsync()` + `HttpPromise`    | ✅ Full async support    |
 | **Middleware System**       | ❌ Not included                     | ✅ Extensive middleware  |
-| **Parallel Requests**       | ✅ Via HttpClientParallel           | ✅ Via Pool              |
+| **Parallel Requests**       | ✅ sendAsync or HttpClientParallel  | ✅ Via Pool              |
 | **Mock/Testing**            | ✅ Dedicated MockClient             | ✅ Mock handler          |
 | **Dependencies**            | Minimal (byjg/uri, PSR interfaces) | More dependencies       |
 | **Learning Curve**          | Simple and straightforward         | Steeper (more features) |
@@ -29,7 +29,7 @@ Both WebRequest and [Guzzle](https://docs.guzzlephp.org/) are PSR-compliant HTTP
 
 1. **Simple HTTP Requests**
    - You need straightforward GET/POST/PUT/DELETE requests
-   - You don't need async operations
+   - You don't need an event loop
    - Your use case is REST API consumption
 
 2. **Lightweight Projects**
@@ -49,8 +49,8 @@ Both WebRequest and [Guzzle](https://docs.guzzlephp.org/) are PSR-compliant HTTP
 
 5. **Parallel Requests (Simple Cases)**
    - You need concurrent requests without async complexity
-   - Handler-based approach is sufficient
-   - You don't need promise-based flow control
+   - `sendAsync()` promises (`then`, `catch`, `finally`, `all`, `race`) or a handler-based approach is sufficient
+   - You don't need concurrency limits or an event loop
 
 ### Example: Simple API Call
 
@@ -74,8 +74,8 @@ $data = json_decode($response->getBody()->getContents(), true);
 ### ✅ Best For:
 
 1. **Async/Promise-Based Operations**
-   - You need non-blocking HTTP requests
-   - Promise-based flow control is required
+   - You need an event loop (e.g. ReactPHP, Amp) or non-blocking requests outside `await()`
+   - Concurrency limits and promise helpers beyond `all()`/`race()` (e.g. `settle`)
    - High-concurrency scenarios
 
 2. **Complex Request/Response Processing**
@@ -122,12 +122,16 @@ $client = new GuzzleHttp\Client([
 
 ### Parallel/Concurrent Requests
 
-#### WebRequest: HttpClientParallel
-- Handler-based approach
-- Synchronous execution of multiple requests
-- Simple callback system
+#### WebRequest: sendAsync() and HttpClientParallel
+- Promises with JavaScript semantics, transferred with curl_multi while `await()` is called (no event loop)
+- Or a handler-based approach with `HttpClientParallel`
 
 ```php
+$responses = HttpPromise::all(
+    request1: $httpClient->sendAsync($request1),
+    request2: $httpClient->sendAsync($request2),
+)->await();
+
 $parallel = new HttpClientParallel($httpClient, $onSuccess, $onError);
 $parallel->addRequest($request1)
     ->addRequest($request2)
@@ -264,7 +268,7 @@ Choose **WebRequest** if you answer YES to most:
 - [ ] Do you want clear PSR-7 implementation examples?
 
 Choose **Guzzle** if you answer YES to most:
-- [ ] Do you need async/promise-based requests?
+- [ ] Do you need an event loop, concurrency limits or settle-style promise helpers?
 - [ ] Will you use middleware extensively?
 - [ ] Is your project large-scale or enterprise?
 - [ ] Do you need advanced streaming capabilities?

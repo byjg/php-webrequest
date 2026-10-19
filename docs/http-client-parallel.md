@@ -6,6 +6,65 @@ description: Execute multiple HTTP requests concurrently for better performance
 
 # HTTP Client Parallel
 
+There are two ways to run requests in parallel, both based on cURL multi-handle (one process, no threads):
+promises with `HttpClient::sendAsync()`, or callbacks with `HttpClientParallel`.
+
+## Promises: sendAsync()
+
+`HttpClient::sendAsync(RequestInterface $request)` starts the request and returns at once an `HttpPromise`, which is
+fulfilled with the `ResponseInterface` or rejected with a `NetworkException` (connection error, timeout, ...). An HTTP
+error status (4xx, 5xx) is a response, as with `sendRequest()`.
+
+```php
+<?php
+use ByJG\WebRequest\HttpClient;
+use ByJG\WebRequest\HttpPromise;
+use ByJG\WebRequest\Psr7\Request;
+use ByJG\Util\Uri;
+
+$httpClient = HttpClient::getInstance();
+
+$responses = HttpPromise::all(
+    users: $httpClient->sendAsync(Request::getInstance(Uri::getInstanceFromString('https://api.example.com/users'))),
+    orders: $httpClient->sendAsync(Request::getInstance(Uri::getInstanceFromString('https://api.example.com/orders'))),
+)->await();
+
+echo $responses['users']->getStatusCode();
+```
+
+There is no event loop: the requests are transferred while `await()` is called on any promise, and all the pending
+requests progress together. The callbacks run then, in the current process.
+
+| Method                                                         | Description                                                                                                                                                       |
+|----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `then(?Closure $onFulfilled, ?Closure $onRejected)`            | A new promise settled with the handler's return value; a handler that throws rejects it. A returned `HttpPromise` is followed, so a request can chain another one |
+| `catch(Closure $onRejected)`                                   | `then(null, $onRejected)`: the value it returns recovers the rejection                                                                                            |
+| `finally(Closure $onFinally)`                                  | The callback gets no argument; the promise keeps the original value or reason unless it throws                                                                    |
+| `await()`                                                      | Transfers the requests until the promise settles; returns the value or throws the reason                                                                          |
+| `getState()`                                                   | `HttpPromiseState::Pending`, `Fulfilled` or `Rejected`                                                                                                            |
+| `HttpPromise::all(HttpPromise ...$promises)`                   | Fulfilled with the values in the order (and keys) of the promises, or rejected with the first rejection                                                           |
+| `HttpPromise::race(HttpPromise ...$promises)`                  | Settled as the first promise that settles                                                                                                                         |
+| `HttpPromise::resolve($value)`, `HttpPromise::reject($reason)` | An already settled promise                                                                                                                                        |
+
+```php
+<?php
+$name = $httpClient->sendAsync($userRequest)
+    ->then(fn($response) => json_decode((string)$response->getBody(), true))
+    ->then(fn($user) => $httpClient->sendAsync($profileRequestFor($user['id'])))   // a chained request
+    ->then(fn($response) => json_decode((string)$response->getBody(), true)['name'])
+    ->catch(fn(\ByJG\WebRequest\Exception\NetworkException $ex) => 'unknown')
+    ->await();
+```
+
+`MockClient::sendAsync()` returns a promise already settled with the mocked response.
+
+:::note
+A request whose promise is never awaited (directly, or through a chained or `all()` promise) only progresses while
+another promise is awaited. Awaiting a pending promise with no request in progress throws a `LogicException`.
+:::
+
+## Callbacks: HttpClientParallel
+
 The `HttpClientParallel` class allows you to execute multiple HTTP requests concurrently, improving performance when making multiple independent API calls.
 
 ## Features

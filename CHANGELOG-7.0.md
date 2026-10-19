@@ -14,6 +14,22 @@ This is a source-compatible change for every caller. It is a breaking change onl
 *extends* `Message` or `Request` and overrides one of these methods — see
 [Breaking Changes](#breaking-changes).
 
+## New Features
+
+### Async requests with promises: sendAsync() and HttpPromise
+
+- `HttpClient::sendAsync(RequestInterface $request): HttpPromise` starts the request and returns at once. The
+  requests run in parallel with curl_multi, in the current process, while `HttpPromise::await()` is called on any
+  promise (there is no event loop).
+- `HttpPromise` follows the JavaScript Promise semantics: `then(?$onFulfilled, ?$onRejected)`, `catch()`,
+  `finally()` (no argument, keeps the value or reason), a returned `HttpPromise` is followed (chained requests),
+  `await()` returns the value or throws the reason, `getState()` returns an `HttpPromiseState`, and the static
+  `all()` (keeps the order and keys), `race()`, `resolve()` and `reject()`.
+- The promise is fulfilled with the `ResponseInterface` (an HTTP error status is a response, as in
+  `sendRequest()`) or rejected with a `NetworkException`.
+- `MockClient::sendAsync()` returns a promise settled with the mocked response.
+- See `docs/http-client-parallel.md`. `HttpClientParallel` is unchanged.
+
 ## Improvements
 
 ### PSR-7 withers preserve the concrete type
