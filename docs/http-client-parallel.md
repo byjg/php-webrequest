@@ -45,6 +45,7 @@ requests progress together. The callbacks run then, in the current process.
 | `HttpPromise::all(HttpPromise ...$promises)`                   | Fulfilled with the values in the order (and keys) of the promises, or rejected with the first rejection                                                           |
 | `HttpPromise::race(HttpPromise ...$promises)`                  | Settled as the first promise that settles                                                                                                                         |
 | `HttpPromise::resolve($value)`, `HttpPromise::reject($reason)` | An already settled promise                                                                                                                                        |
+| `HttpPromise::try(Closure $closure, mixed ...$args)`     | Calls the closure: resolved with its return value (a returned promise is followed) or rejected with what it throws, as `Promise.try()` in JavaScript |
 
 ```php
 <?php

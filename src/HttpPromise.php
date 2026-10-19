@@ -42,6 +42,19 @@ class HttpPromise
     }
 
     /**
+     * Call the closure with the arguments and return a promise resolved with its return value (a returned
+     * promise is followed) or rejected with what it throws, as the JavaScript Promise.try()
+     */
+    public static function try(Closure $closure, mixed ...$args): HttpPromise
+    {
+        try {
+            return self::resolve($closure(...$args));
+        } catch (Throwable $ex) {
+            return self::reject($ex);
+        }
+    }
+
+    /**
      * Fulfill the promise, or follow the promise passed, as a JavaScript resolve()
      *
      * @internal

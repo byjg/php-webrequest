@@ -58,11 +58,7 @@ class MockClient extends HttpClient
     #[\Override]
     public function sendAsync(RequestInterface $request): HttpPromise
     {
-        try {
-            return HttpPromise::resolve($this->sendRequest($request));
-        } catch (\Throwable $ex) {
-            return HttpPromise::reject($ex);
-        }
+        return HttpPromise::try($this->sendRequest(...), $request);
     }
 
     #[\Override]

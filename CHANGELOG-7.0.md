@@ -24,7 +24,8 @@ This is a source-compatible change for every caller. It is a breaking change onl
 - `HttpPromise` follows the JavaScript Promise semantics: `then(?$onFulfilled, ?$onRejected)`, `catch()`,
   `finally()` (no argument, keeps the value or reason), a returned `HttpPromise` is followed (chained requests),
   `await()` returns the value or throws the reason, `getState()` returns an `HttpPromiseState`, and the static
-  `all()` (keeps the order and keys), `race()`, `resolve()` and `reject()`.
+  `all()` (keeps the order and keys), `race()`, `resolve()`, `reject()` and `try()` (calls a closure:
+  resolved with its return value or rejected with what it throws, as `Promise.try()`).
 - The promise is fulfilled with the `ResponseInterface` (an HTTP error status is a response, as in
   `sendRequest()`) or rejected with a `NetworkException`.
 - `MockClient::sendAsync()` returns a promise settled with the mocked response.

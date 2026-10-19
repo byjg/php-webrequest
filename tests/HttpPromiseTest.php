@@ -180,6 +180,27 @@ class HttpPromiseTest extends TestCase
         $this->assertEquals(2, $promise->then(fn($value) => $value + 1)->await());
     }
 
+    public function testTry(): void
+    {
+        $promise = HttpPromise::try(fn(int $a, int $b) => $a + $b, 2, 3);
+        $this->assertEquals(HttpPromiseState::Fulfilled, $promise->getState());
+        $this->assertEquals(5, $promise->await());
+
+        // A returned promise is followed
+        $this->assertEquals('inner', HttpPromise::try(fn() => HttpPromise::resolve('inner'))->await());
+    }
+
+    public function testTryRejectsWhatItThrows(): void
+    {
+        // try() does not throw
+        $promise = HttpPromise::try(fn() => throw new RuntimeException('failed'));
+        $this->assertEquals(HttpPromiseState::Rejected, $promise->getState());
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('failed');
+        $promise->await();
+    }
+
     public function testAllEmpty(): void
     {
         $this->assertEquals([], HttpPromise::all()->await());
