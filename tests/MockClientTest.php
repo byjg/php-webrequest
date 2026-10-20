@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Tests;
 
 use ByJG\Util\Uri;
 use ByJG\WebRequest\Exception\MessageException;
@@ -72,7 +72,7 @@ class MockClientTest extends TestCase
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
         $response = $this->object->sendRequest($request);
 
-        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::Ok->value, $response->getStatusCode());
         $this->assertEquals("1.1", $response->getProtocolVersion());
     }
 
@@ -80,6 +80,19 @@ class MockClientTest extends TestCase
      * @throws MessageException
      * @throws RequestException
      */
+    public function testWithProxyCredentials(): void
+    {
+        $this->object->withProxy(Uri::getInstanceFromString("http://us%40er:p%40ss%3Aw@proxy:3128"));
+
+        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
+        $this->object->sendRequest($request);
+
+        $config = $this->object->getCurlConfiguration();
+        $this->assertSame("us@er", $config[CURLOPT_PROXYUSERNAME]);
+        $this->assertSame("p@ss:w", $config[CURLOPT_PROXYPASSWORD]);
+        $this->assertArrayNotHasKey(CURLOPT_PROXYUSERPWD, $config);
+    }
+
     public function testWithCredentials(): void
     {
         $uri = Uri::getInstanceFromString($this->SERVER_TEST)
@@ -91,7 +104,8 @@ class MockClientTest extends TestCase
 
         $curlOptions = $this->curlOptions + [
             CURLOPT_HTTPAUTH => 1,
-            CURLOPT_USERPWD => "user:pass",
+            CURLOPT_USERNAME => "user",
+            CURLOPT_PASSWORD => "pass",
         ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());
     }
@@ -151,7 +165,7 @@ class MockClientTest extends TestCase
 
         $this->object = MockClient::getInstance();
         $response = $this->object->sendRequest($request);
-        $this->assertEquals(HttpStatus::OK->value, $response->getStatusCode());
+        $this->assertEquals(HttpStatus::Ok->value, $response->getStatusCode());
         $curlOptions = $this->curlOptions + [
             CURLOPT_FOLLOWLOCATION => true,
         ];
@@ -207,7 +221,7 @@ class MockClientTest extends TestCase
     public function testPost1(): void
     {
         $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
-            ->withMethod(HttpMethod::POST);
+            ->withMethod(HttpMethod::Post);
         
 
         $response = $this->object->sendRequest($request);
@@ -287,7 +301,7 @@ class MockClientTest extends TestCase
     public function testPostPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
-            HttpMethod::POST,
+            HttpMethod::Post,
             '{teste: "ok"}'
         );
 
@@ -391,9 +405,9 @@ class MockClientTest extends TestCase
     public function testPutPayload(): void
     {
         $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
-            HttpMethod::PUT,
+            HttpMethod::Put,
             '{teste: "ok"}'
-        )->withMethod(HttpMethod::PUT);
+        )->withMethod(HttpMethod::Put);
 
         $response = $this->object->sendRequest($request);
 
@@ -528,7 +542,7 @@ class MockClientTest extends TestCase
         $uploadFile[] = new MultiPartItem('field3', 'value3');
 
         $request = RequestMultiPart::build(Uri::getInstanceFromString($this->SERVER_TEST),
-            HttpMethod::POST,
+            HttpMethod::Post,
             $uploadFile,
             "12345"
         );

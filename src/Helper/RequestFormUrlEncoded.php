@@ -24,7 +24,7 @@ class RequestFormUrlEncoded extends Request
             $params = http_build_query($params);
         }
         return Request::getInstance($uri)
-            ->withMethod(HttpMethod::POST->value)
+            ->withMethod(HttpMethod::Post->value)
             ->withBody(new MemoryStream($params))
             ->withHeader("content-type", "application/x-www-form-urlencoded");
     }

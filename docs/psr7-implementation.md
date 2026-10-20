@@ -66,6 +66,19 @@ echo $stream->getContents(); // "Hello world"
 $stream = new \ByJG\WebRequest\Psr7\FileStream('/path/to/file.txt');
 ```
 
+Every stream extending `StreamBase` also implements `ByJG\WebRequest\Helper\ExtendedStreamInterface`:
+
+```php
+<?php
+$stream = new \ByJG\WebRequest\Psr7\MemoryStream('Hello ');
+
+// Append the contents of another stream at the end
+$stream->appendStream(new \ByJG\WebRequest\Psr7\MemoryStream('world'));
+
+// Attach a PHP stream filter, applied on read ("r", default) or on write ("w")
+$stream->addFilter('string.toupper', 'r');
+```
+
 ## PSR-17 Factory Implementation
 
 WebRequest also implements [PSR-17 HTTP Factories](https://www.php-fig.org/psr/psr-17/) for creating PSR-7 objects:

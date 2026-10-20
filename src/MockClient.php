@@ -52,6 +52,15 @@ class MockClient extends HttpClient
         return $this->parseCurl("", $curlHandle);
     }
 
+    /**
+     * The promise is already settled with sendRequest()
+     */
+    #[\Override]
+    public function sendAsync(RequestInterface $request): HttpPromise
+    {
+        return HttpPromise::try($this->sendRequest(...), $request);
+    }
+
     #[\Override]
     public function parseCurl(string $body, $curlHandle, $close = true): ResponseInterface
     {

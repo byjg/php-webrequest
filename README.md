@@ -9,9 +9,10 @@ A lightweight PSR-7 implementation and highly customized CURL wrapper for making
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-%23ea4aaa?logo=githubsponsors&logoColor=white&labelColor=0d1117)](https://github.com/sponsors/byjg)
 [![Build Status](https://github.com/byjg/php-webrequest/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/php-webrequest/actions/workflows/phpunit.yml)
-[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](http://opensource.byjg.com)
+[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](https://opensource.byjg.com)
+[![Install MCP Server](https://img.shields.io/badge/Install-MCP_Server-8A2BE2?logo=modelcontextprotocol&logoColor=white)](https://opensource.byjg.com/docs/ai/mcpserver-byjg-docs/)
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-webrequest/)
-[![GitHub license](https://img.shields.io/github/license/byjg/php-webrequest.svg)](https://opensource.byjg.com/opensource/licensing.html)
+[![GitHub license](https://img.shields.io/github/license/byjg/php-webrequest.svg)](https://opensource.byjg.com/license/)
 [![GitHub release](https://img.shields.io/github/release/byjg/php-webrequest.svg)](https://github.com/byjg/php-webrequest/releases/)
 
 ## Overview
@@ -25,14 +26,14 @@ PHP WebRequest is a **fully PSR-compliant** HTTP client package that provides:
 
 ### Additional Features
 - Helper classes for common request types (JSON, Form URL Encoded, MultiPart)
-- Support for parallel HTTP requests
+- Support for parallel HTTP requests, with promises (`sendAsync()`) or callbacks
 - Mock client for testing
 
 ## Documentation
 
 - [HTTP Messages and Factories (PSR-7/PSR-17)](docs/psr7-implementation.md) - Create and manipulate HTTP requests, responses, and streams
 - [Sending HTTP Requests (PSR-18)](docs/http-client.md) - Send HTTP requests with customizable options (proxy, SSL, timeouts)
-- [Parallel Requests](docs/http-client-parallel.md) - Execute multiple HTTP requests concurrently for better performance
+- [Parallel Requests](docs/http-client-parallel.md) - Execute multiple HTTP requests concurrently, with promises (`sendAsync()`) or callbacks
 - [Testing with Mock Client](docs/mock-client.md) - Test HTTP code without real network calls
 - [Request Helpers](docs/helpers.md) - Quickly build JSON, Form, and MultiPart requests
 - [Comparison with Guzzle](docs/comparison-with-guzzle.md) - How WebRequest compares to Guzzle HTTP client
@@ -53,7 +54,7 @@ $statusCode = $response->getStatusCode();
 $body = $response->getBody()->getContents();
 ```
 
-## Install
+## Installation
 
 ```bash
 composer require "byjg/webrequest"
@@ -72,15 +73,5 @@ vendor/bin/phpunit
 docker-compose down
 ```
 
-## Dependencies
-
-```mermaid
-flowchart TD
-    byjg/webrequest --> psr/http-message
-    byjg/webrequest --> psr/http-client
-    byjg/webrequest --> ext-json
-    byjg/webrequest --> byjg/uri
-```
-
 ----
-[Open source ByJG](http://opensource.byjg.com)
+[Open source ByJG](https://opensource.byjg.com)

@@ -2,6 +2,7 @@
 
 namespace ByJG\WebRequest;
 
+use ByJG\WebRequest\Exception\CurlException;
 use ByJG\WebRequest\Exception\NetworkException;
 use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\Psr7\NullStream;
@@ -71,7 +72,9 @@ class HttpClient implements ClientInterface
     public function withProxy(UriInterface $uri): HttpClient
     {
         if ($uri->getUserInfo() != "") {
-            $this->withCurlOption(CURLOPT_PROXYUSERPWD, $uri->getUserInfo());
+            [$user, $password] = $this->splitUserInfo($uri);
+            $this->withCurlOption(CURLOPT_PROXYUSERNAME, $user);
+            $this->withCurlOption(CURLOPT_PROXYPASSWORD, $password);
         }
         $this->withCurlOption(CURLOPT_PROXY, $uri);
         return $this;
@@ -112,6 +115,21 @@ class HttpClient implements ClientInterface
         }
 
         return $this->parseCurl((string)$result, $curlHandle);
+    }
+
+    /**
+     * Start the request and return at once. The requests sent this way run in parallel (curl_multi)
+     * while HttpPromise::await() is called; the promise is fulfilled with the response, or rejected
+     * with a NetworkException.
+     *
+     * @param RequestInterface $request
+     * @return HttpPromise
+     * @throws RequestException
+     * @throws CurlException
+     */
+    public function sendAsync(RequestInterface $request): HttpPromise
+    {
+        return CurlMultiLoop::getInstance()->add($this->createCurlHandle($request), $request);
     }
 
     /**
@@ -161,17 +179,17 @@ class HttpClient implements ClientInterface
     protected function setMethod(): void
     {
         switch ($this->request->getMethod()) {
-            case HttpMethod::POST->value:
+            case HttpMethod::Post->value:
                 $this->setCurl(CURLOPT_POST, true);
                 break;
-            case HttpMethod::HEAD->value:
+            case HttpMethod::Head->value:
                 $this->setCurl(CURLOPT_NOBODY, true);
                 $this->setCurl(CURLOPT_WRITEFUNCTION, null);
                 $this->setCurl(CURLOPT_READFUNCTION, null);
                 $this->setCurl(CURLOPT_FILE, null);
                 $this->setCurl(CURLOPT_INFILE, null);
                 break;
-            case HttpMethod::GET->value:
+            case HttpMethod::Get->value:
                 break;
             default:
                 $this->setCurl(CURLOPT_CUSTOMREQUEST, $this->request->getMethod());
@@ -198,10 +216,25 @@ class HttpClient implements ClientInterface
      */
     protected function setCredentials(): void
     {
-        if ($this->request->getUri()->getUserInfo() != "") {
+        $uri = $this->request->getUri();
+        if ($uri->getUserInfo() != "") {
+            [$user, $password] = $this->splitUserInfo($uri);
             $this->setCurl(CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-            $this->setCurl(CURLOPT_USERPWD, $this->request->getUri()->getUserInfo());
+            $this->setCurl(CURLOPT_USERNAME, $user);
+            $this->setCurl(CURLOPT_PASSWORD, $password);
         }
+    }
+
+    /**
+     * The user and password of a URI, decoded: curl wants the plain values, while the PSR-7 userinfo
+     * is percent-encoded "user[:password]" (the first ':' separates them, a ':' in the user is encoded).
+     *
+     * @return array{string, string}
+     */
+    protected function splitUserInfo(UriInterface $uri): array
+    {
+        $parts = explode(':', $uri->getUserInfo(), 2);
+        return [rawurldecode($parts[0]), rawurldecode($parts[1] ?? '')];
     }
 
     protected function setHeaders(): void

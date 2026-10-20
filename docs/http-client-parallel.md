@@ -6,13 +6,91 @@ description: Execute multiple HTTP requests concurrently for better performance
 
 # HTTP Client Parallel
 
+There are two ways to run requests in parallel, both based on cURL multi-handle (one process, no threads):
+promises with `HttpClient::sendAsync()`, or callbacks with `HttpClientParallel`.
+
+## Promises: sendAsync()
+
+`HttpClient::sendAsync(RequestInterface $request)` starts the request and returns at once an `HttpPromise`, which is
+fulfilled with the `ResponseInterface` or rejected with a `NetworkException` (connection error, timeout, ...). An HTTP
+error status (4xx, 5xx) is a response, as with `sendRequest()`.
+
+```php
+<?php
+use ByJG\WebRequest\HttpClient;
+use ByJG\WebRequest\HttpPromise;
+use ByJG\WebRequest\Psr7\Request;
+use ByJG\Util\Uri;
+
+$httpClient = HttpClient::getInstance();
+
+$responses = HttpPromise::all(
+    users: $httpClient->sendAsync(Request::getInstance(Uri::getInstanceFromString('https://api.example.com/users'))),
+    orders: $httpClient->sendAsync(Request::getInstance(Uri::getInstanceFromString('https://api.example.com/orders'))),
+)->await();
+
+echo $responses['users']->getStatusCode();
+```
+
+There is no event loop: the requests are transferred while `await()` is called on any promise, and all the pending
+requests progress together. The callbacks run then, in the current process.
+
+| Method                                                         | Description                                                                                                                                                       |
+|----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `then(?Closure $onFulfilled, ?Closure $onRejected)`            | A new promise settled with the handler's return value; a handler that throws rejects it. A returned `HttpPromise` is followed, so a request can chain another one |
+| `catch(Closure $onRejected)`                                   | `then(null, $onRejected)`: the value it returns recovers the rejection                                                                                            |
+| `finally(Closure $onFinally)`                                  | The callback gets no argument; the promise keeps the original value or reason unless it throws                                                                    |
+| `await()`                                                      | Transfers the requests until the promise settles; returns the value or throws the reason                                                                          |
+| `getState()`                                                   | `HttpPromiseState::Pending`, `Fulfilled` or `Rejected`                                                                                                            |
+| `HttpPromise::all(HttpPromise ...$promises)`                   | Fulfilled with the values in the order (and keys) of the promises, or rejected with the first rejection                                                           |
+| `HttpPromise::race(HttpPromise ...$promises)`                  | Settled as the first promise that settles                                                                                                                         |
+| `HttpPromise::resolve($value)`, `HttpPromise::reject($reason)` | An already settled promise                                                                                                                                        |
+| `HttpPromise::try(Closure $closure, mixed ...$args)`     | Calls the closure: resolved with its return value (a returned promise is followed) or rejected with what it throws, as `Promise.try()` in JavaScript |
+| `HttpPromise::map(iterable $items, Closure $callback, int $concurrency)` | Calls `$callback($item, $key)` with at most `$concurrency` promises pending: the next item starts when one settles. Fulfilled with the values in the order (and keys) of the items, or rejected with the first rejection (no other item starts) |
+
+```php
+<?php
+$name = $httpClient->sendAsync($userRequest)
+    ->then(fn($response) => json_decode((string)$response->getBody(), true))
+    ->then(fn($user) => $httpClient->sendAsync($profileRequestFor($user['id'])))   // a chained request
+    ->then(fn($response) => json_decode((string)$response->getBody(), true)['name'])
+    ->catch(fn(\ByJG\WebRequest\Exception\NetworkException $ex) => 'unknown')
+    ->await();
+```
+
+`MockClient::sendAsync()` returns a promise already settled with the mocked response.
+
+### Limiting the requests in progress
+
+Every `sendAsync()` starts its request at once, so `HttpPromise::all()` over a long list opens all the connections
+together. `HttpPromise::map()` starts the requests as the previous ones finish, with at most `$concurrency` in progress
+(e.g. to respect the rate limit of an API):
+
+```php
+<?php
+$users = HttpPromise::map(
+    $userIds,
+    fn(int $id) => $httpClient->sendAsync(Request::getInstance(Uri::getInstanceFromString("https://api.example.com/users/$id")))
+        ->then(fn($response) => json_decode((string)$response->getBody(), true)),
+    10   // at most 10 requests in progress
+)->await();   // in the order of $userIds
+```
+
+`$items` is read as the requests start, so it can be a generator.
+
+:::note
+A request whose promise is never awaited (directly, or through a chained or `all()` promise) only progresses while
+another promise is awaited. Awaiting a pending promise with no request in progress throws a `LogicException`.
+:::
+
+## Callbacks: HttpClientParallel
+
 The `HttpClientParallel` class allows you to execute multiple HTTP requests concurrently, improving performance when making multiple independent API calls.
 
 ## Features
 
 - Run multiple HTTP requests in parallel
 - Define success and error handlers for each request
-- Batch processing for high-volume requests
 - Based on cURL multi-handle functionality
 
 ## Basic Usage
@@ -30,9 +108,9 @@ $onSuccess = function ($response, $id) {
     echo "Request $id completed with status $statusCode\n";
 };
 
-$onError = function ($error, $id) {
-    // Handle the error
-    echo "Request $id failed: " . $error->getMessage() . "\n";
+$onError = function (string $error, $id) {
+    // Handle the error: $error is the cURL error message
+    echo "Request $id failed: $error\n";
 };
 
 // Create the HttpClientParallel instance
@@ -75,9 +153,9 @@ $customSuccessHandler = function ($response, $id) {
     echo "Special handler for request $id\n";
 };
 
-$customErrorHandler = function ($error, $id) {
+$customErrorHandler = function (string $error, $id) {
     // Special error handling for this request
-    echo "Special error handler for request $id: " . $error->getMessage() . "\n";
+    echo "Special error handler for request $id: $error\n";
 };
 
 // Add request with custom handlers
@@ -90,17 +168,25 @@ $parallel->addRequest(
 
 ## Getting Error Information
 
-After execution, you can retrieve a list of errors that occurred:
+The handlers receive the response (or the cURL error message) and the request id, which is the
+order in which the request was added, starting at 0. Each request calls exactly one handler, once,
+as soon as it finishes: `onSuccess` when a response was received, `onError` when the connection failed.
+
+If a handler throws, or a response cannot be parsed, the error is collected and `execute()`
+throws a `CurlException` after all requests have finished; its message lists each error, once, as
+`"ClassName: message"`. `getErrorList()` returns the collected errors as `Throwable` objects: the
+exception thrown by a handler, or the exception raised while parsing the response.
 
 ```php
 <?php
-$parallel->execute();
+use ByJG\WebRequest\Exception\CurlException;
 
-// Get errors that occurred during execution
-$errors = $parallel->getErrorList();
-
-foreach ($errors as $requestId => $error) {
-    echo "Error in request $requestId: " . $error->getMessage() . "\n";
+try {
+    $parallel->execute();
+} catch (CurlException $e) {
+    foreach ($parallel->getErrorList() as $error) {
+        echo get_class($error) . ": " . $error->getMessage() . "\n";
+    }
 }
 ```
 

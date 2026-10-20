@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Tests;
 
 use ByJG\WebRequest\ContentDisposition;
 use ByJG\WebRequest\FileNotFoundException;
@@ -86,7 +86,7 @@ class MultiPartItemTest extends TestCase
             ->withContent("Lorem ipsum dolor sit amet")
             ->withContentType("text/html")
             ->withFilename("text.txt")
-            ->withContentDisposition(ContentDisposition::formData)
+            ->withContentDisposition(ContentDisposition::FormData)
             ->withEncodedBase64();
 
         $expected = [
