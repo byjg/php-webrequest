@@ -42,7 +42,7 @@ WebRequest implements the [PSR-7 HTTP Message Interface](https://www.php-fig.org
 
 ```php
 <?php
-$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
+$uri = \ByJG\Util\Uri::getInstance('http://www.example.com/page');
 $request = \ByJG\WebRequest\Psr7\Request::getInstance($uri);
 ```
 

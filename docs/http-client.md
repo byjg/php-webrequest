@@ -26,7 +26,7 @@ The `HttpClient` class is the core component for sending HTTP requests. It imple
 ```php
 <?php
 // Create a request
-$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
+$uri = \ByJG\Util\Uri::getInstance('http://www.example.com/page');
 $request = \ByJG\WebRequest\Psr7\Request::getInstance($uri);
 
 // Get an instance of the HTTP client
@@ -70,7 +70,7 @@ You can route requests through a proxy:
 
 ```php
 <?php
-$proxyUri = \ByJG\Util\Uri::getInstanceFromString('http://proxy.example.com:8080');
+$proxyUri = \ByJG\Util\Uri::getInstance('http://proxy.example.com:8080');
 $client = \ByJG\WebRequest\HttpClient::getInstance()
     ->withProxy($proxyUri);
 ```

@@ -33,7 +33,7 @@ $mockClient = new \ByJG\WebRequest\MockClient($mockResponse);
 
 // Create a request
 $request = \ByJG\WebRequest\Psr7\Request::getInstance(
-    \ByJG\Util\Uri::getInstanceFromString('http://example.com/api')
+    \ByJG\Util\Uri::getInstance('http://example.com/api')
 );
 
 // Use the mock client to send the request

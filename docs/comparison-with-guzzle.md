@@ -62,7 +62,7 @@ use ByJG\Util\Uri;
 
 // Simple and straightforward
 $request = Request::getInstance(
-    Uri::getInstanceFromString('https://api.example.com/users')
+    Uri::getInstance('https://api.example.com/users')
 );
 
 $response = HttpClient::getInstance()->sendRequest($request);

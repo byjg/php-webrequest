@@ -50,7 +50,7 @@ class ServerRequestTest extends TestCase
 
     public function testGetQueryParams()
     {
-        $uri = Uri::getInstanceFromString('http://example.com?param1=value1');
+        $uri = Uri::getInstance('http://example.com?param1=value1');
         $request = new ServerRequest($uri);
         $this->assertEquals(['param1' => 'value1'], $request->getQueryParams());
 
@@ -129,7 +129,7 @@ class ServerRequestTest extends TestCase
 
     public function testAllConfigurations()
     {
-        $uri = Uri::getInstanceFromString('http://example.com?param1=value1');
+        $uri = Uri::getInstance('http://example.com?param1=value1');
         $serverParams = ['HOST' => 'localhost'];
         $cookieParams = ['test' => 'value'];
         $query = ['param2' => 'value2'];

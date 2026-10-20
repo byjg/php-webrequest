@@ -69,7 +69,7 @@ class MockClientTest extends TestCase
      */
     public function testGetLastStatus(): void
     {
-        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
+        $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST));
         $response = $this->object->sendRequest($request);
 
         $this->assertEquals(HttpStatus::Ok->value, $response->getStatusCode());
@@ -82,9 +82,9 @@ class MockClientTest extends TestCase
      */
     public function testWithProxyCredentials(): void
     {
-        $this->object->withProxy(Uri::getInstanceFromString("http://us%40er:p%40ss%3Aw@proxy:3128"));
+        $this->object->withProxy(Uri::getInstance("http://us%40er:p%40ss%3Aw@proxy:3128"));
 
-        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
+        $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST));
         $this->object->sendRequest($request);
 
         $config = $this->object->getCurlConfiguration();
@@ -95,7 +95,7 @@ class MockClientTest extends TestCase
 
     public function testWithCredentials(): void
     {
-        $uri = Uri::getInstanceFromString($this->SERVER_TEST)
+        $uri = Uri::getInstance($this->SERVER_TEST)
             ->withUserInfo("user", "pass");
 
         $request = Request::getInstance($uri);
@@ -116,7 +116,7 @@ class MockClientTest extends TestCase
      */
     public function testReferer(): void
     {
-        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST))
             ->withHeader("referer", "http://example.com/abc");
 
         $response = $this->object->sendRequest($request);
@@ -135,7 +135,7 @@ class MockClientTest extends TestCase
     {
         unset($this->curlOptions[CURLOPT_HTTPHEADER]);
 
-        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST))
             ->withHeader("X-Custom-Header", "Defined");
 
         $response = $this->object->sendRequest($request);
@@ -154,7 +154,7 @@ class MockClientTest extends TestCase
     {
         unset($this->curlOptions[CURLOPT_FOLLOWLOCATION]);
 
-        $request = Request::getInstance(Uri::getInstanceFromString($this->REDIRECT_TEST));
+        $request = Request::getInstance(Uri::getInstance($this->REDIRECT_TEST));
         $this->object = MockClient::getInstance()
             ->withNoFollowRedirect();
         $response = $this->object->sendRequest($request);
@@ -181,7 +181,7 @@ class MockClientTest extends TestCase
         unset($this->curlOptions[CURLOPT_SSL_VERIFYHOST]);
         unset($this->curlOptions[CURLOPT_SSL_VERIFYPEER]);
 
-        $request = Request::getInstance(Uri::getInstanceFromString($this->REDIRECT_TEST));
+        $request = Request::getInstance(Uri::getInstance($this->REDIRECT_TEST));
         $this->object = MockClient::getInstance()
             ->withNoSSLVerification();
         $response = $this->object->sendRequest($request);
@@ -206,7 +206,7 @@ class MockClientTest extends TestCase
      */
     public function testGet1(): void
     {
-        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST))
             ->withMethod("GET");
         $response = $this->object->sendRequest($request);
 
@@ -220,7 +220,7 @@ class MockClientTest extends TestCase
      */
     public function testPost1(): void
     {
-        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST))
             ->withMethod(HttpMethod::Post);
         
 
@@ -238,7 +238,7 @@ class MockClientTest extends TestCase
      */
     public function testPost2(): void
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstance($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
         ]);
@@ -260,7 +260,7 @@ class MockClientTest extends TestCase
      */
     public function testPost4(): void
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2');
+        $request = RequestFormUrlEncoded::build(Uri::getInstance($this->SERVER_TEST), 'just_string=value1&just_string2=value2');
 
         $response = $this->object->sendRequest($request);
 
@@ -279,7 +279,7 @@ class MockClientTest extends TestCase
      */
     public function testPost5(): void
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstance($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ]);
 
@@ -300,7 +300,7 @@ class MockClientTest extends TestCase
      */
     public function testPostPayload(): void
     {
-        $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
+        $request = RequestJson::build(Uri::getInstance($this->SERVER_TEST)->withQuery("extra=ok"),
             HttpMethod::Post,
             '{teste: "ok"}'
         );
@@ -323,7 +323,7 @@ class MockClientTest extends TestCase
      */
     public function testPut1(): void
     {
-        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST))
             ->withMethod("PUT");
 
 
@@ -341,7 +341,7 @@ class MockClientTest extends TestCase
      */
     public function testPut2(): void
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstance($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
         ])->withMethod("PUT");
@@ -363,7 +363,7 @@ class MockClientTest extends TestCase
      */
     public function testPut4(): void
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
+        $request = RequestFormUrlEncoded::build(Uri::getInstance($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("PUT");
 
         $response = $this->object->sendRequest($request);
@@ -383,7 +383,7 @@ class MockClientTest extends TestCase
      */
     public function testPut5(): void
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstance($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ])->withMethod("PUT");
 
@@ -404,7 +404,7 @@ class MockClientTest extends TestCase
      */
     public function testPutPayload(): void
     {
-        $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
+        $request = RequestJson::build(Uri::getInstance($this->SERVER_TEST)->withQuery("extra=ok"),
             HttpMethod::Put,
             '{teste: "ok"}'
         )->withMethod(HttpMethod::Put);
@@ -427,7 +427,7 @@ class MockClientTest extends TestCase
      */
     public function testDelete1(): void
     {
-        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST))
+        $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST))
             ->withMethod("DELETE");
 
 
@@ -445,7 +445,7 @@ class MockClientTest extends TestCase
      */
     public function testDelete2(): void
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstance($this->SERVER_TEST), [
             'param1' => 'value1',
             'param2' => 'value2'
         ])->withMethod("DELETE");
@@ -467,7 +467,7 @@ class MockClientTest extends TestCase
      */
     public function testDelete4(): void
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
+        $request = RequestFormUrlEncoded::build(Uri::getInstance($this->SERVER_TEST), 'just_string=value1&just_string2=value2')
             ->withMethod("DELETE");
 
         $response = $this->object->sendRequest($request);
@@ -487,7 +487,7 @@ class MockClientTest extends TestCase
      */
     public function testDelete5(): void
     {
-        $request = RequestFormUrlEncoded::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"), [
+        $request = RequestFormUrlEncoded::build(Uri::getInstance($this->SERVER_TEST)->withQuery("extra=ok"), [
             'param' => 'value'
         ])->withMethod("DELETE");
 
@@ -508,7 +508,7 @@ class MockClientTest extends TestCase
      */
     public function testDeletePayload(): void
     {
-        $request = RequestJson::build(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("extra=ok"),
+        $request = RequestJson::build(Uri::getInstance($this->SERVER_TEST)->withQuery("extra=ok"),
             "DELETE",
             '{teste: "ok"}'
         )->withMethod("DELETE");
@@ -541,7 +541,7 @@ class MockClientTest extends TestCase
         );
         $uploadFile[] = new MultiPartItem('field3', 'value3');
 
-        $request = RequestMultiPart::build(Uri::getInstanceFromString($this->SERVER_TEST),
+        $request = RequestMultiPart::build(Uri::getInstance($this->SERVER_TEST),
             HttpMethod::Post,
             $uploadFile,
             "12345"
@@ -578,7 +578,7 @@ class MockClientTest extends TestCase
      */
     public function testWithCurlOption(): void
     {
-        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
+        $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST));
 
         $this->object->withCurlOption(CURLOPT_NOBODY, 1);
 
@@ -599,7 +599,7 @@ class MockClientTest extends TestCase
         $expectedResponse = Response::getInstance(404)
             ->withBody(new MemoryStream("<h1>Not Found</h1>"));
 
-        $request = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST));
+        $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST));
 
         $this->object = new MockClient($expectedResponse);
 
