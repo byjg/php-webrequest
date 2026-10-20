@@ -15,7 +15,7 @@ The `RequestJson` helper allows you to easily create JSON requests.
 ```php
 <?php
 // Create a URI
-$uri = \ByJG\Util\Uri::getInstanceFromString('http://api.example.com/users');
+$uri = \ByJG\Util\Uri::getInstance('http://api.example.com/users');
 
 // Create a JSON request with RequestJson helper
 $request = \ByJG\WebRequest\Helper\RequestJson::build(
@@ -49,7 +49,7 @@ The `RequestFormUrlEncoded` helper allows you to create requests with `applicati
 ```php
 <?php
 // Create a URI
-$uri = \ByJG\Util\Uri::getInstanceFromString('http://example.com/login');
+$uri = \ByJG\Util\Uri::getInstance('http://example.com/login');
 
 // Create a form URL encoded request
 $request = \ByJG\WebRequest\Helper\RequestFormUrlEncoded::build(
@@ -73,7 +73,7 @@ The `RequestMultiPart` helper creates requests with `multipart/form-data` conten
 ```php
 <?php
 // Create a URI
-$uri = \ByJG\Util\Uri::getInstanceFromString('http://example.com/upload');
+$uri = \ByJG\Util\Uri::getInstance('http://example.com/upload');
 
 // Create MultiPartItem objects for each form field
 $items = [];

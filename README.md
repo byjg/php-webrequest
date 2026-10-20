@@ -43,7 +43,7 @@ PHP WebRequest is a **fully PSR-compliant** HTTP client package that provides:
 ```php
 <?php
 // Create a request
-$uri = \ByJG\Util\Uri::getInstanceFromString('http://www.example.com/page');
+$uri = \ByJG\Util\Uri::getInstance('http://www.example.com/page');
 $request = \ByJG\WebRequest\Psr7\Request::getInstance($uri);
 
 // Send the request

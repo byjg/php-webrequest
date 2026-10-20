@@ -31,7 +31,7 @@ class HttpPromiseTest extends TestCase
 
     protected function request(string $path, string $query = ''): Request
     {
-        return Request::getInstance(Uri::getInstanceFromString($this->server . $path)->withQuery($query));
+        return Request::getInstance(Uri::getInstance($this->server . $path)->withQuery($query));
     }
 
     public function testSendAsync(): void
@@ -82,7 +82,7 @@ class HttpPromiseTest extends TestCase
     public function testNetworkErrorRejects(): void
     {
         // Nothing listens on the port 1
-        $promise = HttpClient::getInstance()->sendAsync(Request::getInstance(Uri::getInstanceFromString('http://localhost:1/')));
+        $promise = HttpClient::getInstance()->sendAsync(Request::getInstance(Uri::getInstance('http://localhost:1/')));
 
         try {
             $promise->await();
@@ -94,7 +94,7 @@ class HttpPromiseTest extends TestCase
         $this->assertEquals(HttpPromiseState::Rejected, $promise->getState());
 
         $recovered = HttpClient::getInstance()
-            ->sendAsync(Request::getInstance(Uri::getInstanceFromString('http://localhost:1/')))
+            ->sendAsync(Request::getInstance(Uri::getInstance('http://localhost:1/')))
             ->catch(fn(NetworkException $ex) => 'recovered');
         $this->assertEquals('recovered', $recovered->await());
     }
@@ -105,7 +105,7 @@ class HttpPromiseTest extends TestCase
 
         $all = HttpPromise::all(
             $httpClient->sendAsync($this->request('/multirequest.php', 'param=1')),
-            $httpClient->sendAsync(Request::getInstance(Uri::getInstanceFromString('http://localhost:1/'))),
+            $httpClient->sendAsync(Request::getInstance(Uri::getInstance('http://localhost:1/'))),
         );
 
         $start = microtime(true);

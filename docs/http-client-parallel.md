@@ -25,8 +25,8 @@ use ByJG\Util\Uri;
 $httpClient = HttpClient::getInstance();
 
 $responses = HttpPromise::all(
-    users: $httpClient->sendAsync(Request::getInstance(Uri::getInstanceFromString('https://api.example.com/users'))),
-    orders: $httpClient->sendAsync(Request::getInstance(Uri::getInstanceFromString('https://api.example.com/orders'))),
+    users: $httpClient->sendAsync(Request::getInstance(Uri::getInstance('https://api.example.com/users'))),
+    orders: $httpClient->sendAsync(Request::getInstance(Uri::getInstance('https://api.example.com/orders'))),
 )->await();
 
 echo $responses['users']->getStatusCode();
@@ -70,7 +70,7 @@ together. `HttpPromise::map()` starts the requests as the previous ones finish, 
 <?php
 $users = HttpPromise::map(
     $userIds,
-    fn(int $id) => $httpClient->sendAsync(Request::getInstance(Uri::getInstanceFromString("https://api.example.com/users/$id")))
+    fn(int $id) => $httpClient->sendAsync(Request::getInstance(Uri::getInstance("https://api.example.com/users/$id")))
         ->then(fn($response) => json_decode((string)$response->getBody(), true)),
     10   // at most 10 requests in progress
 )->await();   // in the order of $userIds
@@ -122,13 +122,13 @@ $parallel = new \ByJG\WebRequest\HttpClientParallel(
 
 // Create requests
 $request1 = \ByJG\WebRequest\Psr7\Request::getInstance(
-    \ByJG\Util\Uri::getInstanceFromString('http://api1.example.com')
+    \ByJG\Util\Uri::getInstance('http://api1.example.com')
 );
 $request2 = \ByJG\WebRequest\Psr7\Request::getInstance(
-    \ByJG\Util\Uri::getInstanceFromString('http://api2.example.com')
+    \ByJG\Util\Uri::getInstance('http://api2.example.com')
 );
 $request3 = \ByJG\WebRequest\Psr7\Request::getInstance(
-    \ByJG\Util\Uri::getInstanceFromString('http://api3.example.com')
+    \ByJG\Util\Uri::getInstance('http://api3.example.com')
 );
 
 // Add requests to the parallel client

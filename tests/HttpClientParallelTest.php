@@ -55,9 +55,9 @@ class HttpClientParallelTest extends TestCase
             $onError
         );
 
-        $request1 = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("param=1"));
-        $request2 = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("param=2"));
-        $request3 = Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("param=3"));
+        $request1 = Request::getInstance(Uri::getInstance($this->SERVER_TEST)->withQuery("param=1"));
+        $request2 = Request::getInstance(Uri::getInstance($this->SERVER_TEST)->withQuery("param=2"));
+        $request3 = Request::getInstance(Uri::getInstance($this->SERVER_TEST)->withQuery("param=3"));
 
         $multi
             ->addRequest($request1)
@@ -93,8 +93,8 @@ class HttpClientParallelTest extends TestCase
         );
 
         $multi
-            ->addRequest(Request::getInstance(Uri::getInstanceFromString("http://localhost:1/")))
-            ->addRequest(Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("param=1")));
+            ->addRequest(Request::getInstance(Uri::getInstance("http://localhost:1/")))
+            ->addRequest(Request::getInstance(Uri::getInstance($this->SERVER_TEST)->withQuery("param=1")));
 
         $multi->execute();
 
@@ -124,8 +124,8 @@ class HttpClientParallelTest extends TestCase
         };
 
         $multi
-            ->addRequest(Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("param=1")))
-            ->addRequest(Request::getInstance(Uri::getInstanceFromString($this->SERVER_TEST)->withQuery("param=2")));
+            ->addRequest(Request::getInstance(Uri::getInstance($this->SERVER_TEST)->withQuery("param=1")))
+            ->addRequest(Request::getInstance(Uri::getInstance($this->SERVER_TEST)->withQuery("param=2")));
 
         try {
             $multi->execute();
