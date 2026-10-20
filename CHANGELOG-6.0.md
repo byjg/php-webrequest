@@ -56,7 +56,7 @@ Version 6.0 represents a major release with significant improvements to PHP vers
 
 | Before (5.x) | After (6.0) | Description |
 |--------------|-------------|-------------|
-| PHP >=8.1 <8.4 | PHP >=8.3 <8.6 | Minimum PHP version increased from 8.1 to 8.3; added support for PHP 8.4 and 8.5 |
+| `PHP >=8.1 <8.4` | `PHP >=8.3 <8.6` | Minimum PHP version increased from 8.1 to 8.3; added support for PHP 8.4 and 8.5 |
 | `byjg/uri` ^5.0 | `byjg/uri` ^6.0 | Updated to major version 6 of the URI package |
 | PHPUnit ^9.6 | PHPUnit ^10.5\|^11.5 | Updated to PHPUnit 10 and 11 for better PHP 8.3+ support |
 | Psalm ^5.9 | Psalm ^5.9\|^6.13 | Extended Psalm version support to include version 6 |
