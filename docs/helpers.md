@@ -19,9 +19,9 @@ $uri = \ByJG\Util\Uri::getInstance('http://api.example.com/users');
 
 // Create a JSON request with RequestJson helper
 $request = \ByJG\WebRequest\Helper\RequestJson::build(
-    $uri,                    // The URI
-    'POST',                  // HTTP method
-    '{"name": "John Doe"}'   // JSON string (can also be an array)
+    $uri,                               // The URI
+    \ByJG\WebRequest\HttpMethod::Post,  // HTTP method (a string such as 'POST' also works)
+    '{"name": "John Doe"}'              // JSON string (can also be an array)
 );
 
 // Send the request
@@ -34,7 +34,7 @@ You can also pass an associative array instead of a JSON string:
 <?php
 $request = \ByJG\WebRequest\Helper\RequestJson::build(
     $uri,
-    'POST',
+    \ByJG\WebRequest\HttpMethod::Post,
     [
         'name' => 'John Doe',
         'email' => 'john@example.com'
@@ -100,7 +100,7 @@ $items[] = new \ByJG\WebRequest\MultiPartItem(
 // Create the multipart request
 $request = \ByJG\WebRequest\Helper\RequestMultiPart::build(
     $uri,
-    'POST',
+    \ByJG\WebRequest\HttpMethod::Post,
     $items
 );
 
