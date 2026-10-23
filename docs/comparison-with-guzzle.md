@@ -192,7 +192,7 @@ $client = new Client(['handler' => $handler]);
 - `RequestMultiPart::build()` - File uploads
 
 ```php
-$request = RequestJson::build($uri, 'POST', [
+$request = RequestJson::build($uri, HttpMethod::Post, [
     'name' => 'John',
     'email' => 'john@example.com'
 ]);
