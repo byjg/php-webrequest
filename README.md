@@ -5,7 +5,7 @@ tags: [php, http]
 
 # Web Request
 
-A lightweight PSR-7 implementation and highly customized CURL wrapper for making REST calls.
+A PSR-18 HTTP client on cURL, with its own PSR-7 messages, parallel requests and a mock client for tests, in one small package.
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-%23ea4aaa?logo=githubsponsors&logoColor=white&labelColor=0d1117)](https://github.com/sponsors/byjg)
 [![Build Status](https://github.com/byjg/php-webrequest/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/php-webrequest/actions/workflows/phpunit.yml)
@@ -14,6 +14,27 @@ A lightweight PSR-7 implementation and highly customized CURL wrapper for making
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-webrequest/)
 [![GitHub license](https://img.shields.io/github/license/byjg/php-webrequest.svg)](https://opensource.byjg.com/license/)
 [![GitHub release](https://img.shields.io/github/release/byjg/php-webrequest.svg)](https://github.com/byjg/php-webrequest/releases/)
+
+## Why
+
+Calling an API should not need a large dependency tree, and the code that does it should be
+easy to test. Most clients give you one of the two.
+
+WebRequest implements the standards (PSR-7 messages, PSR-17 factories, a PSR-18 client), so
+the code that uses it depends on the interfaces, not on this package:
+
+```php
+$responses = HttpPromise::all(
+    users:  $httpClient->sendAsync(Request::getInstance(Uri::getInstance('https://api.example.com/users'))),
+    orders: $httpClient->sendAsync(Request::getInstance(Uri::getInstance('https://api.example.com/orders'))),
+)->await();
+```
+
+- **Parallel requests without an event loop.** `sendAsync()` returns a promise, and every
+  pending request runs together on cURL multi when you `await()`.
+- **Test without the network.** `MockClient` returns the response you give it and keeps the
+  request it received.
+- **Helpers for the usual bodies:** JSON, form URL-encoded and multipart.
 
 ## Overview
 
