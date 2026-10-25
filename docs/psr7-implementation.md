@@ -88,6 +88,8 @@ WebRequest also implements [PSR-17 HTTP Factories](https://www.php-fig.org/psr/p
 - **ServerRequestFactory**: Creates ServerRequest objects
 - **StreamFactory**: Creates Stream objects
 - **UploadedFileFactory**: Creates UploadedFile objects
+- **UriFactory**: Creates Uri objects. It is `ByJG\Util\UriFactory`, from [byjg/uri](https://github.com/byjg/php-uri),
+  which WebRequest already requires
 
 :::tip
 PSR-17 factories provide a standardized way to create PSR-7 objects, making your code more interoperable with other PSR-compliant libraries.
