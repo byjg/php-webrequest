@@ -1,5 +1,6 @@
 ---
 sidebar_key: webrequest
+sidebar_category: http-apis
 tags: [php, http]
 ---
 
