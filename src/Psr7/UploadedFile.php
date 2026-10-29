@@ -5,10 +5,12 @@ namespace ByJG\WebRequest\Psr7;
 use ByJG\WebRequest\Factory\StreamFactory;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use RuntimeException;
 
 class UploadedFile implements UploadedFileInterface
 {
     protected StreamInterface $stream;
+    protected bool $moved = false;
 
     public function __construct(
         StreamInterface|string $stream,
@@ -32,19 +34,46 @@ class UploadedFile implements UploadedFileInterface
     #[\Override]
     public function getStream(): StreamInterface
     {
+        if ($this->moved) {
+            throw new RuntimeException("The uploaded file was moved");
+        }
         return $this->stream;
     }
 
     #[\Override]
     public function moveTo(string $targetPath): void
     {
-        $this->stream->rewind();
-
+        if ($this->moved) {
+            throw new RuntimeException("The uploaded file was already moved");
+        }
         if (!is_writable(dirname($targetPath))) {
-            throw new \RuntimeException("Target path is not writable");
+            throw new RuntimeException("Target path is not writable");
         }
 
-        file_put_contents($targetPath, $this->stream->getContents());
+        // A file on disk is moved, not copied: move_uploaded_file() for one PHP received
+        $path = $this->filePath();
+        if ($path !== null) {
+            $moved = is_uploaded_file($path) ? move_uploaded_file($path, $targetPath) : rename($path, $targetPath);
+            if (!$moved) {
+                throw new RuntimeException("Could not move the uploaded file to $targetPath");
+            }
+        } else {
+            $this->stream->rewind();
+            file_put_contents($targetPath, $this->stream->getContents());
+        }
+        $this->moved = true;
+    }
+
+    /**
+     * The path of the file the stream reads, when it is a plain file
+     */
+    private function filePath(): ?string
+    {
+        $metadata = $this->stream->getMetadata();
+        if (!is_array($metadata) || ($metadata['wrapper_type'] ?? '') !== 'plainfile' || !is_file((string)$metadata['uri'])) {
+            return null;
+        }
+        return (string)$metadata['uri'];
     }
 
     #[\Override]
@@ -115,14 +144,14 @@ class UploadedFile implements UploadedFileInterface
 
     private static function createUploadedFile(array $file): UploadedFile
     {
-        $content = '';
-        if ($file['error'] == UPLOAD_ERR_OK) {
-            $fileContent = file_get_contents($file['tmp_name']);
-            $content = $fileContent !== false ? $fileContent : '';
+        // The temporary file is read through the stream when used, never loaded in advance
+        $stream = '';
+        if ($file['error'] == UPLOAD_ERR_OK && is_file($file['tmp_name'])) {
+            $stream = new FileStream($file['tmp_name'], 'r');
         }
 
         return new UploadedFile(
-            $content,
+            $stream,
             $file['size'],
             $file['error'],
             $file['name'],

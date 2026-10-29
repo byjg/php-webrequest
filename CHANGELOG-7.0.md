@@ -83,6 +83,15 @@ All methods already returned `clone $this`, so runtime behaviour is unchanged.
 
 ## Bug Fixes
 
+- **`ServerRequest::getParsedBody()` with `multipart/form-data`** returned the raw body. It now returns
+  `$_POST`, as PSR-7 requires for a multipart or form-encoded POST.
+- **`UploadedFile::parseFilesGlobal()` read every upload into memory**, and `moveTo()` wrote a copy and left
+  the temporary file behind. The uploaded file is now a stream over its temporary file, read only when used,
+  and `moveTo()` moves a file on disk (`move_uploaded_file()` for a file PHP received, `rename()` otherwise).
+  After `moveTo()`, `getStream()` and a second `moveTo()` throw a `RuntimeException`, as PSR-7 requires.
+- **`ServerRequest::withParsedBody()` with an array and a content type other than JSON or form-encoded**
+  (or none) threw a `TypeError` (the array was written to the body stream). The body is now kept as it is.
+
 - **Credentials with special characters**: the request and proxy credentials were passed to curl as the
   percent-encoded PSR-7 userinfo (`CURLOPT_USERPWD`/`CURLOPT_PROXYUSERPWD`), so a password with `@`, `:` or
   `%` was sent encoded and authentication failed. The user and password are now decoded and sent

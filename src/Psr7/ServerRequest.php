@@ -119,6 +119,12 @@ class ServerRequest extends Request implements ServerRequestInterface
         }
 
         $contentType = $this->getHeader('Content-Type')[0] ?? '';
+        if (stripos($contentType, 'multipart/form-data') !== false) {
+            // PSR-7: the fields PHP parsed into $_POST, as for the uploaded files and $_FILES
+            $this->parsedBody = $_POST;
+            return $this->parsedBody;
+        }
+
         $bodyContents = $this->getBody()->getContents();
 
         if (stripos($contentType, 'application/json') !== false) {
@@ -144,8 +150,11 @@ class ServerRequest extends Request implements ServerRequestInterface
             $clone = $this->withBody(new MemoryStream(json_encode($data)));
         } elseif (stripos($contentType, 'application/x-www-form-urlencoded') !== false) {
             $clone = $this->withBody(new MemoryStream(http_build_query($data ?? [])));
-        } else {
+        } elseif (is_string($data)) {
             $clone = $this->withBody(new MemoryStream($data));
+        } else {
+            // No encoding for this content type (none, multipart...): the body stays as it is
+            $clone = clone $this;
         }
         $clone->parsedBody = $data;
         return $clone;

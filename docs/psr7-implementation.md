@@ -25,6 +25,15 @@ WebRequest implements the [PSR-7 HTTP Message Interface](https://www.php-fig.org
 | **Response** | HTTP response implementation | PSR-7 ResponseInterface |
 | **ServerRequest** | Server-side HTTP request | PSR-7 ServerRequestInterface |
 
+`ServerRequest` falls back to PHP's globals for what the request does not set: the server params
+(`$_SERVER`), the cookies (`$_COOKIE`) and the uploaded files (`$_FILES`). `getParsedBody()` decodes a JSON
+or `application/x-www-form-urlencoded` body; for `multipart/form-data` it returns `$_POST`, as PSR-7
+requires, since PHP already parsed that body. `withParsedBody()` encodes the data into the body for those
+same JSON and form content types; for any other, the body stays as it is.
+
+`UploadedFile::parseFilesGlobal()` turns `$_FILES` into `UploadedFile` objects whose stream reads the
+temporary file when used. `moveTo()` moves a file on disk instead of copying it, and can be called once.
+
 ### Stream Implementations
 
 | Class | Description | Use Case |
