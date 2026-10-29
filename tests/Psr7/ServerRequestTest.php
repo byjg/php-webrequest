@@ -111,6 +111,40 @@ class ServerRequestTest extends TestCase
         $this->assertEquals(['key2' => 'value2'], $request->getParsedBody());
     }
 
+    /**
+     * PSR-7: for a multipart/form-data request, getParsedBody() returns what PHP parsed into $_POST
+     */
+    public function testGetParsedBodyMultipartReturnsPost()
+    {
+        $_POST = ['name' => 'John', 'tags' => ['a', 'b']];
+        try {
+            $request = (new ServerRequest(null))
+                ->withMethod('POST')
+                ->withHeader('Content-Type', 'multipart/form-data; boundary=12345')
+                ->withBody(new MemoryStream("--12345\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\nJohn\r\n--12345--\r\n"));
+            $this->assertEquals(['name' => 'John', 'tags' => ['a', 'b']], $request->getParsedBody());
+        } finally {
+            $_POST = [];
+        }
+    }
+
+    /**
+     * withParsedBody() for a content type it cannot encode (none, multipart...) keeps the body as is
+     */
+    public function testWithParsedBodyKeepsTheBodyForOtherContentTypes()
+    {
+        $request = (new ServerRequest())->withParsedBody(['key' => 'value']);
+        $this->assertEquals(['key' => 'value'], $request->getParsedBody());
+        $this->assertEquals('', $request->getBody()->getContents());
+
+        $request = (new ServerRequest())
+            ->withHeader('Content-Type', 'multipart/form-data; boundary=12345')
+            ->withBody(new MemoryStream('raw multipart'))
+            ->withParsedBody(['key' => 'value']);
+        $this->assertEquals(['key' => 'value'], $request->getParsedBody());
+        $this->assertEquals('raw multipart', $request->getBody()->getContents());
+    }
+
     public function testWithAttribute()
     {
         $request = new ServerRequest();

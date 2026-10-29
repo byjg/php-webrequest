@@ -2,8 +2,10 @@
 
 namespace Tests\Psr7;
 
+use ByJG\WebRequest\Psr7\FileStream;
 use ByJG\WebRequest\Psr7\UploadedFile;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class UploadedFileTest extends TestCase
 {
@@ -32,6 +34,78 @@ class UploadedFileTest extends TestCase
             if (file_exists($targetPath)) {
                 unlink($targetPath);
             }
+        }
+    }
+
+    /**
+     * A file on disk is moved, not copied: no second copy of a large upload
+     */
+    public function testMoveToMovesAFileOnDisk()
+    {
+        $source = tempnam(sys_get_temp_dir(), 'upload');
+        $targetPath = sys_get_temp_dir() . '/moved-' . uniqid() . '.txt';
+        file_put_contents($source, 'content');
+        $uploadedFile = new UploadedFile(new FileStream($source, 'r'), 7, UPLOAD_ERR_OK, 'test.txt', 'text/plain');
+
+        try {
+            $uploadedFile->moveTo($targetPath);
+            $this->assertEquals('content', file_get_contents($targetPath));
+            $this->assertFileDoesNotExist($source);
+        } finally {
+            @unlink($source);
+            @unlink($targetPath);
+        }
+    }
+
+    /**
+     * PSR-7: once moved, the stream and a second move are not available
+     */
+    public function testNothingAfterMoveTo()
+    {
+        $uploadedFile = new UploadedFile('content', 7, UPLOAD_ERR_OK, 'test.txt', 'text/plain');
+        $targetPath = sys_get_temp_dir() . '/moved-' . uniqid() . '.txt';
+        $uploadedFile->moveTo($targetPath);
+
+        try {
+            $this->expectException(RuntimeException::class);
+            $uploadedFile->getStream();
+        } finally {
+            @unlink($targetPath);
+        }
+    }
+
+    public function testMoveToOnlyOnce()
+    {
+        $uploadedFile = new UploadedFile('content', 7, UPLOAD_ERR_OK, 'test.txt', 'text/plain');
+        $targetPath = sys_get_temp_dir() . '/moved-' . uniqid() . '.txt';
+        $uploadedFile->moveTo($targetPath);
+
+        try {
+            $this->expectException(RuntimeException::class);
+            $uploadedFile->moveTo($targetPath . '.again');
+        } finally {
+            @unlink($targetPath);
+        }
+    }
+
+    /**
+     * parseFilesGlobal() reads the temporary file only when the stream is read, not in advance
+     */
+    public function testParseGlobalFilesReadsTheFileWhenUsed()
+    {
+        $tmpName = tempnam(sys_get_temp_dir(), 'upload');
+        file_put_contents($tmpName, 'content');
+        $_FILES = ['file' => ['name' => 'test.txt', 'type' => 'text/plain', 'tmp_name' => $tmpName, 'error' => UPLOAD_ERR_OK, 'size' => 7]];
+
+        try {
+            $uploadedFiles = UploadedFile::parseFilesGlobal();
+            file_put_contents($tmpName, 'changed');
+
+            $this->assertEquals('changed', $uploadedFiles['file']->getStream()->getContents());
+            $this->assertEquals(7, $uploadedFiles['file']->getSize());
+        } finally {
+            $_FILES = [];
+            @unlink($tmpName);
         }
     }
 
