@@ -39,9 +39,9 @@ class MockClientTest extends TestCase
         $host = empty(getenv('HTTP_TEST_HOST')) ?  "localhost" : getenv('HTTP_TEST_HOST');
         $port = empty(getenv('HTTP_TEST_PORT')) ?  "8080" : getenv('HTTP_TEST_PORT');
 
-        $this->BASE_URL_TEST = "$host:$port";
-
         $this->SERVER_TEST = "http://$host:$port/rest.php";
+        // The Host header the client sends: the authority of the URI, without the standard port of its scheme
+        $this->BASE_URL_TEST = Uri::getInstance($this->SERVER_TEST)->getAuthority();
         $this->REDIRECT_TEST = "http://$host:$port/redirect.php";
         $this->SOAP_TEST = "http://$host:$port/soap.php";
         
