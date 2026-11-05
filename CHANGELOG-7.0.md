@@ -49,7 +49,18 @@ This is a source-compatible change for every caller. It is a breaking change onl
   (as PHP fills `$_POST`) and its files (as `MultiPartItem`, an `UploadedFileInterface`), for a body PHP did
   not parse.
 
+### `Message::withHeaders()`
+
+`withHeaders(array $headers)` sets several headers at once: each as `withHeader()` sets it (validated, it replaces
+the header of that name in any case), with one copy of the message instead of one for each `withHeader()` call.
+It takes what `getHeaders()` returns, so a request is copied with
+`$new->withHeaders($request->getHeaders())`. Not part of PSR-7.
+
 ## Improvements
+
+### `ServerRequest::getQueryParams()` does not copy the request
+
+It cloned the whole request on each call, for nothing.
 
 ### PSR-7 withers preserve the concrete type
 
