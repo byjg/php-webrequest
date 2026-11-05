@@ -115,20 +115,66 @@ class MultiPartItem extends UploadedFile
         return $this->contentDisposition;
     }
     
+    /**
+     * Write the part to a multipart body. Lines end with CRLF (RFC 7578, RFC 2046).
+     */
     public function build(StreamInterface $stream, $boundary): void
     {
-        $stream->write("--$boundary\nContent-Disposition: {$this->getContentDisposition()->value}; name=\"{$this->getField()}\";");
+        $stream->write("--$boundary\r\nContent-Disposition: {$this->getContentDisposition()->value}; name=\"{$this->getField()}\";");
         $fileName = $this->getClientFilename();
         if (!empty($fileName)) {
             $stream->write(" filename=\"{$this->getClientFilename()}\";");
         }
         $contentType = $this->getClientMediaType();
         if (!empty($contentType)) {
-            $stream->write("\nContent-Type: {$this->getClientMediaType()}");
+            $stream->write("\r\nContent-Type: {$this->getClientMediaType()}");
         }
         if ($this->isBase64()) {
-            $stream->write("\nContent-Transfer-Encoding: base64");
+            $stream->write("\r\nContent-Transfer-Encoding: base64");
         }
-        $stream->write("\n\n{$this->getContent()}\n");
+        $stream->write("\r\n\r\n{$this->getContent()}\r\n");
+    }
+
+    /**
+     * The fields and the files of a multipart body, the reverse of build(): for a body PHP did not parse
+     * (a request built in a test, a PSR-7 request without a parsed body). The fields are read as PHP reads
+     * them into $_POST ("tags[]" is a list); the files are by their field name, as MultiPartItem objects.
+     * Lines may end with CRLF or LF.
+     *
+     * @param string $body
+     * @param string $contentType the Content-Type header, with the boundary
+     * @return array{array<array-key, mixed>, array<string, MultiPartItem>}
+     */
+    public static function parseBody(string $body, string $contentType): array
+    {
+        if (preg_match('/boundary="?([^";]+)"?/i', $contentType, $match) !== 1) {
+            return [[], []];
+        }
+
+        $query = [];
+        $files = [];
+        $parts = preg_split('/(?:\r?\n)?--' . preg_quote(trim($match[1]), '/') . '(?:--)?[ \t]*(?:\r?\n|$)/', $body) ?: [];
+        foreach ($parts as $part) {
+            $sections = preg_split('/\r?\n\r?\n/', $part, 2);
+            if ($sections === false || count($sections) < 2) {
+                continue;
+            }
+            [$head, $content] = $sections;
+            if (preg_match('/\bname="([^"]*)"/i', $head, $name) !== 1) {
+                continue;
+            }
+            if (preg_match('/^Content-Transfer-Encoding:\s*base64\s*$/im', $head) === 1) {
+                $content = (string)base64_decode($content);
+            }
+            if (preg_match('/\bfilename="([^"]*)"/i', $head, $filename) === 1) {
+                $type = preg_match('/^Content-Type:\s*([^\r\n]+)/im', $head, $typeMatch) === 1 ? trim($typeMatch[1]) : '';
+                $files[$name[1]] = new MultiPartItem($name[1], $content, $filename[1], $type);
+                continue;
+            }
+            $query[] = rawurlencode($name[1]) . '=' . rawurlencode($content);
+        }
+
+        parse_str(implode('&', $query), $fields);
+        return [$fields, $files];
     }
 }

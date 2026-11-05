@@ -159,6 +159,18 @@ To add the multipart body to a request you already built, use `buildMultiPart()`
 $request = \ByJG\WebRequest\Helper\RequestMultiPart::buildMultiPart($items, $request);
 ```
 
+To read a multipart body back, as PHP would fill `$_POST` and `$_FILES` (for a body PHP did not parse,
+such as a request built in a test), use `MultiPartItem::parseBody()`. The fields come as in `$_POST`
+(`tags[]` is a list) and the files as `MultiPartItem` objects, which are PSR-7 `UploadedFileInterface`:
+
+```php
+<?php
+[$fields, $files] = \ByJG\WebRequest\MultiPartItem::parseBody(
+    (string)$request->getBody(),
+    $request->getHeaderLine('Content-Type')
+);
+```
+
 ## Parsing the Response Body
 
 `ParseBody::parse()` returns the body of a message decoded as an associative array when its

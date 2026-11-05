@@ -554,19 +554,19 @@ class MockClientTest extends TestCase
         $curlOptions = $this->curlOptions + [
                 CURLOPT_POST => true,
                 CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: multipart/form-data; boundary=12345'],
-                CURLOPT_POSTFIELDS => "--12345\n".
-                    "Content-Disposition: form-data; name=\"field1\";\n".
-                    "\n".
-                    "value1\n".
-                    "--12345\n".
-                    "Content-Disposition: form-data; name=\"field2\"; filename=\"filename.json\";\n".
-                    "Content-Type: application/json; charset=UTF-8\n".
-                    "\n".
-                    "{\"key\": \"value2\"}\n".
-                    "--12345\n".
-                    "Content-Disposition: form-data; name=\"field3\";\n".
-                    "\n".
-                    "value3\n".
+                CURLOPT_POSTFIELDS => "--12345\r\n".
+                    "Content-Disposition: form-data; name=\"field1\";\r\n".
+                    "\r\n".
+                    "value1\r\n".
+                    "--12345\r\n".
+                    "Content-Disposition: form-data; name=\"field2\"; filename=\"filename.json\";\r\n".
+                    "Content-Type: application/json; charset=UTF-8\r\n".
+                    "\r\n".
+                    "{\"key\": \"value2\"}\r\n".
+                    "--12345\r\n".
+                    "Content-Disposition: form-data; name=\"field3\";\r\n".
+                    "\r\n".
+                    "value3\r\n".
                     "--12345--"
             ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());

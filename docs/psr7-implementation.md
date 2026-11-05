@@ -25,11 +25,58 @@ WebRequest implements the [PSR-7 HTTP Message Interface](https://www.php-fig.org
 | **Response** | HTTP response implementation | PSR-7 ResponseInterface |
 | **ServerRequest** | Server-side HTTP request | PSR-7 ServerRequestInterface |
 
-`ServerRequest` falls back to PHP's globals for what the request does not set: the server params
-(`$_SERVER`), the cookies (`$_COOKIE`) and the uploaded files (`$_FILES`). `getParsedBody()` decodes a JSON
-or `application/x-www-form-urlencoded` body; for `multipart/form-data` it returns `$_POST`, as PSR-7
-requires, since PHP already parsed that body. `withParsedBody()` encodes the data into the body for those
-same JSON and form content types; for any other, the body stays as it is.
+Headers keep the name in the case it was first given (`getHeaders()` returns `content-type` if it was set
+as `content-type`), and are still read in any case. A header name must be an RFC 7230 token and a value cannot
+have line breaks, otherwise `MessageException`, an `InvalidArgumentException`, is thrown. The method is
+case-sensitive and can be any token (`PROPFIND`, `PURGE`...), not only the ones in `HttpMethod`. A URI without
+a host keeps the `Host` header the request had.
+
+`ServerRequest` holds only what it is given, as PSR-7 requires: `new ServerRequest()` and
+`ServerRequestFactory` do not read PHP's globals.
+
+#### Parsed body
+
+`getParsedBody()` returns what `withParsedBody()` set. When nothing was set, it parses the request's own body
+by its `Content-Type`:
+
+| Content-Type                                                          | Parsed with                                    | Result                                     |
+|-----------------------------------------------------------------------|------------------------------------------------|--------------------------------------------|
+| `application/json`, `*+json`                                          | `json_decode()`                                | associative array                          |
+| `application/x-www-form-urlencoded`                                   | `parse_str()`                                  | the fields                                 |
+| `multipart/form-data`                                                 | `MultiPartItem::parseBody()`                   | the fields, as PHP fills `$_POST`          |
+| `application/xml`, `text/xml`, `*+xml`                                | `Serialize::fromXml()` (byjg/serializer)       | array, without the root element            |
+| `application/yaml`, `application/x-yaml`, `text/yaml`, `text/x-yaml`  | `Serialize::fromYaml()`                        | array                                      |
+| `text/csv`, `application/csv`                                         | `Serialize::fromCsv()`                         | list of rows, keyed by the header row      |
+
+PSR-7 allows only `null`, an array or an object as the parsed body, so any other `Content-Type` (`text/plain`,
+`application/octet-stream`...), an invalid body or a JSON or YAML scalar (`"text"`, `abc`) gives `null`; read it
+with `getBody()`. `parseBody()` does the same parsing but throws `MessageException`, an
+`InvalidArgumentException`, saying why there is no parsed body. For a YAML scalar, the serializer's `TypeError`
+is its previous exception:
+
+```php
+<?php
+$request->getParsedBody();  // null for text/plain
+$request->parseBody();      // MessageException: The Content-Type 'text/plain' has no parsed body: ...
+```
+
+`withParsedBody()` accepts `null`, an array or an object (`MessageException` otherwise). For JSON,
+urlencoded, XML, YAML and CSV it also writes the body from the data, so both describe the same request; for
+any other `Content-Type` (multipart...) the body stays as it is.
+
+#### fromGlobals()
+
+`ServerRequest::fromGlobals()` builds the current request from the globals: the method, URI, headers and
+server params from `$_SERVER`, the cookies from `$_COOKIE`, the uploaded files from `$_FILES`, and, for a
+`POST` of a form (`application/x-www-form-urlencoded` or `multipart/form-data`), `$_POST` as the parsed body.
+The body is a copy of `php://input`, or the one you give, as a stream or a string (a worker in the CLI, where
+`php://input` is empty, or a test):
+
+```php
+<?php
+$request = \ByJG\WebRequest\Psr7\ServerRequest::fromGlobals();
+$request = \ByJG\WebRequest\Psr7\ServerRequest::fromGlobals('{"name":"John"}');
+```
 
 `UploadedFile::parseFilesGlobal()` turns `$_FILES` into `UploadedFile` objects whose stream reads the
 temporary file when used. `moveTo()` moves a file on disk instead of copying it, and can be called once.
@@ -42,6 +89,7 @@ temporary file when used. `moveTo()` moves a file on disk instead of copying it,
 | **MemoryStream** | In-memory stream | String data, JSON payloads |
 | **FileStream** | File-based stream | Reading from files |
 | **TempFileStream** | Temporary file stream | Large data that shouldn't stay in memory |
+| **ResourceStream** | Stream over a resource opened elsewhere | `fopen()` results, `StreamFactory::createStreamFromResource()` |
 | **NullStream** | Discards all data | Testing, ignoring response bodies |
 | **UploadedFile** | Uploaded file handler | Processing file uploads |
 
@@ -95,7 +143,9 @@ WebRequest also implements [PSR-17 HTTP Factories](https://www.php-fig.org/psr/p
 - **RequestFactory**: Creates Request objects
 - **ResponseFactory**: Creates Response objects
 - **ServerRequestFactory**: Creates ServerRequest objects
-- **StreamFactory**: Creates Stream objects
+- **StreamFactory**: Creates Stream objects. `createStreamFromResource()` uses the resource itself, at its current
+  position (it is not copied, and closing the stream closes it), and `createStreamFromFile()` opens the file with
+  the mode given (`r` by default, so the stream is read only)
 - **UploadedFileFactory**: Creates UploadedFile objects
 - **UriFactory**: Creates Uri objects. It is `ByJG\Util\UriFactory`, from [byjg/uri](https://github.com/byjg/php-uri),
   which WebRequest already requires

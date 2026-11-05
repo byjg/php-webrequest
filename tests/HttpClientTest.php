@@ -873,13 +873,42 @@ class HttpClientTest extends TestCase
 
     public function testInvalidMethod(): void
     {
-        $this->expectException(RequestException::class);
-        $this->expectExceptionMessage("Invalid Method TEST");
+        $this->expectException(MessageException::class);
+        $this->expectExceptionMessage("Invalid Method BAD METHOD");
         $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST))
             ->withHeader( "Accept", "application/json")
-            ->withMethod("TEST");
+            ->withMethod("BAD METHOD");
 
         $this->object->sendRequest($request);
     }
 
+    public function testCustomMethod(): void
+    {
+        // PSR-7: the method is case-sensitive and any token, sent as it is
+        $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST))
+            ->withMethod("PROPFIND");
+
+        $response = $this->object->sendRequest($request);
+
+        $this->assertEquals(HttpStatus::Ok->value, $response->getStatusCode());
+        $this->assertEquals("PROPFIND", ParseBody::parse($response)["method"]);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws MessageException
+     * @throws NetworkException
+     * @throws RequestException
+     */
+    public function testHeadersAfterTheRefererAreSent(): void
+    {
+        $request = Request::getInstance(Uri::getInstance($this->SERVER_TEST))
+            ->withHeader("Referer", "http://example.com/abc")
+            ->withHeader("User-Agent", "test")
+            ->withHeader("X-Custom-Header", "Defined");
+
+        $body = ParseBody::parse($this->object->sendRequest($request));
+        $this->assertEquals('http://example.com/abc', $body["referer"]);
+        $this->assertEquals('Defined', $body["custom_header"]);
+    }
 }

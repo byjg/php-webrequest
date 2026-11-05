@@ -7,6 +7,8 @@ use ByJG\WebRequest\FileNotFoundException;
 use ByJG\WebRequest\MultiPartItem;
 use ByJG\WebRequest\Psr7\MemoryStream;
 use PHPUnit\Framework\TestCase;
+use ByJG\Util\Uri;
+use ByJG\WebRequest\Helper\RequestMultiPart;
 
 class MultiPartItemTest extends TestCase
 {
@@ -28,7 +30,7 @@ class MultiPartItemTest extends TestCase
         $multiPartItem->build($stream, "1234567890");
         $stream->rewind();
 
-        $this->assertEquals(implode("\n", $expected), $stream->getContents());
+        $this->assertEquals(implode("\r\n", $expected), $stream->getContents());
     }
 
     public function testBuild2(): void
@@ -49,7 +51,7 @@ class MultiPartItemTest extends TestCase
         $multiPartItem->build($stream, "1234567890");
         $stream->rewind();
 
-        $this->assertEquals(implode("\n", $expected), $stream->getContents());
+        $this->assertEquals(implode("\r\n", $expected), $stream->getContents());
     }
 
     public function testBuild3(): void
@@ -74,7 +76,7 @@ class MultiPartItemTest extends TestCase
         $multiPartItem->build($stream, "1234567890");
         $stream->rewind();
 
-        $this->assertEquals(implode("\n", $expected), $stream->getContents());
+        $this->assertEquals(implode("\r\n", $expected), $stream->getContents());
     }
 
     public function testBuild4(): void
@@ -102,7 +104,7 @@ class MultiPartItemTest extends TestCase
         $multiPartItem->build($stream, "1234567890");
         $stream->rewind();
 
-        $this->assertEquals(implode("\n", $expected), $stream->getContents());
+        $this->assertEquals(implode("\r\n", $expected), $stream->getContents());
     }
 
     /**
@@ -131,6 +133,44 @@ class MultiPartItemTest extends TestCase
         $multiPartItem->build($stream, "1234567890");
         $stream->rewind();
 
-        $this->assertEquals(implode("\n", $expected), $stream->getContents());
+        $this->assertEquals(implode("\r\n", $expected), $stream->getContents());
+    }
+
+    public function testParseBodyReadsWhatRequestMultiPartBuilds(): void
+    {
+        // Binary content with line breaks, a NUL byte and a line that looks like a delimiter
+        $png = "\x89PNG\r\n\x1a\n\0\r\n--not-the-boundary\r\nend";
+        $request = RequestMultiPart::build(new Uri('http://localhost/upload'), 'POST', [
+            new MultiPartItem('note', 'somenote'),
+            new MultiPartItem('tags[]', 'a'),
+            new MultiPartItem('tags[]', 'b'),
+            new MultiPartItem('upfile', $png, 'file.txt', 'text/plain'),
+            (new MultiPartItem('encoded', 'base64 content', 'b.txt', 'text/plain'))->withEncodedBase64(),
+        ]);
+
+        [$fields, $files] = MultiPartItem::parseBody((string)$request->getBody(), $request->getHeaderLine('Content-Type'));
+
+        $this->assertSame(['note' => 'somenote', 'tags' => ['a', 'b']], $fields);
+        $this->assertSame(['upfile', 'encoded'], array_keys($files));
+        $this->assertSame($png, (string)$files['upfile']->getStream());
+        $this->assertSame(strlen($png), $files['upfile']->getSize());
+        $this->assertSame('file.txt', $files['upfile']->getClientFilename());
+        $this->assertSame('text/plain', $files['upfile']->getClientMediaType());
+        $this->assertSame('base64 content', (string)$files['encoded']->getStream());
+    }
+
+    public function testParseBodyWithLfLineEndingsAndQuotedBoundary(): void
+    {
+        $body = "--xyz\nContent-Disposition: form-data; name=\"name\"\n\nJohn\n--xyz--\n";
+
+        [$fields, $files] = MultiPartItem::parseBody($body, 'multipart/form-data; boundary="xyz"');
+
+        $this->assertSame(['name' => 'John'], $fields);
+        $this->assertSame([], $files);
+    }
+
+    public function testParseBodyWithoutBoundary(): void
+    {
+        $this->assertSame([[], []], MultiPartItem::parseBody('anything', 'multipart/form-data'));
     }
 }

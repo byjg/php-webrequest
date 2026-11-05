@@ -32,15 +32,15 @@ class MessageTest extends TestCase
         return [
             [
                 ["mime-type", "text/plain"],
-                ["Mime-Type" => ["text/plain"]]
+                ["mime-type" => ["text/plain"]]
             ],
             [
                 ["MIME-TYPE", "text/plain"],
-                ["Mime-Type" => ["text/plain"]]
+                ["MIME-TYPE" => ["text/plain"]]
             ],
             [
                 ["accept-encoding", ["gzip", "deflate", "br"]],
-                ["Accept-Encoding" => ["gzip", "deflate", "br"]]
+                ["accept-encoding" => ["gzip", "deflate", "br"]]
             ]
         ];
     }
@@ -91,7 +91,7 @@ class MessageTest extends TestCase
 
         $message = $message->withoutHeader("accept-language");
 
-        $expected = array_merge(["Cache-Control" => ["max-age=0"]], $expected);
+        $expected = array_merge(["cache-control" => ["max-age=0"]], $expected);
         $this->assertEquals($expected, $message->getHeaders());
     }
 
@@ -134,5 +134,45 @@ class MessageTest extends TestCase
         $this->expectException(MessageException::class);
         $this->expectExceptionMessage("Invalid Protocol Version");
         $this->message->withProtocolVersion("3.0");
+    }
+
+    public function testWithAddedHeaderKeepsTheFirstName(): void
+    {
+        $message = $this->message
+            ->withAddedHeader("content-type", "text/html")
+            ->withAddedHeader("Content-Type", "text/plain");
+        $this->assertEquals(["content-type" => ["text/html", "text/plain"]], $message->getHeaders());
+
+        // withHeader() replaces the values and the name
+        $message = $message->withHeader("CONTENT-TYPE", "application/json");
+        $this->assertEquals(["CONTENT-TYPE" => ["application/json"]], $message->getHeaders());
+    }
+
+    public function testHeaderValueIsTrimmedAndListKeysDropped(): void
+    {
+        $message = $this->message->withHeader("x-foo", ["a" => " bar ", "b" => 10]);
+        $this->assertSame(["bar", "10"], $message->getHeader("X-Foo"));
+    }
+
+    /**
+     * @return array<array{mixed, mixed}>
+     */
+    public static function invalidHeaderProvider(): array
+    {
+        return [
+            "empty name" => ["", "value"],
+            "name with a space" => ["x foo", "value"],
+            "empty array" => ["x-foo", []],
+            "boolean" => ["x-foo", false],
+            "object" => ["x-foo", new \stdClass()],
+            "header injection" => ["x-foo", "value\r\nSet-Cookie: x=y"],
+        ];
+    }
+
+    #[DataProvider('invalidHeaderProvider')]
+    public function testInvalidHeader(string $name, mixed $value): void
+    {
+        $this->expectException(MessageException::class);
+        $this->message->withHeader($name, $value);
     }
 }

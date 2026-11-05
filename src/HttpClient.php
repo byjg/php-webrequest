@@ -242,13 +242,13 @@ class HttpClient implements ClientInterface
         $headers = $this->request->getHeaders();
         $resultHeaders = [];
         foreach ($headers as $key => $value) {
-            if ($key === "Referer") {
+            if (strcasecmp($key, "Referer") === 0) {
                 $this->setCurl(CURLOPT_REFERER, $this->request->getHeaderLine($key));
-                break;
+                continue;
             }
-            if ($key === "User-Agent") {
+            if (strcasecmp($key, "User-Agent") === 0) {
                 $this->setCurl(CURLOPT_USERAGENT, $this->request->getHeaderLine($key));
-                break;
+                continue;
             }
 
             $resultHeaders[] = $key . ": " . $this->request->getHeaderLine($key);

@@ -29,19 +29,15 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
      */
     public function __toString(): string
     {
-        if ($this->isDetached()) {
+        try {
+            if ($this->isSeekable()) {
+                $this->rewind();
+            }
+            return $this->getContents();
+        } catch (\Throwable) {
+            // PSR-7: __toString() must not throw
             return "";
         }
-
-        if ($this->getSize() === 0) {
-            return "";
-        }
-
-        if ($this->isSeekable()) {
-            $this->rewind();
-        }
-
-        return $this->getContents();
     }
 
     /**
@@ -50,11 +46,10 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     #[\Override]
     public function close(): void
     {
-        if (!$this->isDetached()) {
-            return;
+        $resource = $this->detach();
+        if (is_resource($resource)) {
+            fclose($resource);
         }
-        fclose($this->resource);
-        unset($this->resource);
     }
 
     /**
@@ -124,10 +119,9 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     public function isSeekable(): bool
     {
         if ($this->isDetached()) {
-            throw new RuntimeException("Stream is detached");
+            return false;
         }
-        $seekable = $this->getMetadata('seekable');
-        return is_null($seekable) || is_array($seekable) ? false : $seekable;
+        return $this->getMetadata('seekable') === true;
     }
 
     /**
@@ -140,7 +134,9 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
         if (!$this->isSeekable()) {
             throw new RuntimeException("Stream is not seekable");
         }
-        fseek($this->resource, $offset, $whence);
+        if (fseek($this->resource, $offset, $whence) === -1) {
+            throw new RuntimeException("Cannot seek to position $offset");
+        }
     }
 
     /**
@@ -150,10 +146,7 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     #[\Override]
     public function rewind(): void
     {
-        if (!$this->isSeekable()) {
-            throw new RuntimeException("Stream is not seekable");
-        }
-        rewind($this->resource);
+        $this->seek(0);
     }
 
     /**
@@ -163,15 +156,9 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     #[\Override]
     public function isWritable(): bool
     {
-        if ($this->isDetached()) {
-            throw new RuntimeException("Stream is detached");
-        }
-        $mode = $this->getMetadata('mode');
-        if (!is_string($mode)) {
-            return false;
-        }
-        return stristr($mode, 'w') !== false
-            || stristr($mode, 'a') !== false;
+        $mode = $this->mode();
+        // The first letter is what fopen() honors: "rw" opens a file read only
+        return $mode !== '' && (in_array($mode[0], ['w', 'a', 'x', 'c'], true) || str_contains($mode, '+'));
     }
 
     /**
@@ -203,16 +190,20 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     #[\Override]
     public function isReadable(): bool
     {
+        $mode = $this->mode();
+        return $mode !== '' && ($mode[0] === 'r' || str_contains($mode, '+'));
+    }
+
+    /**
+     * The mode the resource was opened with, or an empty string when the stream is detached
+     */
+    protected function mode(): string
+    {
         if ($this->isDetached()) {
-            throw new RuntimeException("Stream is detached");
+            return '';
         }
         $mode = $this->getMetadata('mode');
-        if (!is_string($mode)) {
-            return false;
-        }
-        return stristr($mode, 'w+') !== false
-            || stristr($mode, 'a+') !== false
-            || stristr($mode, 'r') !== false;
+        return is_string($mode) ? $mode : '';
     }
 
     /**
@@ -221,8 +212,11 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     #[\Override]
     public function read(int $length): string
     {
-        if ($this->isDetached()) {
-            throw new RuntimeException("Stream is detached");
+        if (!$this->isReadable()) {
+            throw new RuntimeException("Stream is not readable");
+        }
+        if ($length < 0) {
+            throw new RuntimeException("Length must not be negative");
         }
         if (feof($this->resource) || $length === 0) {
             return "";
@@ -241,7 +235,14 @@ abstract class StreamBase implements StreamInterface, ExtendedStreamInterface
     #[\Override]
     public function getContents(): string
     {
-        return $this->read($this->getSize() - $this->tell());
+        if (!$this->isReadable()) {
+            throw new RuntimeException("Stream is not readable");
+        }
+        $contents = stream_get_contents($this->resource);
+        if ($contents === false) {
+            throw new RuntimeException("Failed to read from stream");
+        }
+        return $contents;
     }
 
     /**

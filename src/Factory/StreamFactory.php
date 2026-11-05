@@ -3,6 +3,7 @@
 namespace ByJG\WebRequest\Factory;
 
 use ByJG\WebRequest\Psr7\MemoryStream;
+use ByJG\WebRequest\Psr7\ResourceStream;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
@@ -39,19 +40,21 @@ class StreamFactory implements StreamFactoryInterface
     #[\Override]
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
-        if (!file_exists($filename)) {
-            throw new RuntimeException("File not found: $filename");
+        if ($filename === '') {
+            throw new RuntimeException("The file name is empty");
         }
 
-        $resource = fopen($filename, $mode);
+        $resource = @fopen($filename, $mode);
         if ($resource === false) {
-            throw new RuntimeException("Failed to open file: $filename");
+            throw new RuntimeException(error_get_last()['message'] ?? "Failed to open file: $filename");
         }
 
-        return $this->createStreamFromResource($resource);
+        return new ResourceStream($resource);
     }
 
     /**
+     * The stream uses the resource as it is, at its current position, and closing the stream closes it.
+     *
      * @inheritDoc
      */
     #[\Override]
@@ -61,13 +64,7 @@ class StreamFactory implements StreamFactoryInterface
             throw new RuntimeException("Cannot open resource");
         }
 
-        $content = '';
-        while ($buffer = fread($resource, 8192)) {
-            $content .= $buffer;
-        }
-        $stream = $this->createStream($content);
-        fclose($resource);
-        return $stream;
+        return new ResourceStream($resource);
     }
 
     public static function instance(string $class = MemoryStream::class): StreamFactoryInterface

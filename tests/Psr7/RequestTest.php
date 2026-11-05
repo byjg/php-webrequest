@@ -124,4 +124,27 @@ class RequestTest extends TestCase
         $this->assertEquals($uri, $request->getUri());
     }
 
+    public function testWithUriWithoutHostKeepsTheHostHeader(): void
+    {
+        $request = (new Request(new Uri("http://somehost.com")))->withUri(new Uri("/path"));
+        $this->assertEquals(["somehost.com"], $request->getHeader("host"));
+
+        // Without a Host header, $preserveHost still takes the host of the URI
+        $request = (new Request(new Uri("/path")))->withUri(new Uri("http://somehost.com"), true);
+        $this->assertEquals(["somehost.com"], $request->getHeader("host"));
+    }
+
+    public function testMethodIsCaseSensitiveAndExtendable(): void
+    {
+        $request = new Request(new Uri());
+        $this->assertEquals("head", $request->withMethod("head")->getMethod());
+        $this->assertEquals("PROPFIND", $request->withMethod("PROPFIND")->getMethod());
+    }
+
+    public function testInvalidMethod(): void
+    {
+        $this->expectException(MessageException::class);
+        (new Request(new Uri()))->withMethod("");
+    }
+
 }

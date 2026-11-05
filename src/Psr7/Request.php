@@ -3,7 +3,6 @@
 namespace ByJG\WebRequest\Psr7;
 
 use ByJG\WebRequest\Exception\MessageException;
-use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\HttpMethod;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -79,9 +78,11 @@ class Request extends Message implements RequestInterface
     }
 
     /**
+     * The method is case-sensitive and can be any token, not only the ones in HttpMethod.
+     *
      * @inheritDoc
      * @return $this
-     * @throws RequestException
+     * @throws MessageException
      */
     #[\Override]
     public function withMethod(string|HttpMethod $method): static
@@ -90,10 +91,8 @@ class Request extends Message implements RequestInterface
             $method = $method->value;
         }
 
-        $method = strtoupper($method);
-
-        if (is_null(HttpMethod::tryFrom($method))) {
-            throw new RequestException($this, "Invalid Method " . $method);
+        if (preg_match("/^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/", $method) !== 1) {
+            throw new MessageException("Invalid Method " . $method);
         }
 
         $clone = clone $this;
@@ -130,13 +129,16 @@ class Request extends Message implements RequestInterface
     {
         $this->uri = $uri;
 
-        if (!$preserveHost || (!$this->hasHeader("host") && $this->uri->getHost() !== "")) {
-            $port = $this->uri->getPort();
-            $host = $this->uri->getHost();
-            if (!empty($port)) {
-                $host .= ":$port";
-            }
-            $this->setHeader("host", $host, true);
+        // A URI without a host keeps the Host header, and so does $preserveHost when there is one
+        $host = $this->uri->getHost();
+        if ($host === "" || ($preserveHost && $this->getHeaderLine("Host") !== "")) {
+            return;
         }
+
+        $port = $this->uri->getPort();
+        if (!empty($port)) {
+            $host .= ":$port";
+        }
+        $this->setHeader("Host", $host, true);
     }
 }

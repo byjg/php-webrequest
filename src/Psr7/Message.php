@@ -10,7 +10,15 @@ use Psr\Http\Message\StreamInterface;
 class Message implements MessageInterface
 {
     protected string $protocolVersion = "1.1";
+    /**
+     * @var array<string, string[]> the values by the header name, in the case it was first given
+     */
     protected array $headers = [];
+
+    /**
+     * @var array<string, string> the name in $headers by the lowercase name
+     */
+    protected array $headerNames = [];
 
     /**
      * @var ?StreamInterface
@@ -57,7 +65,7 @@ class Message implements MessageInterface
     #[\Override]
     public function hasHeader(string $name): bool
     {
-        return (isset($this->headers[$this->normalize($name)]));
+        return isset($this->headerNames[strtolower($name)]);
     }
 
     /**
@@ -67,7 +75,7 @@ class Message implements MessageInterface
     public function getHeader(string $name): array
     {
         if ($this->hasHeader($name)) {
-            return $this->headers[$this->normalize($name)];
+            return $this->headers[$this->headerNames[strtolower($name)]];
         }
 
         return [];
@@ -109,24 +117,43 @@ class Message implements MessageInterface
     }
 
     /**
-     * @param $name
-     * @param $value
-     * @param $overwrite
+     * @param mixed $name
+     * @param mixed $value
+     * @param bool $overwrite
      * @throws MessageException
      */
-    protected function setHeader($name, $value, $overwrite): void
+    protected function setHeader(mixed $name, mixed $value, bool $overwrite): void
     {
-        if (!is_string($value) && !is_array($value)) {
-            throw new MessageException("Invalid Header Value");
+        // RFC 7230: the name is a token, and a value has no line breaks or control characters
+        if (!is_string($name) || preg_match("/^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/", $name) !== 1) {
+            throw new MessageException("Invalid header name");
         }
 
-        $value = (array)$value;
-
-        if (!$overwrite) {
-            $value = array_merge($this->getHeader($name), $value);
+        $values = is_array($value) ? array_values($value) : [$value];
+        if (empty($values)) {
+            throw new MessageException("The header $name has no value");
+        }
+        foreach ($values as $key => $item) {
+            if ((!is_string($item) && !is_int($item) && !is_float($item))
+                || preg_match("/^[\x20\x09\x21-\x7E\x80-\xFF]*$/", (string)$item) !== 1
+            ) {
+                throw new MessageException("Invalid value for the header $name");
+            }
+            $values[$key] = trim((string)$item, " \t");
         }
 
-        $this->headers[$this->normalize($name)] = $value;
+        $lowercase = strtolower($name);
+        if (isset($this->headerNames[$lowercase])) {
+            if (!$overwrite) {
+                // Adding keeps the name as it was first given
+                $name = $this->headerNames[$lowercase];
+                $values = array_merge($this->headers[$name], $values);
+            }
+            unset($this->headers[$this->headerNames[$lowercase]]);
+        }
+
+        $this->headerNames[$lowercase] = $name;
+        $this->headers[$name] = $values;
     }
 
     /**
@@ -137,8 +164,9 @@ class Message implements MessageInterface
     public function withoutHeader(string $name): static
     {
         $clone = clone $this;
-        if ($clone->hasHeader($name)) {
-            unset($clone->headers[$this->normalize($name)]);
+        $lowercase = strtolower($name);
+        if (isset($clone->headerNames[$lowercase])) {
+            unset($clone->headers[$clone->headerNames[$lowercase]], $clone->headerNames[$lowercase]);
         }
         return $clone;
     }
@@ -166,10 +194,5 @@ class Message implements MessageInterface
         $clone = clone $this;
         $clone->body = $body;
         return $clone;
-    }
-
-    protected function normalize($header): string
-    {
-        return str_replace(" ", "-", ucwords(str_replace("-", " ", strtolower($header))));
     }
 }
