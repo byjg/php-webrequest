@@ -4,7 +4,6 @@ namespace ByJG\WebRequest\Helper;
 
 use ByJG\WebRequest\ContentDisposition;
 use ByJG\WebRequest\Exception\MessageException;
-use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\HttpMethod;
 use ByJG\WebRequest\MultiPartItem;
 use ByJG\WebRequest\Psr7\MemoryStream;
@@ -21,7 +20,6 @@ class RequestMultiPart extends Request
      * @param string|null $boundary
      * @return RequestInterface
      * @throws MessageException
-     * @throws RequestException
      */
     public static function build(UriInterface $uri, HttpMethod|string $method, array $multiPartItem, ?string $boundary = null): RequestInterface
     {

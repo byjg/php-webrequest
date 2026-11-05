@@ -39,9 +39,9 @@ class MockClientTest extends TestCase
         $host = empty(getenv('HTTP_TEST_HOST')) ?  "localhost" : getenv('HTTP_TEST_HOST');
         $port = empty(getenv('HTTP_TEST_PORT')) ?  "8080" : getenv('HTTP_TEST_PORT');
 
-        $this->BASE_URL_TEST = "$host:$port";
-
         $this->SERVER_TEST = "http://$host:$port/rest.php";
+        // The Host header the client sends: the authority of the URI, without the standard port of its scheme
+        $this->BASE_URL_TEST = Uri::getInstance($this->SERVER_TEST)->getAuthority();
         $this->REDIRECT_TEST = "http://$host:$port/redirect.php";
         $this->SOAP_TEST = "http://$host:$port/soap.php";
         
@@ -554,19 +554,19 @@ class MockClientTest extends TestCase
         $curlOptions = $this->curlOptions + [
                 CURLOPT_POST => true,
                 CURLOPT_HTTPHEADER => ["Host: $this->BASE_URL_TEST", 'Content-Type: multipart/form-data; boundary=12345'],
-                CURLOPT_POSTFIELDS => "--12345\n".
-                    "Content-Disposition: form-data; name=\"field1\";\n".
-                    "\n".
-                    "value1\n".
-                    "--12345\n".
-                    "Content-Disposition: form-data; name=\"field2\"; filename=\"filename.json\";\n".
-                    "Content-Type: application/json; charset=UTF-8\n".
-                    "\n".
-                    "{\"key\": \"value2\"}\n".
-                    "--12345\n".
-                    "Content-Disposition: form-data; name=\"field3\";\n".
-                    "\n".
-                    "value3\n".
+                CURLOPT_POSTFIELDS => "--12345\r\n".
+                    "Content-Disposition: form-data; name=\"field1\";\r\n".
+                    "\r\n".
+                    "value1\r\n".
+                    "--12345\r\n".
+                    "Content-Disposition: form-data; name=\"field2\"; filename=\"filename.json\";\r\n".
+                    "Content-Type: application/json; charset=UTF-8\r\n".
+                    "\r\n".
+                    "{\"key\": \"value2\"}\r\n".
+                    "--12345\r\n".
+                    "Content-Disposition: form-data; name=\"field3\";\r\n".
+                    "\r\n".
+                    "value3\r\n".
                     "--12345--"
             ];
         $this->assertEquals($curlOptions, $this->object->getCurlConfiguration());

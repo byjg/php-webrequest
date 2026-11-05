@@ -4,7 +4,6 @@ namespace ByJG\WebRequest\Factory;
 
 use ByJG\Util\Uri;
 use ByJG\WebRequest\Exception\MessageException;
-use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\HttpMethod;
 use ByJG\WebRequest\Psr7\Request;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -16,7 +15,6 @@ class RequestFactory implements RequestFactoryInterface
      * @inheritDoc
      * @param HttpMethod|string $method
      * @param Uri|string $uri
-     * @throws RequestException
      * @throws MessageException
      */
     #[\Override]

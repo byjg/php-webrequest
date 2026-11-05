@@ -313,6 +313,7 @@ class HttpPromiseTest extends TestCase
         $promise = $mock->sendAsync($this->request('/rest.php'));
         $this->assertEquals(HttpPromiseState::Fulfilled, $promise->getState());
         $this->assertSame($expected, $promise->await());
-        $this->assertEquals($this->server . '/rest.php', (string)$mock->getRequestedObject()->getUri());
+        // The URI as written, without the standard port of its scheme
+        $this->assertEquals((string)Uri::getInstance($this->server . '/rest.php'), (string)$mock->getRequestedObject()->getUri());
     }
 }

@@ -22,6 +22,12 @@ and open the template in the editor.
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.5/phpunit.xsd">
 
   <php>
+    <const name="REQUEST_FACTORY" value="ByJG\WebRequest\Factory\RequestFactory"/>
+    <const name="RESPONSE_FACTORY" value="ByJG\WebRequest\Factory\ResponseFactory"/>
+    <const name="SERVER_REQUEST_FACTORY" value="ByJG\WebRequest\Factory\ServerRequestFactory"/>
+    <const name="STREAM_FACTORY" value="ByJG\WebRequest\Factory\StreamFactory"/>
+    <const name="UPLOADED_FILE_FACTORY" value="ByJG\WebRequest\Factory\UploadedFileFactory"/>
+    <const name="URI_FACTORY" value="ByJG\Util\UriFactory"/>
     <ini name="display_errors" value="On"/>
     <ini name="display_startup_errors" value="On"/>
     <ini name="error_reporting" value="E_ALL"/>
@@ -36,6 +42,15 @@ and open the template in the editor.
   <testsuites>
     <testsuite name="Test Suite">
       <directory>./tests/</directory>
+      <exclude>./tests/Conformance/</exclude>
+    </testsuite>
+    <!-- PSR-7 and PSR-17 conformance (php-http/psr7-integration-tests, http-interop/http-factory-tests).
+         Both suites run by default; name one with testsuite to run it alone.
+         The URI factory is byjg/uri's, which runs its own conformance tests. -->
+    <testsuite name="Conformance">
+      <directory>./tests/Conformance/</directory>
+      <directory>./vendor/http-interop/http-factory-tests/test/</directory>
+      <exclude>./vendor/http-interop/http-factory-tests/test/UriFactoryTest.php</exclude>
     </testsuite>
   </testsuites>
 </phpunit>

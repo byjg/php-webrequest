@@ -95,5 +95,14 @@ vendor/bin/phpunit
 docker-compose down
 ```
 
+The PSR-7 and PSR-17 conformance suites, the ones other implementations run
+([php-http/psr7-integration-tests](https://github.com/php-http/psr7-integration-tests) and
+[http-interop/http-factory-tests](https://github.com/http-interop/http-factory-tests)), run with the
+package tests. They need no test server, so they can also run alone:
+
+```bash
+vendor/bin/phpunit --testsuite Conformance
+```
+
 ----
 [Open source ByJG](https://opensource.byjg.com)

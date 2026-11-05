@@ -34,6 +34,21 @@ This is a source-compatible change for every caller. It is a breaking change onl
 - `MockClient::sendAsync()` returns a promise settled with the mocked response.
 - See `docs/http-client-parallel.md`. `HttpClientParallel` is unchanged.
 
+### ServerRequest::fromGlobals(), MultiPartItem::parseBody()
+
+- `ServerRequest::fromGlobals(StreamInterface|string|null $body = null)` builds the current request from
+  `$_SERVER` (method, URI, headers, server params), `$_COOKIE`, `$_FILES` and, for a POST of a form, `$_POST` as
+  the parsed body. The body is a seekable copy of `php://input`, or the one given (a stream as it is, a string
+  in a `MemoryStream`), for a worker in the CLI or a test.
+- `getParsedBody()`, when no parsed body was given, parses the body by its `Content-Type`: JSON,
+  urlencoded, multipart, and now XML, YAML and CSV (through byjg/serializer). `withParsedBody()` writes the
+  body for JSON, urlencoded, XML, YAML and CSV.
+- `ServerRequest::parseBody()` parses the body as `getParsedBody()` does, but throws `MessageException` saying
+  why there is no parsed body (a `Content-Type` such as `text/plain`, an invalid body, a JSON or YAML scalar).
+- `MultiPartItem::parseBody(string $body, string $contentType)` reads a multipart body back into its fields
+  (as PHP fills `$_POST`) and its files (as `MultiPartItem`, an `UploadedFileInterface`), for a body PHP did
+  not parse.
+
 ## Improvements
 
 ### PSR-7 withers preserve the concrete type
@@ -83,14 +98,14 @@ All methods already returned `clone $this`, so runtime behaviour is unchanged.
 
 ## Bug Fixes
 
-- **`ServerRequest::getParsedBody()` with `multipart/form-data`** returned the raw body. It now returns
-  `$_POST`, as PSR-7 requires for a multipart or form-encoded POST.
+- **`StreamBase::close()` never closed the resource** (the check was inverted); it now closes it.
+- **`HttpClient` dropped the headers after `Referer` or `User-Agent`**: the loop stopped (`break`) when it
+  met one of them, and their names were compared case-sensitively. Every header is now sent.
+
 - **`UploadedFile::parseFilesGlobal()` read every upload into memory**, and `moveTo()` wrote a copy and left
   the temporary file behind. The uploaded file is now a stream over its temporary file, read only when used,
   and `moveTo()` moves a file on disk (`move_uploaded_file()` for a file PHP received, `rename()` otherwise).
   After `moveTo()`, `getStream()` and a second `moveTo()` throw a `RuntimeException`, as PSR-7 requires.
-- **`ServerRequest::withParsedBody()` with an array and a content type other than JSON or form-encoded**
-  (or none) threw a `TypeError` (the array was written to the body stream). The body is now kept as it is.
 
 - **Credentials with special characters**: the request and proxy credentials were passed to curl as the
   percent-encoded PSR-7 userinfo (`CURLOPT_USERPWD`/`CURLOPT_PROXYUSERPWD`), so a password with `@`, `:` or
@@ -122,6 +137,38 @@ All methods already returned `clone $this`, so runtime behaviour is unchanged.
 | `Request::withUri(): RequestInterface` | `: static` | Return type narrowed |
 | `HttpClientParallel::getErrorList()` entries: `Throwable` or `string` | always `Throwable` | A response that could not be parsed is stored as the exception, not as a `"ClassName: message"` string |
 | `HttpClientParallel`: `onError` called twice for a failed connection, a parse error recorded twice | called / recorded once | Code that compensated for the duplicates (e.g. counted `onError` calls or the `CurlException` "Raised N error(s)" count) sees the real numbers |
+
+### PSR-7 conformance
+
+The package now runs the PSR-7 and PSR-17 conformance suites with its tests (alone: `vendor/bin/phpunit --testsuite Conformance`),
+and the behavior below changed to follow them:
+
+- **`ServerRequest` holds only what it is given.** `new ServerRequest()` and `ServerRequestFactory` no longer
+  read `$_SERVER`, `$_COOKIE`, `$_FILES` or `$_POST`: build the current request with the new
+  `ServerRequest::fromGlobals()`. A multipart body is parsed from the body, not taken from `$_POST`.
+- **The parsed body is `null`, an array or an object.** `getParsedBody()` returns `null`, not the body as a
+  string, for a `Content-Type` it does not parse (`text/plain`...); read it with `getBody()`, or call
+  `parseBody()` for the reason. `withParsedBody()` accepts only `null`, an array or an object
+  (`MessageException` otherwise; a string was written as the body).
+- **`getHeaders()` keeps the header name as it was first given** (`content-type`, not `Content-Type`).
+  `getHeader()`, `hasHeader()` and `getHeaderLine()` still ignore the case. Code that read
+  `getHeaders()['Content-Type']` must use `getHeaderLine('Content-Type')`.
+- **Header names and values are validated**: a name that is not an RFC 7230 token, an empty array, a
+  non-string value or a value with a line break throws `MessageException`. Values are trimmed.
+- **The method is case-sensitive and any token**: `withMethod('post')` keeps `post`, and `PROPFIND` or
+  `PURGE` are accepted. An invalid method throws `MessageException` instead of `RequestException`.
+  `HttpClient` sends the method as given, and servers such as nginx answer `400 Bad Request` to `post`:
+  pass the `HttpMethod` enum (`HttpMethod::Post`) or the uppercase name.
+- **`MessageException` extends `InvalidArgumentException`** (still an `Exception`).
+- **`withUri()` with a URI without a host keeps the `Host` header**, and an empty host is no longer written.
+- **`StreamFactory::createStreamFromResource()` uses the resource**, at its current position (it is not
+  copied, and closing the stream closes it), and `createStreamFromFile()` opens the file with the mode given
+  (`r` by default, so the stream is read only; an invalid mode throws `RuntimeException`). Both return the new
+  `ResourceStream`.
+- **Streams**: `read()` and `getContents()` on a stream that is not readable throw `RuntimeException`;
+  `isReadable()` and `isWritable()` follow the mode as `fopen()` does (`"rw"` opens a file read only);
+  `isSeekable()`, `isReadable()` and `isWritable()` return `false` for a detached stream instead of throwing.
+- **`MultiPartItem::build()` ends its lines with CRLF**, as RFC 7578 requires, instead of LF.
 
 ### Who is affected
 
@@ -186,6 +233,8 @@ behaviour change.
 ### ByJG dependencies
 
 - `byjg/uri` is now `^7.0`.
+- `byjg/serializer` `^7.0` is a new dependency (with `symfony/yaml`), to parse and write XML, YAML and CSV
+  bodies.
 
 While 7.0 is unreleased these resolve to `7.0.x-dev` from each component's
 `7.0` branch, via `minimum-stability: dev` with `prefer-stable: true`.

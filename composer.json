@@ -26,13 +26,16 @@
     "byjg/uri": "^7.0",
     "psr/http-message": "^1.0|^2.0",
     "psr/http-client": "^1.0",
-    "psr/http-factory": "^1.0|^1.1"
+    "psr/http-factory": "^1.0|^1.1",
+    "byjg/serializer": "^7.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^12.5",
 
     "ext-soap": "*",
-    "psalm/phar": "^6.16"
+    "psalm/phar": "^6.16",
+    "php-http/psr7-integration-tests": "^1.5",
+    "http-interop/http-factory-tests": "^2.4"
   },
   "provide": {
     "psr/http-client-implementation": "1.0",

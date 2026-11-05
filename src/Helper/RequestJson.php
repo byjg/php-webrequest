@@ -3,7 +3,6 @@
 namespace ByJG\WebRequest\Helper;
 
 use ByJG\WebRequest\Exception\MessageException;
-use ByJG\WebRequest\Exception\RequestException;
 use ByJG\WebRequest\HttpMethod;
 use ByJG\WebRequest\Psr7\MemoryStream;
 use ByJG\WebRequest\Psr7\Request;
@@ -17,7 +16,6 @@ class RequestJson extends Request
      * @param array|string $json
      * @return Request
      * @throws MessageException
-     * @throws RequestException
      */
     public static function build(UriInterface $uri, HttpMethod|string $method, array|string $json): Request
     {
@@ -28,6 +26,6 @@ class RequestJson extends Request
         return Request::getInstance($uri)
             ->withMethod($method)
             ->withBody(new MemoryStream($json))
-            ->withHeader("content-type", "application/json");
+            ->withHeader("Content-Type", "application/json");
     }
 }
