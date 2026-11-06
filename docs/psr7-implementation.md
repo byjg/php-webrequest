@@ -31,6 +31,21 @@ have line breaks, otherwise `MessageException`, an `InvalidArgumentException`, i
 case-sensitive and can be any token (`PROPFIND`, `PURGE`...), not only the ones in `HttpMethod`. A URI without
 a host keeps the `Host` header the request had.
 
+`withHeaders()` (not part of PSR-7) sets several headers at once, each as `withHeader()` would, with one copy of the
+message instead of one for each header:
+
+```php
+<?php
+$request = $request->withHeaders([
+    'Accept' => 'application/json',
+    'Authorization' => 'Bearer ' . $token,
+    'Accept-Encoding' => ['gzip', 'deflate'],
+]);
+
+// Copy the headers of another request (getHeaders() returns this format)
+$serverRequest = $serverRequest->withHeaders($request->getHeaders());
+```
+
 `ServerRequest` holds only what it is given, as PSR-7 requires: `new ServerRequest()` and
 `ServerRequestFactory` do not read PHP's globals.
 

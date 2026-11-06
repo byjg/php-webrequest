@@ -175,4 +175,46 @@ class MessageTest extends TestCase
         $this->expectException(MessageException::class);
         $this->message->withHeader($name, $value);
     }
+
+    public function testWithHeadersIsWithHeaderForEachOne(): void
+    {
+        $base = $this->message->withHeader('Accept', 'text/html')->withHeader('X-Keep', 'kept');
+        $headers = [
+            'ACCEPT' => 'application/json',
+            'Authorization' => ['Bearer abc'],
+            'Accept-Encoding' => ['gzip', ' deflate '],
+            'X-Number' => 10,
+        ];
+
+        $chained = $base;
+        foreach ($headers as $name => $value) {
+            $chained = $chained->withHeader($name, $value);
+        }
+        $bulk = $base->withHeaders($headers);
+
+        $this->assertSame($chained->getHeaders(), $bulk->getHeaders());
+        $this->assertSame(
+            ['X-Keep' => ['kept'], 'ACCEPT' => ['application/json'], 'Authorization' => ['Bearer abc'],
+                'Accept-Encoding' => ['gzip', 'deflate'], 'X-Number' => ['10']],
+            $bulk->getHeaders()
+        );
+        $this->assertSame('application/json', $bulk->getHeaderLine('accept'));
+
+        // Immutable: the message it came from is not changed
+        $this->assertSame(['Accept' => ['text/html'], 'X-Keep' => ['kept']], $base->getHeaders());
+        $this->assertNotSame($base, $bulk);
+    }
+
+    public function testWithHeadersOfNoHeaders(): void
+    {
+        $base = $this->message->withHeader('Accept', 'text/html');
+        $this->assertSame($base->getHeaders(), $base->withHeaders([])->getHeaders());
+    }
+
+    #[DataProvider('invalidHeaderProvider')]
+    public function testWithHeadersInvalidHeader(string $name, mixed $value): void
+    {
+        $this->expectException(MessageException::class);
+        $this->message->withHeaders(['X-Valid' => 'ok', $name => $value]);
+    }
 }

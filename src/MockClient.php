@@ -75,7 +75,7 @@ class MockClient extends HttpClient
     #[\Override]
     public function createCurlHandle(RequestInterface $request): CurlHandle
     {
-        $this->request = clone $request;
+        $this->request = $request;
         $this->curlOptions = [];
         $this->clearRequestMethod();
         $this->defaultCurlOptions();

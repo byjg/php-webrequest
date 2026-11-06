@@ -131,12 +131,8 @@ class ServerRequest extends Request implements ServerRequestInterface
     #[\Override]
     public function getQueryParams(): array
     {
-        $clone = clone $this;
-        $queryUri = $clone->uri->getQuery();
-        parse_str($queryUri, $output);
-
-        $queryServer = $clone->serverParams['QUERY_STRING'] ?? '';
-        parse_str($queryServer, $outputServer);
+        parse_str($this->uri->getQuery(), $output);
+        parse_str($this->serverParams['QUERY_STRING'] ?? '', $outputServer);
 
         return array_merge($output, $outputServer);
     }

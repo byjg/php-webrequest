@@ -104,6 +104,23 @@ class Message implements MessageInterface
     }
 
     /**
+     * An instance with these headers, each set as withHeader() sets it (it replaces the header of that name, in any
+     * case): one copy of the message for all of them, instead of one for each withHeader() call. Not part of PSR-7.
+     *
+     * @param array<string, string|string[]> $headers The values of each header name, as getHeaders() returns them
+     * @return static
+     * @throws MessageException when a name or a value is invalid
+     */
+    public function withHeaders(array $headers): static
+    {
+        $clone = clone $this;
+        foreach ($headers as $name => $value) {
+            $clone->setHeader((string)$name, $value, true);
+        }
+        return $clone;
+    }
+
+    /**
      * @inheritDoc
      * @return $this
      * @throws MessageException
