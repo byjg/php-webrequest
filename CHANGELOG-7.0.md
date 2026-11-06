@@ -62,6 +62,12 @@ It takes what `getHeaders()` returns, so a request is copied with
 
 It cloned the whole request on each call, for nothing.
 
+### `MockClient` keeps the request it is sent, not a copy
+
+`createCurlHandle()` cloned the request, as `HttpClient` does not: a request is immutable, so the copy protected
+nothing (and `clone` is shallow, so it shared the body anyway). `getRequestedObject()` now returns the request that was
+sent.
+
 ### PSR-7 withers preserve the concrete type
 
 `Message` and `Request` declared their withers as returning the PSR interface, which discarded the
